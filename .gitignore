@@ -1,0 +1,20 @@
+# Compiled Sources #
+####################
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.run.xml
+*.synctex.gz
+
+# Packages #
+############
+*.zip
+
+# Documentation #
+#################
+*.pdf
+*.ppt
+*.pptx
+

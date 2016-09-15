@@ -8,6 +8,10 @@
 *.run.xml
 *.synctex.gz
 
+# Backup Files #
+################
+*.bib.bak
+
 # Packages #
 ############
 *.zip

@@ -1,41 +1,55 @@
 \chapter{Sistemas Operacionais Embarcados}
 
-Sendo o objetivo do trabalho a construção de um \emph{Sistemas operacionais embarcados},  são um dos pontos principais deste trabalho e 
+O presente capítulo inicia abordando o tema de sistemas operacionais e sobre como estes atuam em ambientes computacionais, mantendo um foco mais voltado aos de uso pessoal.
+
+%TODO falar sobre Associar veiculos a sistemas embarcados
+Na sequência, há uma breve discussão sobre o que são sistemas embarcados, onde podemos encontrá-los  e como podemos classifica-los. Uma discussão sobre as funcionalidades que um sistema embarcado pode agregar aos sistemas veiculares é realizada no capítulo \ref{cap:automacao_veicular}.
+
+Definidos estes conceitos, um modelo de estrutura para um sistema operacional é apresentado, mostrando e detalhando os principais componentes que o compõem.
+
+Em seguida, o conceito de sistemas de tempo real é agregado ao trabalho, apresentando uma definição para o mesmo, bem como exemplificando casos que justifiquem a sua associação para com projetos veiculares. O conceito de sistemas operacionais embarcados é então conformado para um padrão que atenda as especificações de um projeto com restrições temporais.
+
+Por fim, são apresentados exemplos de sistemas operacionais em tempo real, buscando destacar o que eles apresentam em termos de inovação ou funcionalidade.
 
 \section{Sistemas Operacionais}
 
-Em seu livro sobre sistemas operacionais, \citeonline{minix} explica que um computador é composto por um ou mais processadores, uma memória principal e dispositivos de entrada e saída. O sistema operacional tem por objetivo controlar os recursos do computador e prover a base na qual as aplicações podem ser escritas. Esta base provê uma interface que provê para o programador de aplicativos um meio de acesso a funções de mais baixo nível e hardware.
+Em seu livro sobre sistemas operacionais, \citeonline{minix} explica que um computador é composto por um ou mais processadores, uma memória principal e dispositivos de entrada e saída. O sistema operacional tem por objetivo controlar os recursos do computador e prover a base na qual as aplicações podem ser escritas. Esta base disponibiliza uma interface para o programador de aplicativos, que atua como um meio de acesso a funções de mais baixo nível e ao hardware.
 
 Ele também menciona que definir um sistema operacional é uma tarefa difícil, e que parte do problema se deve ao fato de ele realizar duas funções distintas: expandir a máquina e gerenciar recursos.
 
 Expandir a máquina se refere á abstração feita sobre o seu hardware, escondendo as complexidades e facilitando a sua manipulação através de uma interface de mais alto nível. 
 
-Gerenciar recursos se refere ao compartilhamento destes em tempo e espaço. Em tempo pode ser exemplificado por um sistema que precisa executar diversas tarefas ao mesmo tempo em um computador mas onde apenas uma delas pode estar ativa. Neste caso, o sistema operacional alterna em dados intervalos de tempo qual processo estará sendo executado. Impedir o acesso á áreas de memória reservada ou ainda permitir que um processo aloque a impressora são exemplos da gerenciamento de recursos em espaço.
-
-
-
-%\textoResumo{Este é um texto de resumo}
-
-Breve introdução
-
-Realizam duas tarefas distintas: expandir a máquina e gerenciar recursos.
+Gerenciar recursos se refere ao compartilhamento destes em tempo e espaço. Em tempo pode ser exemplificado por um sistema que precisa executar diversas tarefas ao mesmo tempo em um computador mas onde apenas uma delas pode estar ativa. Neste caso, o sistema operacional alterna em dados intervalos de tempo qual processo estará sendo executado. Impedir o acesso á áreas de memória reservada ou ainda permitir que mais de um processo aloque a impressora são exemplos da gerenciamento de recursos em espaço.
 
 \section{Sistemas Embarcados}
 
-\section{Sistemas Operacionais Embarcados}
+De forma objetiva, \citeonline{prog_emb_sys} definem um sistema embarcado como uma combinação de hardwares e softwares computacionais em possível conjunto com partes mecânicas e/ou eletrônicas, integrados para realizar uma função dedicada.
 
+\citeonline{hallinan} expande esta definição descrevendo uma série de características que ajudam a classificar quando um sistema pode ser considerado embarcado, sendo elas:
 
-*Definição de Sistemas Embarcados e Sistemas Operacionais Embarcados
+\begin{itemize}
+	\item Possuir um mecanismo de processamento, tal como um microcontrolador de uso geral;
+	\item Tipicamente projetados para uma aplicação ou propósito específico;
+	\item Oferecem, opcionalmente, uma interface de usuário simples como, por exemplo, um controle de ignição para um motor automotivo;
+	\item Frequentemente possuem recursos limitados. A exemplo, eles podem ter uma memória principal pequena e nenhum disco-rígido;
+	\item Podem ter um suprimento limitado de energia, como em um sistema alimentado por baterias;
+	\item Tipicamente, não são utilizados como plataformas computacionais de propósito geral;
+	\item Geralmente possuem aplicativos de software pré-instalados, sem seleção do usuário;
+	\item São distribuídos com todas as aplicações de software e hardware pré-integrados;
+	\item Comumente são projetados para aplicações onde não há intervenção humana;
+\end{itemize}
+
+Na maioria dos casos, os sistemas embarcados são limitados em recursos quando comparados ao tipico computador de uso geral. Os sistemas embarcados geralmente possuem memória limitada, pequeno ou nenhum espaço de disco rígido e, algumas vezes, nenhuma forma de conectividade com redes externas. Frequentemente, as únicas interfaces com o usuário são uma porta serial e alguns LEDs\footnote{Light Emitting Diode ou Diodo Emissor de Luz}\cite{hallinan}.
+
+\citeonline{qingli} fala que sistemas embarcados são encontrados em uma variedade infinita de tipos, cada qual exibindo caracteristicas únicas. A exemplo, ele cita que a maioria dos veículos em transito, hoje em dia, imbuem chips de computadores, os quais executam tarefas que agregam funcionalidades aos veículos, tornando-os mais fáceis, objetivos, seguros e agradáveis de dirigir. Outros exemplos seriam: telefones, casas inteligentes, sistemas de segurança, aparelhos de televisão a cabo e a satélite, sistemas de \emph{home theater}, secretária eletrônica, dentre muitos outros.
 
 \section{Estrutura de um Sistema Operacional Embarcado}
 
-adsdasds
+\section{Sistema de Tempo Real}
 
-\section{Padrões para o Desenvolvimento de RTOS (Sistemas Operacionais Embarcados de Tempo Real) }
-
-asdasdas
+\section{Padrões para o Desenvolvimento de RTOS}
 
 \section{Exemplos}
 
-asdasdsada
-
+\chapter{Automação Veicular}
+\label{cap:automacao_veicular}

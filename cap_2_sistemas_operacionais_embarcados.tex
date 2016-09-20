@@ -3,7 +3,7 @@
 O presente capítulo inicia abordando o tema de sistemas operacionais e sobre como estes atuam em ambientes computacionais, mantendo um foco mais voltado aos de uso pessoal.
 
 %TODO falar sobre Associar veiculos a sistemas embarcados
-Na sequência, há uma breve discussão sobre o que são sistemas embarcados, onde podemos encontrá-los  e como podemos classifica-los. Uma discussão sobre as funcionalidades que um sistema embarcado pode agregar aos sistemas veiculares é realizada no capítulo \ref{cap:automacao_veicular}.
+Na sequência, há uma breve discussão sobre o que são sistemas embarcados, onde podemos encontrá-los  e como podemos classifica-los. Uma discussão sobre as funcionalidades que um sistema embarcado pode agregar aos sistemas veiculares é realizada no capítulo . %\ref{cap:automacao_veicular}.
 
 Definidos estes conceitos, um modelo de estrutura para um sistema operacional é apresentado, mostrando e detalhando os principais componentes que o compõem.
 
@@ -43,13 +43,158 @@ Na maioria dos casos, os sistemas embarcados são limitados em recursos quando c
 
 \citeonline{qingli} fala que sistemas embarcados são encontrados em uma variedade infinita de tipos, cada qual exibindo caracteristicas únicas. A exemplo, ele cita que a maioria dos veículos em transito, hoje em dia, imbuem chips de computadores, os quais executam tarefas que agregam funcionalidades aos veículos, tornando-os mais fáceis, objetivos, seguros e agradáveis de dirigir. Outros exemplos seriam: telefones, casas inteligentes, sistemas de segurança, aparelhos de televisão a cabo e a satélite, sistemas de \emph{home theater}, secretária eletrônica, dentre muitos outros.
 
-\section{Estrutura de um Sistema Operacional Embarcado}
+\section{Componentes de um Sistema Operacional Embarcado}
+
+%TODO Escrever esta parte
+Paradas que compõem um \emph{kernel}. O conteúdo que segue foi adaptado do livro de \citeonline{qingli}. Informações provenientes de outros autores estarão devidamente citados.
+
+\subsection{Gerenciamento de Tarefas}
+
+Tarefas são threads de execução independentes que competem entrem si para se tornarem o processo ativo no processador. As aplicações são decompostas em múltiplas tarefas concorrentes para optimizar a manipulação de entradas e saídas atendendo a uma restrição temporal.
+
+Uma tarefa precisa ser agendável. Ela deve ser capaz de competir pelo tempo de execução em um sistema, baseado em um algoritmo de agendamento, como \emph{round-robin} ou por prioridades. Uma tarefa é definida pelo seu distinto conjunto de parâmetros e estruturas de dado que a suportam. Ao ser criada, uma tarefa recebe um identificador único, uma prioridade, uma estrutura de contexto e uma rotina que será executada sempre que a tarefa estiver em execução. Um exemplo de estrutura para uma tarefa pode ser visto no algoritmo \ref{alg:struct_task}.
+
+\begin{listing}
+	\label{alg:struct_task}
+	\caption{Estrutura de uma Tarefa.}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct task_s {
+	int id;
+	int priority;
+	state_t state;
+	context_t context;
+	void (*function)();	
+} task_t;
+	\end{minted}
+\end{listing}
+
+Além de prover a estrutura para um objeto do tipo \emph{tarefa}, o \emph{kernel} também é responsável por oferecer serviços que manipulam estes objetos. Estes serviços incluem ações que o kernel realiza sigilosamente para suportar as tarefas como, por exemplo, criar e manter o bloco de controle e pilha de uma tarefa.
+
+O \emph{kernel} também deve prover uma API\footnote{Application Programming Interface - Interface de Programação de Aplicação} que permita ao desenvolvedor manipular as tarefas. Algumas das operações mais comuns que os desenvolvedores podem realizar em uma tarefa incluem:
+
+\begin{itemize}
+	\item Criar e excluir;
+	\item Controlar o agendamento;
+	\item Recuperar informações.
+\end{itemize}
+
+Uma tarefa pode ser destinada a realizar tanto uma atividade do sistema quanto uma funcionalidade implementada pelo usuário final. Qualquer que seja seu propósito, uma tarefa possuí um conjunto de estados, os quais definem o seu comportamento no sistema. Dentre os mais comuns estão os estados de: \emph{pronto}, \emph{rodando} e \emph{bloqueado}.
+
+\begin{itemize}
+	\item \textbf{Pronto}: A tarefa está pronta para execução e está a espera do escalonador de processos;
+	\item \textbf{Rodando}: A tarefa foi escolhida pelo escalonador e está efetivamente em execução;
+	\item \textbf{Bloqueado}: A tarefa está aguardando a liberação de algum recurso antes que possa prosseguir sua execução.
+\end{itemize}
+
+\emph{Pronto} é  sempre o estado inicial de uma tarefa. Dependendo do tipo de tarefa, ela pode executar em um looping infinito ou até que ela encerre. Neste ultimo caso, a tarefa é removida da lista de processos aptos. Uma tarefa só pode mudar seu estado para bloqueado quando ela for a tarefa em execução. Uma tarefa que está bloqueada, e cujo recurso foi liberado, pode apenas retornar para a fila de espera e aguardar que o escalonador a coloque em execução novamente.
+
+A figura \ref{fig:tarefa_estados} apresenta uma ilustração das transições de estado que uma tarefa pode fazer.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{task_states.png}
+	\caption{Transição de Estados para Tarefas.}
+	\label{fig:tarefa_estados}
+\end{figure}
+
+\subsubsection{Fibra}
+
+Uma variante das tarefas são as fibras\footnote{Fiber}, que são threads de execução leves e não-preemptivas, normalmente utilizadas para executar porções de código responsáveis pelos dispositivos de drivers e outros trabalhos de performance crítica \cite{rocket}.
+
+\subsubsection{Semáforos}
+
+Múltiplas \emph{threads} de execução concorrentes em uma aplicação devem serem capazes de sincronizar suas execuções e coordenar o acesso mutuamente exclusivo a recursos compartilhados. Para atender a estes requisitos, os \emph{kernels} provêm um objeto chamado semáforo e respectivos serviços associados a este.
+
+Um semáforo é um objeto do \emph{kernel} que uma ou mais threads de execução podem reservar ou liberar, para o propósito de sincronização ou exclusão mútua. Os elementos que compõem um semáforo são: um identificador único, um contador e uma fila de tarefas em espera. Um exemplo de estrutura de um semáforo pode ser visto no algoritmo \ref{alg:struct_semaphore}.
+
+\begin{listing}
+	\label{alg:struct_semaphore}
+	\caption{Estrutura de uma Semáforo.}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+	typedef struct semaphore_s {
+	int id;
+	int value;
+	queue_t waiting_tasks;
+	} semaphore_t;
+	\end{minted}
+\end{listing}
+
+Um semáforo funciona como uma espécie de chave que permite a uma tarefa acessar algum tipo de operação ou recurso. Se a tarefa puder adquirir um semáforo, ela poderá continuar sua execução normalmente.
+
+Um semáforo pode ser reservador um número finito de vezes. Uma vez que seu valor máximo seja alcançado, as tarefas que tentarem adquirir este semáforo serão enviadas para uma lista de espera, onde permanecerão até que uma tarefa que tenha alocado previamente o semáforo o libere. Assim que se torna disponível, o semáforo é realocado para a primeira tarefa na fila de espera, caso haja alguma. Do contrário, seu valor re-incrementa.
+
+Os semáforos aqui apresentados são os de contagem, binário e de exclusão mútua. Semáforos de contagem e binários apresentam comportamentos similares e respeitam as restrições impostas anteriormente, tendo como única diferença que um semáforo binário possui seu valor máximo igual a $1$. Os diagramas de estados destes dois modelos podem ser visualizados nas figuras \ref{fig:semaphore_binary} e \ref{fig:semaphore_counting}.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{semaphore_binary.png}
+	\caption{Transição de Estados para Semáforos Binários.}
+	\label{fig:semaphore_binary}
+\end{figure}
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{semaphore_counting.png}
+	\caption{Transição de Estados para Semáforos Numéricos.}
+	\label{fig:semaphore_counting}
+\end{figure}
+
+\subsubsection{Mutex}
+
+Um terceiro tipo de semáforo trata de um caso especial do semáforo binário, chamado de \emph{semáforo de exclusão mútua} ou \emph{mutex}.  Um \emph{mutex} pode suportar propriedades de posse, trava recursiva, deleção segura de tarefas, dentre outros protocolos para evitar problemas inerentes a exclusão mútua.
+
+\pagebreak
+
+\begin{itemize}
+%	\setlength\itemsep{1mm}
+	\item \textbf{Posse}: Quando uma tarefa aloca um \emph{mutex}, ela se torna seu proprietário até que ela libere este recurso. Contrário aos semáforos, onde qualquer tarefa pode liberar o recurso, inclusive uma tarefa que não alocou o semáforo, apenas a tarefa proprietária poderá liberar o \emph{mutex}.
+	\item \textbf{Trava Recursiva}: Permite a tarefa que alocou o \emph{mutex} realizar chamadas adicionais para trava-lo novamente. Um contador interno é utilizo para manter o registro da quantidade de vezes que o recurso foi alocado para a tarefa proprietária. O \emph{mutex} só volta a ser liberado quando a tarefa proprietária chama um número igual de vezes a rotina de liberação deste recurso.
+	\item \textbf{Deleção segura}: A deleção prematura de uma tarefa pode ser evitada utilizando uma trava de deleção para quando a tarefa trava e destrava um \emph{mutex}. Ativar esta propriedade garante que uma tarefa que for proprietária do \emph{mutex} não possa ser excluída até que o mesmo seja liberado.
+	\item \textbf{Anulação de Inversão de Prioridade}: Dado o cenário onde uma tarefa de prioridade inferior que aloca um \emph{mutex}, e onde uma tarefa de prioridade maior está aguardando que ele seja liberado, mas que está sendo ofuscada por uma terceira tarefa de prioridade mediana, ocorre o que é chamado de \emph{Inversão de Prioridade}, pois a tarefa mais prioritária passaria a ser aquela que alocou o \emph{mutex}. Algumas técnicas para evitar estas situações são: elevar a prioridade da tarefa que aloca o \emph{mutex} ao máximo ou ainda por herança de prioridade da tarefa que ficar bloqueada por aguardar o \emph{mutex}.
+\end{itemize}
+
+Contrário aos estados de \emph{disponivel}/\emph{indisponivel} dos semáforos de contagem/binários, os estados de um \emph{mutex} são \emph{destravado} e \emph{travado}, representados por $0$ e $1$ respectivamente. Um \emph{mutex} é inicialmente criado em seu estado \emph{destravado}, no qual ele pode ser reservado por uma tarefa. Após a alocação, o \emph{mutex} passa para o estado \emph{travado}. Reciprocamente, quando a tarefa libera o \emph{mutex}, este retorna para o estado \emph{destravado}. A figura \ref{fig:semaphore_mutex} mostra o diagrama de estados para um \emph{mutex} com e sem travamento recursivo.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{semaphore_counting.png}
+	\caption{Transição de Estados para Semáforos Numéricos.}
+	\label{fig:semaphore_mutex}
+\end{figure}
+
+\subsubsection{Filas de Mensagens}
+
+Uma fila de mensagens é um objeto que possui buffer através do qual tarefas e ISRs\footnote{Interrupt Service Routines - Rotinas de Serviço para Exceções) enviam e recebem mensagens para comunicação e sincronizar com dados. Uma fila de mensagens é uma espécie de pipeline. Ela armazena temporariamente as mensagem do remetente até que o destinatário esteja pronto para recebe-las. Esta bufferizaçao temporária desacopla uma tarefa emissora e receptora; isto é, ela libera a tarefa de ter que enviar e receber mensagens simultaneamente.
+
+Assim como os semáforos, uma fila de mensagens tem diversos componentes que o \emph{kernel} utiliza para gerenciar a fila. Quando uma fila de mensagens é criada, ela recebe um QCB\footnote{Queue Control Block - Bloco de Controle de Fila} associado, um identificar único, buffers de memória, um tamanho de fila, um limite máximo de mensagens, e uma ou mais listas de tarefas aguardando.
+
+typedef struct message_queue_s {
+
+} message_queue_t;
+
+\subsection{Pipes}
+
+\subsection{Eventos}
+\subsection{Sinais}
+\subsection{Variáveis Condicionais}
+
+\subsection{Exceções e Interrupções}
+
+\subsection{Temporizadores}
+
+\subsection{Subsistemas de Entrada/Saída}
+
+\subsection{Gerenciamento de Memória}
+
+\subsection{Sistemas de Arquivos}
+
 
 \section{Sistema de Tempo Real}
+
+A real-time application is composed of multiple concurrent tasks that are independent threads of execution, competing on their own for processor execution time \cite{qingli}.
 
 \section{Padrões para o Desenvolvimento de RTOS}
 
 \section{Exemplos}
-
-\chapter{Automação Veicular}
-\label{cap:automacao_veicular}

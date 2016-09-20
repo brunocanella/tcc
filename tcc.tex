@@ -15,13 +15,22 @@
 \usepackage{graphicx} % Possibilita o uso de figuras e gráficos
 \usepackage{color}    % Possibilita o uso de cores no documento
 %\usepackage{pdfpages} % Possibilita a inclusão da ficha catalográfica
-\usepackage{listings}
+\usepackage{listings} % Possibilita colocar códigos
 
 \usepackage[brazil]{babel}  % usados para arrumar os caracteres em português
 \usepackage[utf8]{inputenx} % 
 \usepackage[T1]{fontenc}    %
 
 \usepackage{bibentry} % permite usar o comando nobibliography
+
+\usepackage{minted} % Sintaxe colorida
+
+%----------------------------------------------------------------------
+% comandos de customização dos pacotes
+\renewcommand\listingscaption{Algoritmo}
+% \renewcommand{\lstlistlistingname}{Lista de \lstlistingname s}% List of Listings -> List of Algorithms
+
+\graphicspath{{figuras/}}
 
 %----------------------------------------------------------------------
 % Comandos criados pelo usuário
@@ -95,6 +104,8 @@
 % Elementos textuais
 
 \include{cap_2_sistemas_operacionais_embarcados}
+
+%\include{cap_3_automacao_veicular}
 
 %--------------------------------------------------------
 %Referências

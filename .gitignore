@@ -22,3 +22,6 @@
 *.ppt
 *.pptx
 
+# Directories #
+###############
+fontes/

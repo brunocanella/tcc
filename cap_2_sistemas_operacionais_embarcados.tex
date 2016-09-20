@@ -170,9 +170,19 @@ Uma fila de mensagens é um objeto que possui buffer através do qual tarefas e 
 
 Assim como os semáforos, uma fila de mensagens tem diversos componentes que o \emph{kernel} utiliza para gerenciar a fila. Quando uma fila de mensagens é criada, ela recebe um QCB\footnote{Queue Control Block - Bloco de Controle de Fila} associado, um identificar único, buffers de memória, um tamanho de fila, um limite máximo de mensagens, e uma ou mais listas de tarefas aguardando.
 
+\begin{listing}
+	\label{alg:struct_semaphore}
+	\caption{Estrutura de uma Semáforo.}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
 typedef struct message_queue_s {
-
+	int id;
+	int queue_size;
+	int queue_max;
+	queue_t waiting_tasks;
 } message_queue_t;
+	\end{minted}
+\end{listing}
 
 \subsection{Pipes}
 

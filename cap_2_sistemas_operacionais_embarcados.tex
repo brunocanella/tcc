@@ -55,8 +55,8 @@ Tarefas são threads de execução independentes que competem entrem si para se 
 Uma tarefa precisa ser agendável. Ela deve ser capaz de competir pelo tempo de execução em um sistema, baseado em um algoritmo de agendamento, como \emph{round-robin} ou por prioridades. Uma tarefa é definida pelo seu distinto conjunto de parâmetros e estruturas de dado que a suportam. Ao ser criada, uma tarefa recebe um identificador único, uma prioridade, uma estrutura de contexto e uma rotina que será executada sempre que a tarefa estiver em execução. Um exemplo de estrutura para uma tarefa pode ser visto no algoritmo \ref{alg:struct_task}.
 
 \begin{listing}
-	\label{alg:struct_task}
 	\caption{Estrutura de uma Tarefa.}
+	\label{alg:struct_task}
 	\centering
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
 typedef struct task_s {
@@ -69,7 +69,7 @@ typedef struct task_s {
 	\end{minted}
 \end{listing}
 
-Além de prover a estrutura para um objeto do tipo \emph{tarefa}, o \emph{kernel} também é responsável por oferecer serviços que manipulam estes objetos. Estes serviços incluem ações que o kernel realiza sigilosamente para suportar as tarefas como, por exemplo, criar e manter o bloco de controle e pilha de uma tarefa.
+Além de prover a estrutura para um objeto do tipo \emph{tarefa}, o \emph{kernel} também é responsável por oferecer serviços que manipulam estes objetos. Estes serviços incluem ações que o \emph{kernel} realiza sigilosamente para suportar as tarefas como, por exemplo, criar e manter o bloco de controle e pilha de uma tarefa.
 
 O \emph{kernel} também deve prover uma API\footnote{Application Programming Interface - Interface de Programação de Aplicação} que permita ao desenvolvedor manipular as tarefas. Algumas das operações mais comuns que os desenvolvedores podem realizar em uma tarefa incluem:
 
@@ -109,15 +109,15 @@ Múltiplas \emph{threads} de execução concorrentes em uma aplicação devem se
 Um semáforo é um objeto do \emph{kernel} que uma ou mais threads de execução podem reservar ou liberar, para o propósito de sincronização ou exclusão mútua. Os elementos que compõem um semáforo são: um identificador único, um contador e uma fila de tarefas em espera. Um exemplo de estrutura de um semáforo pode ser visto no algoritmo \ref{alg:struct_semaphore}.
 
 \begin{listing}
-	\label{alg:struct_semaphore}
 	\caption{Estrutura de uma Semáforo.}
+	\label{alg:struct_semaphore}
 	\centering
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
-	typedef struct semaphore_s {
+typedef struct semaphore_s {
 	int id;
 	int value;
 	queue_t waiting_tasks;
-	} semaphore_t;
+} semaphore_t;
 	\end{minted}
 \end{listing}
 
@@ -159,40 +159,150 @@ Contrário aos estados de \emph{disponivel}/\emph{indisponivel} dos semáforos d
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=\textwidth]{semaphore_counting.png}
-	\caption{Transição de Estados para Semáforos Numéricos.}
+	\includegraphics[width=\textwidth]{semaphore_mutex.png}
+	\caption{Transição de Estados para Mutex.}
 	\label{fig:semaphore_mutex}
 \end{figure}
 
 \subsubsection{Filas de Mensagens}
 
-Uma fila de mensagens é um objeto que possui buffer através do qual tarefas e ISRs\footnote{Interrupt Service Routines - Rotinas de Serviço para Exceções) enviam e recebem mensagens para comunicação e sincronizar com dados. Uma fila de mensagens é uma espécie de pipeline. Ela armazena temporariamente as mensagem do remetente até que o destinatário esteja pronto para recebe-las. Esta bufferizaçao temporária desacopla uma tarefa emissora e receptora; isto é, ela libera a tarefa de ter que enviar e receber mensagens simultaneamente.
+Uma fila de mensagens é um objeto através do qual as tarefas e ISRs\footnote{Interrupt Service Routines - Rotinas de Serviço para Exceções} enviam e recebem mensagens para comunicação e sincronização de dados. Uma fila de mensagens é uma espécie de pipeline. Ela armazena temporariamente as mensagem do remetente até que o destinatário esteja pronto para recebe-las. % Esta bufferização temporária desacopla uma tarefa emissora e receptora; isto é, ela libera a tarefa de ter que enviar e receber mensagens simultaneamente.
 
-Assim como os semáforos, uma fila de mensagens tem diversos componentes que o \emph{kernel} utiliza para gerenciar a fila. Quando uma fila de mensagens é criada, ela recebe um QCB\footnote{Queue Control Block - Bloco de Controle de Fila} associado, um identificar único, buffers de memória, um tamanho de fila, um limite máximo de mensagens, e uma ou mais listas de tarefas aguardando.
+%Assim como os semáforos, uma fila de mensagens tem diversos componentes que o \emph{kernel} utiliza para gerenciar a fila.
+Quando uma fila de mensagens é criada, ela recebe um QCB\footnote{Queue Control Block - Bloco de Controle de Fila} contendo: um identificar único, uma fila e contador para mensagens e uma fila e contador para tarefas em espera, caso requisições bloqueantes sejam suportadas. Um exemplo de implementação para uma fila de mensagens pode ser visto no \refalg{struct_message_queue}.
 
 \begin{listing}
-	\label{alg:struct_semaphore}
-	\caption{Estrutura de uma Semáforo.}
+	\caption{Estrutura de uma Fila de Mensagens.}
+	\label{alg:struct_message_queue}
 	\centering
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct message_element_s {
+	unsigned char message[MAX_MESSAGE_LENGHT];	
+} message_element_t;
+
 typedef struct message_queue_s {
 	int id;
-	int queue_size;
-	int queue_max;
-	queue_t waiting_tasks;
+	int tasks_size;
+	task_t tasks[MAX_TASKS_QUEUE];
+	int message_elements_size;
+	message_element_t message_elements[MAX_MESSAGES_QUEUE];
 } message_queue_t;
 	\end{minted}
 \end{listing}
 
-\subsection{Pipes}
+A fila de mensagens é composta por objetos chamados de \emph{elementos}, dos quais cada um pode armazenar uma única mensagem. Os \emph{elementos} contendo a primeira e ultima mensagens são chamados de cabeça e cauda, respectivamente. Alguns elementos da fila podem estar vazios (não contêm uma mensagem). O número total de elementos (vazio ou não) na fila é o comprimento total da fila, representando em \refalg{struct_message_queue} como \emph{MAX\_MESSAGES\_QUEUE}. Uma outra possibilidade seria permitir que o desenvolvedor especificasse os tamanhos das filas quando uma fila de mensagens for criada. A \reffig{messages_queues} apresenta um esquema para as filas de mensagem.
 
-\subsection{Eventos}
-\subsection{Sinais}
-\subsection{Variáveis Condicionais}
+\figura{messages_queues}{Esquema de uma Fila de Mensagens}
 
-\subsection{Exceções e Interrupções}
+\paragraph{Estados em uma Fila de Mensagens}
 
-\subsection{Temporizadores}
+O estado inicial para uma fila de mensagens é \emph{Vazio}. Se uma tarefa tentar receber uma mensagen de uma fila de mensagens vazia, a tarefa bloqueará e, se ela assim desejar, será mantida na fila de tarefas esperando, a qual pode ser tanto uma FIFO\footnote{First In, First Out - Primeiro que entra é o primeiro que sai} ou ainda baseado em prioridade.
+
+Nesta situação, se outra tarefa enviar uma mensagem para a fila de mensagens, a mensagem é entregue diretamente para a tarefa bloqueada. A tarefa bloqueada é então removida da lista de tarefas em espera e redesignada para o estado de \emph{Pronto}. A fila de mensagens volta a ficar vazia.
+
+Uma fila de mensagens passa para o estado \emph{Parcial} quando a fila de tarefas estiver vazia e, estando no estado \emph{Vazio}, uma mensagem for recebida.
+
+Conforme mensagens adicionais chegam a esta fila, ela eventualmente enche até o ponto em que esgota seu espaço livre. A partir deste ponto, o número de mensagens na fila é igual ao seu limite máximo, e o estado da fila de mensagens se torna \emph{Cheio}. 
+
+Enquanto a fila de mensagens estiver neste estado, quaisquer tarefas enviando mensagens para ela irão falhar, a menos que alguma outra tarefa requisite primeiro uma mensagem daquela fila, efetivamente liberando um elemento da fila. O reciproco também é verdade para fila em estado \emph{Vazio} em que tarefas tentem receber mensagens. A \reffig{messages_states} contém um diagrama apresentando a mudança de estados em uma fila de mensagens.
+
+\figura{messages_states}{Estados da Fila de Mensagens}
+
+\subsubsection{Pipes}
+
+\emph{Pipes} são objetos do \emph{kernel} que provêm a troca de dados não estruturada e que facilitam a sincronização entre tarefas. Em uma implementação tradicional, um \emph{pipe} é um facilitador para troca de dados de maneira unidirecional, conforme visto na \reffig{pipes_schema}. Dois descritores, um para cada extremidade do \emph{pipe} são retornados quando um \emph{pipe} é criado. Um dos descritores fica responsável pela escrita, enquanto o outro é destinado a leitura. Os dados permanecem no \emph{pipe} como um \emph{array} de \emph{bytes} não estruturados. Os dados são lidos do \emph{pipe} em \emph{FIFO}.
+
+\figura{pipes_schema}{Esquema de um Pipe}
+
+Um \emph{pipe} provê um fluxo de dados simples, de forma que o leitor fique bloqueado enquanto o \emph{pipe} estiver vazio, assim como o escritor permanecerá bloqueado enquanto um \emph{pipe} estiver cheio. Tipicamente, um \emph{pipe} é utilizado para trocar dados entre uma tarefa produtora e uma tarefa consumidora, conforme mostrado na \reffig{pipes_transmission}. Também é possível haverem diversos escritores e leitores para um mesmo \emph{pipe}.
+
+\figura{pipes_transmission}{Modelo de transmissão para Pipes}
+
+Um \emph{pipe}, embora bastante similar a uma \emph{fila de mensagens}, possui diferenças significantes que a tornam um elemento único. Como exemplo, ao contrário de uma \emph{fila de mensagens}, um \emph{pipe} não pode armazenar multiplas mensagens. Ao invés, os dados nele armazenados não possuem estrutura, mas consistem em um fluxo de \emph{bytes}. Outra diferença é que os dados em um pipe não podem ser priorizados; o fluxo de dados é estreitamente \emph{FIFO}. Finalmente, os pipes oferecem a função de \emph{seleção}, que permitem que uma tarefa permaneça bloqueada até que uma condição ocorra em um ou mais \emph{pipes}.
+
+\paragraph{Bloco de Controle para Pipes}
+
+As informações especificas para objetos do tipo \emph{pipe} são mantidas em uma estrutura chamada de \emph{PCB}\footnote{Pipe Control Block - Bloco de Controle para Pipes}. Esta estrutura, em uma forma geral, contém um \emph{buffer} de dados alocado pelo \emph{kernel} para suas operações de entrada e saída. O tamanho deste \emph{buffer} é mantido no bloco de controle e se torna fixo após a criação do \emph{pipe}. A contagem de \emph{bytes} no \emph{buffer}, em conjunto com os cursores\footnote{posição no buffer} de entrada e saída, também são partes do bloco de controle. A contagem de \emph{bytes} representa a quantidade dados legível no \emph{pipe}. O cursor de entrada especifica onde a proxima operação de escrita deverá ocorrer. Similarmente, o cursor de saída indica onde a próxima leitura ocorrerá. O \emph{kernel} cria e retorna dois descritores, que são únicos para o sistema de entrada/saída. A \reffig{pipes_pcb} apresenta um modelo gráfico de um \emph{PCB}, enquanto que o \refalg{pipes_pcb} demonstra um exemplo de implementação.
+
+\figura{pipes_pcb}{Bloco de controle do Pipe}
+
+\begin{listing}
+	\caption{Bloco de controle do Pipe.}
+	\label{alg:pipes_pcb}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct pcb_s {
+	uint32_t byte_count;
+	byte* buffer;
+	uint32_t buffer_size;
+	byte* cursor_input;
+	byte* cursor_output;	
+} pcb_t;
+	\end{minted}
+\end{listing}
+
+\paragraph{Estados de um Pipe}
+
+Um \emph{pipe} possui um número limitado de estados. Cada um corresponde a um estado de transmissão de dados entre os leitores e escritores do \emph{pipe}, conforme ilustrado pela \reffig{pipes_states}.
+
+\figura{pipes_states}{Estados de um Pipe}
+
+\paragraph{Operações para Pipes}
+
+Algumas das operações para \emph{pipes} são:
+
+\begin{itemize}
+	\item Criar e excluir;
+	\item Ler e escrever no pipe;
+	\item Emitir comandos de controle;
+	\item Realizar uma seleção.
+\end{itemize}
+
+Destes, o comando de \emph{seleção} é o que mais se destaca, sendo um dos diferenciais entre \emph{pipes} e \emph{filas de mensagens}. Ela permite que uma tarefa bloqueie e aguarde que uma condição especifica ocorra em um ou mais \emph{pipes}. A condição de aguardo pode ser a espera pela disponibilidade de dados ou pelo esvaziamento de um \emph{pipe}. A \reffig{pipes_select} ilustra o cenário no qual uma única tarefa está esperando para ler de dois \emph{pipes} e escrever em um terceiro. Neste caso, o método \emph{seleção} retornará quando os dados estivem disponíveis em quaisquer um dos dois \emph{pipes}. A mesma chamada a função \emph{seleção} também retornará quando um espaço para escrita estiver disponível no \emph{pipe} inferior. Em geral, uma tarefa lendo de múltiplos \emph{pipes} pode realizar uma operação de \emph{seleção} neles, e o método retornará quando qualquer um deles estiver disponível. Similarmente, uma tarefa escrevendo em múltiplos \emph{pipes} pode realizar uma operação de \emph{seleção} sobre os \emph{pipes}, e o método retornará quando surgir um espaço em qualquer um deles.
+
+\figura{pipes_select}{Operação de seleção em múltiplos pipes}
+
+\subsubsection{Registrador de Eventos}
+
+Alguns \emph{kernels} oferecem um tipo especial de registrador como parte do \emph{bloco de controle de uma tarefa}. Este registrador, chamado de \emph{Registrador de Eventos}, pertence a tarefa e consiste em um grupo de \emph{flags} binárias utilizadas para registrar a ocorrência de eventos específicos. Dependendo da implementação do \emph{kernel}, um registrador para eventos pode reservar um espaço entre $8$ à $32$ bits. Cada bit no registrador de eventos é tratado como uma \emph{flag} binária (também conhecida como uma \emph{flag} de evento) e pode estar ativa ou não. A \reffig{events_schema} ilustra o esquema de um registrador de eventos.
+
+\figura{events_schema}{Esquema de um \emph{Registro de Eventos}}
+
+Uma tarefa pode verificar, através do registrador de evento, se houve a ativação de um evento em particular, o qual define sua execução. Uma fonte externa, tal como outra tarefa ou \emph{ISR} podem ativar os bits no registrador de evento para informarem a tarefa que um evento em particular ocorreu.
+
+\paragraph{Bloco de Controle para um Registrador de Eventos}
+
+O bloco de controle para um registrador de eventos geralmente é implementado como parte do bloco de controle de uma tarefa.
+
+A tarefa especifica o conjunto de eventos que ela deseja receber. Este conjunto fica no registrador de eventos desejados. De maneira similar, os eventos recebidos são mantidos no no registrador de eventos recebidos. Uma tarefa pode especificar um temporizador para determinar quanto tempo ela deseja esperar pela chegada de tal evento. O \emph{kernel} desperta a tarefa caso o tempo de espera tenha passado e nenhum dos eventos especificados tenha chego até a tarefa.
+
+Utilizando as condições de notificação, a tarefa informa o \emph{kernel} quando ela deseja ser notificada uma vez que um evento ocorra. Por exemplo, uma tarefa pode especificar a condição de notificação como uma combinação de eventos do tipo 1 e 2 ou ainda quando um evento de tipo 3 ocorrer.
+
+\paragraph{Operações Comuns em Registradores de Eventos}
+
+As duas operações mais comuns a registradores de eventos são as de: enviar um evento e receber eventos.
+
+A operação de recebimento permite que a tarefa que fez a chamada receba eventos de uma fonte externa. Na chamada da função, pode-se especificar um conjunto de eventos e uma condição do tipo \emph{E}/\emph{OU} para que a rotina retorne com sucesso. No caso da operação \emph{E}, todos os eventos devem estar presentes para que a função retorne. Já no caso da opção \emph{OU}, apenas um dos eventos precisa ocorrer para que a função retorne com sucesso.
+
+A operação de recebimento possui versões bloqueantes por tempo ou até que o evento ocorra. No caso da versão por tempo, a tarefa aguarda até que uma quantidade de tempo, informada por parâmetro, tenha decorrido, para então retornar com uma condição de falha.
+
+A função de envio permite que uma fonte externa, tanto uma tarefa ou uma \emph{ISR}, envie eventos para outra tarefa. O emissor pode enviar diversos eventos para a tarefa de destino através de uma única operação de envio. Eventos que foram enviados e que ainda não foram reconhecidos pela tarefa receptora serão sobre-escritos.
+
+\paragraph{Separação por Tarefas}
+
+Por causa de sua natureza não cumulativa, um registrador de eventos que possua diversas tarefas que possam \emph{setar} um mesmo tipo de flag podem sobre-escrever um sinal já existente, causando um comportamente indesejado. Uma maneira de evitar este comportamento é separando faixas de eventos por tarefa, dentro do registrador. Desta forma, cada tarefa fica limitada a um espaço de bits dentro do registrador, sem que haja qualquer interferência de outras tarefas. A \reffig{events_multitask} apresenta um esquema gráfico deste modelo.
+
+\figura{events_multitask}{Registrador de Eventos com bits reservados para tarefas}
+
+\subsubsection{Sinais}
+
+
+
+\subsubsection{Variáveis Condicionais}
+
+\subsubsection{Exceções e Interrupções}
+
+\subsubsection{Temporizadores}
 
 \subsection{Subsistemas de Entrada/Saída}
 

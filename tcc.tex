@@ -37,6 +37,18 @@
 \newcommand{\afazer}[1]{{\color{red}{#1}}} % Para destacar uma parte a ser trabalhada
 \newcommand{\ABNTbibliographyname}{REFERÊNCIAS} % Necessário para abnTeX 0.8.2
 
+\newcommand{\figura}[2]{
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{#1.png}
+	\caption{#2.}
+	\label{fig:#1}
+\end{figure}
+}
+
+\newcommand{\reffig}[1]{\emph{Figura} \ref{fig:#1}}
+\newcommand{\refalg}[1]{\emph{Algoritmo} \ref{alg:#1}}
+
 %----------------------------------------------------------------------
 % Identificadores do trabalho
 % Usados para preencher os elementos pré-textuais

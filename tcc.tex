@@ -25,6 +25,8 @@
 
 \usepackage{minted} % Sintaxe colorida
 
+\usepackage{xparse} % Permite definir umas funções com mais recursos.
+
 %----------------------------------------------------------------------
 % comandos de customização dos pacotes
 \renewcommand\listingscaption{Algoritmo}
@@ -37,17 +39,31 @@
 \newcommand{\afazer}[1]{{\color{red}{#1}}} % Para destacar uma parte a ser trabalhada
 \newcommand{\ABNTbibliographyname}{REFERÊNCIAS} % Necessário para abnTeX 0.8.2
 
-\newcommand{\figura}[2]{
+\newcommand{\figuracustom}[3]{
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=\textwidth]{#1.png}
+	\includegraphics[width=#3]{#1.png}
 	\caption{#2.}
 	\label{fig:#1}
-\end{figure}
+\end{figure}\textsl{}
 }
 
-\newcommand{\reffig}[1]{\emph{Figura} \ref{fig:#1}}
-\newcommand{\refalg}[1]{\emph{Algoritmo} \ref{alg:#1}}
+\newcommand{\figura}[2]{\figuracustom{#1}{#2}{\textwidth}}
+
+\NewDocumentEnvironment{tabela}{mm}
+{
+	\begin{table}[htb]
+		\centering
+}
+{
+		\caption{#2}
+		\label{tab:#1}
+	\end{table}
+}
+
+\newcommand{\reffig}[1]{Figura \ref{fig:#1}}
+\newcommand{\refalg}[1]{Algoritmo \ref{alg:#1}}
+\newcommand{\reftab}[1]{Tabela \ref{tab:#1}}
 
 %----------------------------------------------------------------------
 % Identificadores do trabalho
@@ -115,9 +131,11 @@
 %--------------------------------------------------------
 % Elementos textuais
 
-\include{cap_2_sistemas_operacionais_embarcados}
+\include{cap_2_automacao_veicular}
 
-%\include{cap_3_automacao_veicular}
+%\include{cap_3_sistemas_operacionais_embarcados}
+
+%\include{cap_4_openautos}
 
 %--------------------------------------------------------
 %Referências

@@ -1,0 +1,603 @@
+\chapter{Sistemas Operacionais Embarcados}
+
+%TODO
+
+O presente capítulo apresenta uma visão geral sobre sistemas operacionais, definindo e apresentando os principais conceitos que o compõem. Também serão trabalhados os conceitos de de sistemas operacionais embarcados e de tempo real.
+
+%O presente capítulo inicia abordando o tema de sistemas operacionais e sobre como estes atuam em ambientes computacionais, mantendo um foco mais voltado aos de uso pessoal.
+%
+%%TODO falar sobre Associar veiculos a sistemas embarcados
+%Na sequência, há uma breve discussão sobre o que são sistemas embarcados, onde podemos encontrá-los  e como podemos classifica-los. Uma discussão sobre as funcionalidades que um sistema embarcado pode agregar aos sistemas veiculares é realizada no capítulo . %\ref{cap:automacao_veicular}.
+%
+%Definidos estes conceitos, um modelo de estrutura para um sistema operacional é apresentado, mostrando e detalhando os principais componentes que o compõem.
+%
+%Em seguida, o conceito de sistemas de tempo real é agregado ao trabalho, apresentando uma definição para o mesmo, bem como exemplificando casos que justifiquem a sua associação para com projetos veiculares. O conceito de sistemas operacionais embarcados é então conformado para um padrão que atenda as especificações de um projeto com restrições temporais.
+%
+%Por fim, são apresentados exemplos de sistemas operacionais em tempo real, buscando destacar o que eles apresentam em termos de inovação ou funcionalidade.
+
+\section{Sistemas Operacionais}
+
+Em seu livro sobre sistemas operacionais, \citeonline{minix} explica que um computador é composto por um ou mais processadores, uma memória principal e dispositivos de entrada e saída. O sistema operacional tem por objetivo controlar os recursos do computador e prover a base na qual as aplicações podem ser escritas. Esta base disponibiliza uma interface para o programador de aplicativos, que atua como um meio de acesso a funções de mais baixo nível e ao hardware.
+
+Ele também menciona que definir um sistema operacional é uma tarefa difícil, e que parte do problema se deve ao fato de ele realizar duas funções distintas: expandir a máquina e gerenciar recursos.
+
+Expandir a máquina se refere á abstração feita sobre o seu hardware, escondendo as complexidades e facilitando a sua manipulação através de uma interface de mais alto nível. 
+
+Gerenciar recursos se refere ao compartilhamento destes em tempo e espaço. Em tempo pode ser exemplificado por um sistema que precisa executar diversas tarefas ao mesmo tempo em um computador mas onde apenas uma delas pode estar ativa. Neste caso, o sistema operacional alterna em dados intervalos de tempo qual processo estará sendo executado. Impedir o acesso á áreas de memória reservada ou ainda permitir que mais de um processo aloque a impressora são exemplos da gerenciamento de recursos em espaço.
+
+Segundo \citeonline{osc}, um sistema computacional pode ser dividido em quatro partes, sendo elas: o \emph{hardware}, o sistema operacional, os programas aplicativos e os usuários; conforme ilustra a \reffig{os_parts}.
+
+\figuracustom{os_parts}{Abstração de um sistema computacional. \cite{osc}}{4cm}
+
+O hardware, composto por uma unidade central de processamento\footnote{CPU - Central Processing Unit.}, memória e dipositivos de entrada e saída, provê os recursos básicos de computação para o sistema. Os aplicativos, tais como processadores de texto, planilhas e navegadores, consomem os recursos do sistema a fim de prover utilitários para o usuário do sistema.
+
+O sistema operacional atua como a camada intermediária entre o hardware e os aplicativos, gerenciando os recursos físicos cujos programas precisam alocar, garantindo que todos os aplicativos tenham suas demandas atendidas.
+
+\subsection{Kernel}
+
+\cite{linfo} define o \emph{kernel} como sendo um programa que constitui o núcleo central de um sistema operacional computacional. Ele possui controle total sobre tudo que ocorre no sistema.
+
+Em sistemas computacionais convencionais, o \emph{kernel} é a primeira parte do sistema operacional a ser carregada na memória durante o processo de inicialização. Uma vez carregado, o \emph{kernel} permanece na memória principal do sistema até que o mesmo seja desligado.
+
+Em sistemas operacionais embarcados, o \emph{kernel} sempre está presente na memória de programa. Ainda assim, ele é sempre o primeiro código a ser executado após uma rotina de \emph{reset} do sistema embarcado. A \reffig{os_kernel_memory} ilustra os modelos de memória para o \emph{kernel}.
+
+\figura{os_kernel_memory}{Posição do \emph{kernel} durante a inicialização do sistema}
+
+Não há uma forma de iteração direta entre o usuário e o \emph{kernel}. Ao invés, o usuário utiliza um programa terminal\footnote{Também conhecido como \emph{shell} em sistemas Linux.} que processa comandos do usuário, os quais são convertidos para a execução de funções oferecidas pelo sistema operacional. Consequentemente, este programa terminal é a parte mais externa do \emph{kernel} e é ela que permite a manipulação de recursos do \emph{kernel} e, consequentemente, do hardware pelos comandos do usuário, conforme ilustrada pela \reffig{os_kernel}.
+
+\figuracustom{os_kernel}{Modelo de iteração entre o \emph{kernel}, usuário e componentes físicos}{4cm}
+
+Conforme \citeonline{prog_emb_sys}, o \emph{kernel} é uma parte comum a todos os sistemas operacionais. Na maioria deles, o \emph{kernel} consiste em um agendador\footnote{Scheduler}, uma rotina que realiza a troca de contexto entre as diferentes tarefas e interrupções que estão executando no sistema e o mecanismo de comunicação entre diferentes tarefas.
+
+Como o \emph{kernel} é um componente que está sempre presente para executar as demais funções do sistema, é desejável que ele mantenha um tamanho reduzido, sem comprometer suas funcionalidades para com o sistema operacional ou com as aplicações do sistema.
+
+\section{Sistemas Embarcados}
+
+De forma objetiva, \citeonline{prog_emb_sys} definem um sistema embarcado como uma combinação de hardwares e softwares computacionais em possível conjunto com partes mecânicas e/ou eletrônicas, integrados para realizar uma função dedicada.
+
+\citeonline{hallinan} expande esta definição descrevendo uma série de características que ajudam a classificar quando um sistema pode ser considerado embarcado, sendo elas:
+
+\begin{itemize}
+	\item Possuir um mecanismo de processamento, tal como um microcontrolador de uso geral;
+	\item Tipicamente projetados para uma aplicação ou propósito específico;
+	\item Oferecem, opcionalmente, uma interface de usuário simples como, por exemplo, um controle de ignição para um motor automotivo;
+	\item Frequentemente possuem recursos limitados. A exemplo, eles podem ter uma memória principal pequena e nenhum disco-rígido;
+	\item Podem ter um suprimento limitado de energia, como em um sistema alimentado por baterias;
+	\item Tipicamente, não são utilizados como plataformas computacionais de propósito geral;
+	\item Geralmente possuem aplicativos de software pré-instalados, sem seleção do usuário;
+	\item São distribuídos com todas as aplicações de software e hardware pré-integrados;
+	\item Comumente são projetados para aplicações onde não há intervenção humana;
+\end{itemize}
+
+Na maioria dos casos, os sistemas embarcados são limitados em recursos quando comparados ao tipico computador de uso geral. Os sistemas embarcados geralmente possuem memória limitada, pequeno ou nenhum espaço de disco rígido e, algumas vezes, nenhuma forma de conectividade com redes externas. Frequentemente, as únicas interfaces com o usuário são uma porta serial e alguns LEDs\footnote{Light Emitting Diode ou Diodo Emissor de Luz}\cite{hallinan}.
+
+\citeonline{qingli} fala que sistemas embarcados são encontrados em uma variedade infinita de tipos, cada qual exibindo caracteristicas únicas. A exemplo, ele cita que a maioria dos veículos em transito, hoje em dia, imbuem chips de computadores, os quais executam tarefas que agregam funcionalidades aos veículos, tornando-os mais fáceis, objetivos, seguros e agradáveis de dirigir. Outros exemplos seriam: telefones, casas inteligentes, sistemas de segurança, aparelhos de televisão a cabo e a satélite, sistemas de \emph{home theater}, secretária eletrônica, dentre muitos outros.
+
+\section{Componentes de um Sistema Operacional Embarcado}
+
+Um sistema operacional pode ser quebrado em fragmentos que atendem ao gerenciamento de tarefas, aos subsistemas de entrada e saida, ao gerenciamento de memória e aos sistemas de arquivos. Os seguintes tópicos serão abordados em mais detalhes na sequencia \footnote{O conteúdo que segue foi adaptado do livro de \citeonline{qingli}. Logo, citações para sua obra serão omitidas, afim de evitar uma inflação no texto. Informações provenientes de outros autores, quando houver, estarão devidamente citadas.}.
+
+\subsection{Gerenciamento de Tarefas}
+
+Tarefas são threads de execução independentes que competem entrem si para se tornarem o processo ativo no processador. As aplicações são decompostas em múltiplas tarefas concorrentes para optimizar a manipulação de entradas e saídas atendendo a uma restrição temporal.
+
+Uma tarefa precisa ser agendável. Ela deve ser capaz de competir pelo tempo de execução em um sistema, baseado em um algoritmo de agendamento, como \emph{round-robin} ou por prioridades. Uma tarefa é definida pelo seu distinto conjunto de parâmetros e estruturas de dado que a suportam. Ao ser criada, uma tarefa recebe um identificador único, uma prioridade, uma estrutura de contexto e uma rotina que será executada sempre que a tarefa estiver em execução. Um exemplo de estrutura para uma tarefa pode ser visto no \refalg{struct_task}.
+
+\begin{listing}
+	\caption{Estrutura de uma Tarefa.}
+	\label{alg:struct_task}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct task_s {
+	int id;
+	int priority;
+	state_t state;
+	context_t context;
+	void (*function)();	
+} task_t;
+	\end{minted}
+\end{listing}
+
+Além de prover a estrutura para um objeto do tipo \emph{tarefa}, o \emph{kernel} também é responsável por oferecer serviços que manipulam estes objetos. Estes serviços incluem ações que o \emph{kernel} realiza sigilosamente para suportar as tarefas como, por exemplo, criar e manter o bloco de controle e pilha de uma tarefa.
+
+O \emph{kernel} também deve prover uma API\footnote{Application Programming Interface - Interface de Programação de Aplicação} que permita ao desenvolvedor manipular as tarefas. Algumas das operações mais comuns que os desenvolvedores podem realizar em uma tarefa incluem:
+
+\begin{itemize}
+	\item Criar e excluir;
+	\item Controlar o agendamento;
+	\item Recuperar informações.
+\end{itemize}
+
+Uma tarefa pode ser destinada a realizar tanto uma atividade do sistema quanto uma funcionalidade implementada pelo usuário final. Qualquer que seja seu propósito, uma tarefa possuí um conjunto de estados, os quais definem o seu comportamento no sistema. Dentre os mais comuns estão os estados de: \emph{pronto}, \emph{rodando} e \emph{bloqueado}.
+
+\begin{itemize}
+	\item \textbf{Pronto}: A tarefa está pronta para execução e está a espera do escalonador de processos;
+	\item \textbf{Rodando}: A tarefa foi escolhida pelo escalonador e está efetivamente em execução;
+	\item \textbf{Bloqueado}: A tarefa está aguardando a liberação de algum recurso antes que possa prosseguir sua execução.
+\end{itemize}
+
+\emph{Pronto} é  sempre o estado inicial de uma tarefa. Dependendo do tipo de tarefa, ela pode executar em um looping infinito ou até que ela encerre. Neste ultimo caso, a tarefa é removida da lista de processos aptos. Uma tarefa só pode mudar seu estado para bloqueado quando ela for a tarefa em execução. Uma tarefa que está bloqueada, e cujo recurso foi liberado, pode apenas retornar para a fila de espera e aguardar que o escalonador a coloque em execução novamente.
+
+A \reffig{task_states} apresenta uma ilustração das transições de estado que uma tarefa pode fazer.
+
+\figuracustom{task_states}{Transição de Estados para Tarefas}{7cm}
+
+\subsubsection{Fibra}
+
+Uma variante das tarefas são as fibras\footnote{Fiber}, que são threads de execução leves e não-preemptivas, normalmente utilizadas para executar porções de código responsáveis pelos dispositivos de drivers e outros trabalhos de performance crítica \cite{rocket}.
+
+\subsubsection{Semáforos}
+
+Múltiplas \emph{threads} de execução concorrentes em uma aplicação devem serem capazes de sincronizar suas execuções e coordenar o acesso mutuamente exclusivo a recursos compartilhados. Para atender a estes requisitos, os \emph{kernels} provêm um objeto chamado semáforo e respectivos serviços associados a este.
+
+Um semáforo é um objeto do \emph{kernel} que uma ou mais threads de execução podem reservar ou liberar, para o propósito de sincronização ou exclusão mútua. Os elementos que compõem um semáforo são: um identificador único, um contador e uma fila de tarefas em espera. Um exemplo de estrutura de um semáforo pode ser visto no \refalg{struct_semaphore}.
+
+\begin{listing}
+	\caption{Estrutura de uma Semáforo.}
+	\label{alg:struct_semaphore}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct semaphore_s {
+	int id;
+	int value;
+	queue_t waiting_tasks;
+} semaphore_t;
+	\end{minted}
+\end{listing}
+
+Um semáforo funciona como uma espécie de chave que permite a uma tarefa acessar algum tipo de operação ou recurso. Se a tarefa puder adquirir um semáforo, ela poderá continuar sua execução normalmente.
+
+Um semáforo pode ser reservador um número finito de vezes. Uma vez que seu valor máximo seja alcançado, as tarefas que tentarem adquirir este semáforo serão enviadas para uma lista de espera, onde permanecerão até que uma tarefa que tenha alocado previamente o semáforo o libere. Assim que se torna disponível, o semáforo é realocado para a primeira tarefa na fila de espera, caso haja alguma. Do contrário, seu valor re-incrementa.
+
+Os semáforos aqui apresentados são os de contagem, binário e de exclusão mútua. Semáforos de contagem e binários apresentam comportamentos similares e respeitam as restrições impostas anteriormente, tendo como única diferença que um semáforo binário possui seu valor máximo igual a $1$. Os diagramas de estados destes dois modelos podem ser visualizados na \reffig{semaphore_binary} e \reffig{semaphore_counting}.
+
+
+\figuracustom{semaphore_binary}{Transição de Estados para Semáforos Binários}{7cm}
+
+\figuracustom{semaphore_counting}{Transição de Estados para Semáforos Numéricos}{7cm}
+
+\subsubsection{Mutex}
+
+Um terceiro tipo de semáforo, chamado de \emph{semáforo de exclusão mútua} ou \emph{mutex}, trata de um caso especial do semáforo binário. Afim de evitar problemas inerentes a exclusão mútua, um \emph{mutex} oferece suporte a propriedades de posse, trava recursiva, deleção segura de tarefas, dentre outros.
+
+\begin{itemize}
+%	\setlength\itemsep{1mm}
+	\item \textbf{Posse}: Quando uma tarefa aloca um \emph{mutex}, ela se torna seu proprietário até que ela libere este recurso. Contrário aos semáforos, onde qualquer tarefa pode liberar o recurso, inclusive uma tarefa que não alocou o semáforo, apenas a tarefa proprietária poderá liberar o \emph{mutex}.
+	\item \textbf{Trava Recursiva}: Permite a tarefa que alocou o \emph{mutex} realizar chamadas adicionais para trava-lo novamente. Um contador interno é utilizo para manter o registro da quantidade de vezes que o recurso foi alocado para a tarefa proprietária. O \emph{mutex} só volta a ser liberado quando a tarefa proprietária chama um número igual de vezes a rotina de liberação deste recurso.
+	\item \textbf{Deleção segura}: A deleção prematura de uma tarefa pode ser evitada utilizando uma trava de deleção para quando a tarefa trava e destrava um \emph{mutex}. Ativar esta propriedade garante que uma tarefa que for proprietária do \emph{mutex} não possa ser excluída até que o mesmo seja liberado.
+	\item \textbf{Anulação de Inversão de Prioridade}: Dado o cenário onde uma tarefa de prioridade inferior que aloca um \emph{mutex}, e onde uma tarefa de prioridade maior está aguardando que ele seja liberado, mas que está sendo ofuscada por uma terceira tarefa de prioridade mediana, ocorre o que é chamado de \emph{Inversão de Prioridade}, pois a tarefa mais prioritária passaria a ser aquela que alocou o \emph{mutex}. Algumas técnicas para evitar estas situações são: elevar a prioridade da tarefa que aloca o \emph{mutex} ao máximo ou ainda por herança de prioridade da tarefa que ficar bloqueada por aguardar o \emph{mutex}.
+\end{itemize}
+
+Contrário aos estados de \emph{disponivel}/\emph{indisponivel} dos semáforos de contagem/binários, os estados de um \emph{mutex} são \emph{destravado} e \emph{travado}, representados por $0$ e $1$ respectivamente. Um \emph{mutex} é inicialmente criado em seu estado \emph{destravado}, no qual ele pode ser reservado por uma tarefa. Após a alocação, o \emph{mutex} passa para o estado \emph{travado}. Reciprocamente, quando a tarefa libera o \emph{mutex}, este retorna para o estado \emph{destravado}. A \reffig{semaphore_mutex} mostra o diagrama de estados para um \emph{mutex} com e sem travamento recursivo.
+
+\figura{semaphore_mutex}{Transição de Estados para Mutex}
+
+\subsubsection{Filas de Mensagens}
+
+Uma fila de mensagens é um objeto através do qual as tarefas e ISRs\footnote{Interrupt Service Routines - Rotinas de Serviço para Exceções} enviam e recebem mensagens para comunicação e sincronização de dados. Uma fila de mensagens é uma espécie de pipeline. Ela armazena temporariamente as mensagem do remetente até que o destinatário esteja pronto para recebe-las. % Esta bufferização temporária desacopla uma tarefa emissora e receptora; isto é, ela libera a tarefa de ter que enviar e receber mensagens simultaneamente.
+
+%Assim como os semáforos, uma fila de mensagens tem diversos componentes que o \emph{kernel} utiliza para gerenciar a fila.
+Quando uma fila de mensagens é criada, ela recebe um QCB\footnote{Queue Control Block - Bloco de Controle de Fila} contendo: um identificar único, uma fila e contador para mensagens e uma fila e contador para tarefas em espera, caso requisições bloqueantes sejam suportadas. Um exemplo de implementação para uma fila de mensagens pode ser visto no \refalg{struct_message_queue}.
+
+\begin{listing}
+	\caption{Estrutura de uma Fila de Mensagens.}
+	\label{alg:struct_message_queue}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct message_element_s {
+	unsigned char message[MAX_MESSAGE_LENGHT];	
+} message_element_t;
+
+typedef struct message_queue_s {
+	int id;
+	int tasks_size;
+	task_t tasks[MAX_TASKS_QUEUE];
+	int message_elements_size;
+	message_element_t message_elements[MAX_MESSAGES_QUEUE];
+} message_queue_t;
+	\end{minted}
+\end{listing}
+
+A fila de mensagens é composta por objetos chamados de \emph{elementos}, dos quais cada um pode armazenar uma única mensagem. Os \emph{elementos} contendo a primeira e ultima mensagens são chamados de cabeça e cauda, respectivamente. Alguns elementos da fila podem estar vazios (não contêm uma mensagem). O número total de elementos (vazio ou não) na fila é o comprimento total da fila, representando em \refalg{struct_message_queue} como \emph{MAX\_MESSAGES\_QUEUE}. Uma outra possibilidade seria permitir que o desenvolvedor especificasse os tamanhos das filas quando uma fila de mensagens for criada. A \reffig{messages_queues} apresenta um esquema para as filas de mensagem.
+
+\figura{messages_queues}{Esquema de uma Fila de Mensagens}
+
+\paragraph{Estados em uma Fila de Mensagens}
+
+O estado inicial para uma fila de mensagens é \emph{Vazio}. Se uma tarefa tentar receber uma mensagen de uma fila de mensagens vazia, a tarefa bloqueará e, se ela assim desejar, será mantida na fila de tarefas esperando, a qual pode ser tanto uma FIFO\footnote{First In, First Out - Primeiro que entra é o primeiro que sai} ou ainda baseado em prioridade.
+
+Nesta situação, se outra tarefa enviar uma mensagem para a fila de mensagens, a mensagem é entregue diretamente para a tarefa bloqueada. A tarefa bloqueada é então removida da lista de tarefas em espera e redesignada para o estado de \emph{Pronto}. A fila de mensagens volta a ficar vazia.
+
+Uma fila de mensagens passa para o estado \emph{Parcial} quando a fila de tarefas estiver vazia e, estando no estado \emph{Vazio}, uma mensagem for recebida.
+
+Conforme mensagens adicionais chegam a esta fila, ela eventualmente enche até o ponto em que esgota seu espaço livre. A partir deste ponto, o número de mensagens na fila é igual ao seu limite máximo, e o estado da fila de mensagens se torna \emph{Cheio}. 
+
+Enquanto a fila de mensagens estiver neste estado, quaisquer tarefas enviando mensagens para ela irão falhar, a menos que alguma outra tarefa requisite primeiro uma mensagem daquela fila, efetivamente liberando um elemento da fila. O reciproco também é verdade para fila em estado \emph{Vazio} em que tarefas tentem receber mensagens. A \reffig{messages_states} contém um diagrama apresentando a mudança de estados em uma fila de mensagens.
+
+\figura{messages_states}{Estados da Fila de Mensagens}
+
+\subsubsection{Pipes}
+
+\emph{Pipes} são objetos do \emph{kernel} que provêm a troca de dados não estruturada e que facilitam a sincronização entre tarefas. Em uma implementação tradicional, um \emph{pipe} é um facilitador para troca de dados de maneira unidirecional, conforme visto na \reffig{pipes_schema}. Dois descritores, um para cada extremidade do \emph{pipe} são retornados quando um \emph{pipe} é criado. Um dos descritores fica responsável pela escrita, enquanto o outro é destinado a leitura. Os dados permanecem no \emph{pipe} como um \emph{array} de \emph{bytes} não estruturados. Os dados são lidos do \emph{pipe} em \emph{FIFO}.
+
+\figura{pipes_schema}{Esquema de um Pipe}
+
+Um \emph{pipe} provê um fluxo de dados simples, de forma que o leitor fique bloqueado enquanto o \emph{pipe} estiver vazio, assim como o escritor permanecerá bloqueado enquanto um \emph{pipe} estiver cheio. Tipicamente, um \emph{pipe} é utilizado para trocar dados entre uma tarefa produtora e uma tarefa consumidora, conforme mostrado na \reffig{pipes_transmission}. Também é possível haverem diversos escritores e leitores para um mesmo \emph{pipe}.
+
+\figuracustom{pipes_transmission}{Modelo de transmissão para Pipes}{8cm}
+
+Um \emph{pipe}, embora bastante similar a uma \emph{fila de mensagens}, possui diferenças significantes que a tornam um elemento único. Como exemplo, ao contrário de uma \emph{fila de mensagens}, um \emph{pipe} não pode armazenar multiplas mensagens. Ao invés, os dados nele armazenados não possuem estrutura, mas consistem em um fluxo de \emph{bytes}. Outra diferença é que os dados em um pipe não podem ser priorizados; o fluxo de dados é estreitamente \emph{FIFO}. Finalmente, os pipes oferecem a função de \emph{seleção}, que permitem que uma tarefa permaneça bloqueada até que uma condição ocorra em um ou mais \emph{pipes}.
+
+\paragraph{Bloco de Controle para Pipes}
+
+As informações especificas para objetos do tipo \emph{pipe} são mantidas em uma estrutura chamada de \emph{PCB}\footnote{Pipe Control Block - Bloco de Controle para Pipes}. Esta estrutura, em uma forma geral, contém um \emph{buffer} de dados alocado pelo \emph{kernel} para suas operações de entrada e saída. O tamanho deste \emph{buffer} é mantido no bloco de controle e se torna fixo após a criação do \emph{pipe}. A contagem de \emph{bytes} no \emph{buffer}, em conjunto com os cursores\footnote{posição no buffer} de entrada e saída, também são partes do bloco de controle. A contagem de \emph{bytes} representa a quantidade dados legível no \emph{pipe}. O cursor de entrada especifica onde a proxima operação de escrita deverá ocorrer. Similarmente, o cursor de saída indica onde a próxima leitura ocorrerá. O \emph{kernel} cria e retorna dois descritores, que são únicos para o sistema de entrada/saída. A \reffig{pipes_pcb} apresenta um modelo gráfico de um \emph{PCB}, enquanto que o \refalg{pipes_pcb} demonstra um exemplo de implementação.
+
+\figura{pipes_pcb}{Bloco de controle do Pipe}
+
+\begin{listing}
+	\caption{Bloco de controle do Pipe.}
+	\label{alg:pipes_pcb}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm]{c++}
+typedef struct pcb_s {
+	uint32_t byte_count;
+	byte* buffer;
+	uint32_t buffer_size;
+	byte* cursor_input;
+	byte* cursor_output;	
+} pcb_t;
+	\end{minted}
+\end{listing}
+
+\paragraph{Estados de um Pipe}
+
+Um \emph{pipe} possui um número limitado de estados. Cada um corresponde a um estado de transmissão de dados entre os leitores e escritores do \emph{pipe}, conforme ilustrado pela \reffig{pipes_states}.
+
+\figura{pipes_states}{Estados de um Pipe}
+
+\paragraph{Operações para Pipes}
+
+Algumas das operações para \emph{pipes} são:
+
+\begin{itemize}
+	\item Criar e excluir;
+	\item Ler e escrever no pipe;
+	\item Emitir comandos de controle;
+	\item Realizar uma seleção.
+\end{itemize}
+
+Destes, o comando de \emph{seleção} é o que mais se destaca, sendo um dos diferenciais entre \emph{pipes} e \emph{filas de mensagens}. Ela permite que uma tarefa bloqueie e aguarde que uma condição especifica ocorra em um ou mais \emph{pipes}. A condição de aguardo pode ser a espera pela disponibilidade de dados ou pelo esvaziamento de um \emph{pipe}. A \reffig{pipes_select} ilustra o cenário no qual uma única tarefa está esperando para ler de dois \emph{pipes} e escrever em um terceiro. Neste caso, o método \emph{seleção} retornará quando os dados estivem disponíveis em quaisquer um dos dois \emph{pipes}. A mesma chamada a função \emph{seleção} também retornará quando um espaço para escrita estiver disponível no \emph{pipe} inferior. Em geral, uma tarefa lendo de múltiplos \emph{pipes} pode realizar uma operação de \emph{seleção} neles, e o método retornará quando qualquer um deles estiver disponível. Similarmente, uma tarefa escrevendo em múltiplos \emph{pipes} pode realizar uma operação de \emph{seleção} sobre os \emph{pipes}, e o método retornará quando surgir um espaço em qualquer um deles.
+
+\figuracustom{pipes_select}{Operação de seleção em múltiplos pipes}{7cm}
+
+\subsubsection{Registrador de Eventos}
+
+Alguns \emph{kernels} oferecem um tipo especial de registrador como parte do \emph{bloco de controle de uma tarefa}. Este registrador, chamado de \emph{Registrador de Eventos}, pertence a tarefa e consiste em um grupo de \emph{flags} binárias utilizadas para registrar a ocorrência de eventos específicos. Dependendo da implementação do \emph{kernel}, um registrador para eventos pode reservar um espaço entre $8$ à $32$ bits. Cada bit no registrador de eventos é tratado como uma \emph{flag} binária (também conhecida como uma \emph{flag} de evento) e pode estar ativa ou não. A \reffig{events_schema} ilustra o esquema de um registrador de eventos.
+
+\figuracustom{events_schema}{Esquema de um \emph{Registro de Eventos}}{7cm}
+
+Uma tarefa pode verificar, através do registrador de evento, se houve a ativação de um evento em particular, o qual define sua execução. Uma fonte externa, tal como outra tarefa ou \emph{ISR} podem ativar os bits no registrador de evento para informarem a tarefa que um evento em particular ocorreu.
+
+\paragraph{Bloco de Controle para um Registrador de Eventos}
+
+O bloco de controle para um registrador de eventos geralmente é implementado como parte do bloco de controle de uma tarefa.
+
+A tarefa especifica o conjunto de eventos que ela deseja receber. Este conjunto fica no registrador de eventos desejados. De maneira similar, os eventos recebidos são mantidos no no registrador de eventos recebidos. Uma tarefa pode especificar um temporizador para determinar quanto tempo ela deseja esperar pela chegada de tal evento. O \emph{kernel} desperta a tarefa caso o tempo de espera tenha passado e nenhum dos eventos especificados tenha chego até a tarefa.
+
+Utilizando as condições de notificação, a tarefa informa o \emph{kernel} quando ela deseja ser notificada uma vez que um evento ocorra. Por exemplo, uma tarefa pode especificar a condição de notificação como uma combinação de eventos do tipo 1 e 2 ou ainda quando um evento de tipo 3 ocorrer.
+
+\paragraph{Operações Comuns em Registradores de Eventos}
+
+As duas operações mais comuns a registradores de eventos são as de: enviar um evento e receber eventos.
+
+A operação de recebimento permite que a tarefa que fez a chamada receba eventos de uma fonte externa. Na chamada da função, pode-se especificar um conjunto de eventos e uma condição do tipo \emph{E}/\emph{OU} para que a rotina retorne com sucesso. No caso da operação \emph{E}, todos os eventos devem estar presentes para que a função retorne. Já no caso da opção \emph{OU}, apenas um dos eventos precisa ocorrer para que a função retorne com sucesso.
+
+A operação de recebimento possui versões bloqueantes por tempo ou até que o evento ocorra. No caso da versão por tempo, a tarefa aguarda até que uma quantidade de tempo, informada por parâmetro, tenha decorrido, para então retornar com uma condição de falha.
+
+A função de envio permite que uma fonte externa, tanto uma tarefa ou uma \emph{ISR}, envie eventos para outra tarefa. O emissor pode enviar diversos eventos para a tarefa de destino através de uma única operação de envio. Eventos que foram enviados e que ainda não foram reconhecidos pela tarefa receptora serão sobre-escritos.
+
+\paragraph{Separação por Tarefas}
+
+Por causa de sua natureza não cumulativa, um registrador de eventos que possua diversas tarefas que possam \emph{setar} um mesmo tipo de flag podem sobre-escrever um sinal já existente, causando um comportamente indesejado. Uma maneira de evitar este comportamento é separando faixas de eventos por tarefa, dentro do registrador. Desta forma, cada tarefa fica limitada a um espaço de bits dentro do registrador, sem que haja qualquer interferência de outras tarefas. A \reffig{events_multitask} apresenta um esquema gráfico deste modelo.
+
+\figuracustom{events_multitask}{Registrador de Eventos com bits reservados para tarefas}{7cm}
+
+\subsubsection{Sinais}
+
+Um \emph{sinal} é uma interrupção gerada por software, a qual dispara quando ocorre um evento. Assim como numa interrupção, um \emph{sinal} faz com que o processo em execução seja interrompido para executar uma outra rotina assíncrona.
+
+Na essência, os \emph{sinais} notificam as tarefas de eventos que ocorreram durante a execução de outras tarefas ou \emph{ISR}s. Assim como as interrupções, estes eventos são assíncronos para a tarefa notificada e não ocorrem em nenhum ponto pré-determinado durante sua execução. A principal diferença entre uma interrupção e um sinal é que o primeiro é gerado por hardware, como quando um pino passa de $0V$ para $5V$, enquanto o último é gerador por software.
+
+A quantidade e tipos de \emph{sinais} são dependentes tanto do sistema quando do \emph{SO}. Os \emph{sinais} estão sempre vinculados a um evento e eles podem ocorrer de forma intencional ou não. Um comando ilegal encontrado durante a execução de uma tarefa seria um evento não-intencional, enquanto que a notificação de uma tarefa para outra de que a primeira esta prestes a encerrar seria um evento intencional.
+
+Embora uma tarefa possa determinar qual o tipo de ação que será tomada quando um evento ocorrer, ela não pode prever quando este ocorrerá. Consequentemente, a ocorrência de eventos possui um carácter randômico para a tarefa. 
+
+Quando há a chegada de um sinal, a tarefa diverge de seu caminho normal de execução, e a ASR\footnote{Asynchronous Signal Routine - Rotina de Sinal Assincrona} correspondente é invocada, conforme ilustrado na \reffig{signals_handling}.
+
+\figura{signals_handling}{Tratamento de sinal em uma tarefa}
+
+\paragraph{Bloco de Controle dos Sinais}
+
+Em \emph{kernels} que oferecem suporte à interrupções por software, o \emph{bloco de controle de um sinal} faz parte do bloco de controle de uma tarefa.
+
+Uma tarefa pode registrar no bloco de controle do sinal quais eventos ela deseja tratar. Esta tarefa pode prover um tratador de eventos para cada sinal a ser processado, ou ainda pode executar um tratador universal fornecido pelo \emph{kernel}. É possível utilizar um mesmo tratador para diversos tipos de sinais.
+
+Um sinal pode ser ignorado, colocado como pendente, processado ou bloqueado.
+
+Os sinais que serão ignorados pela tarefa são mantidas na lista de \emph{sinais ignorados}. Qualquer sinal neste conjunto não interrompe a tarefa.
+
+Outros sinais podem chegar enquanto a tarefa estiver no meio do processamento de um sinal. Os sinais extras que vão chegando são mantidos na lista de \emph{sinais pendentes}. Estes sinais são removidos desta lista e ativados tão quão o processamento do sinal anterior é completado.
+
+To process a particular signal, either the task-supplied signal handler can be used for signal processing or the default handler supplied by the underlying kernel can be used to process it. It is also possible for the task to process the signal first and then pass it on for additional processing by the default handler.
+
+Quando uma tarefa se encontra em uma sessão crítica, na qual não pode ser interrompida, ela pode marcar um sinal como bloqueado. Neste caso, o sinal não é ignorado. Ao invés, ele apenas é impedido de ser entregue a tarefa. Assim que a tarefa sai da sessão critica, ela remarca aquele sinal para que ele volte a ser recebido.
+
+\paragraph{Operações Comuns à Sinais}
+
+Algumas das operações comuns a Sinais são:
+
+\begin{itemize}
+	\item \textbf{Capturar}: Instala na tarefa uma rotina que irá tratar um sinal;
+	\item \textbf{Liberar}: Desvincula uma rotina associada previamente a um tipo de sinal;
+	\item \textbf{Enviar}: Envia um sinal para outra tarefa;
+	\item \textbf{Ignorar}: Adiciona um sinal a lista de sinais a serem ignorados;
+	\item \textbf{Bloquear}: Impede o recebimento de um sinal;
+	\item \textbf{Desbloquear}: Desbloqueia o recebimento de um sinal;
+\end{itemize}
+
+\paragraph{Aplicação dos Sinais}
+
+Alguns sinais estão associados com eventos de \emph{hardware} e, portanto, são enviados por \emph{ISR}s de \emph{hardware}. A \emph{ISR} fica responsável pela resposta imediata à estes eventos. Contudo, ela também pode enviar um sinal, de forma que, tarefas afetadas por estes eventos de hardware possam conduzir processamento posterior especifico a tarefa.
+
+Embora sinais possam ser utilizados para fazer a sincronização entre tarefas, existem razões que demandam uso moderado deles. Algumas destas razões são:
+
+\begin{itemize}
+	\item Utilizar sinais pode ser custoso devido a complexidade da construção de sinais quando utilizados para sincronizações entre-tarefas. Um sinal altera o estado de execução da tarefa destinatária. Por ocorrerem assincronamente, a tarefa receptora se torna não-determinística, o que pode ser indesejável em um sistema de tempo-real.
+	\item Diversas implementações não oferecem suporte para enfileiramento ou acumulo de sinais. Nestas implementações, múltiplas ocorrências de um mesmo sinal acabam por sobrescrever os anteriores, deixando a tarefa sem um mecanismo para identificar se o sinal foi sobrescrito ou não.
+	\item Várias implementações não oferecem suporte a entrega de sinais que carregam algum tipo extra de informação.
+	\item Algumas implementações não oferecem suporte a entrega de sinais ordenada, e sinais de vários tipos são tratados como tendo a mesma prioridade.
+\end{itemize}
+
+Idealmente, uma implementação de sinais em um sistema de tempo-real deve oferecer: entrega ordenada de sinais utilizando prioridades, a transmissão de informações adicionais junto ao sinal e o enfileiramento de múltiplas ocorrências de um mesmo sinal.
+
+%\subsubsection{Variáveis Condicionais}
+
+\subsubsection{Exceções e Interrupções}
+
+Uma \emph{Exceção} é qualquer evento que perturbe a execução normal do processador e o force a executar instruções especiais em um modo de estado privilegiado. \emph{Exceções} podem ser classificadas em duas categorias: síncronas e assíncronas.
+
+Exceções geradas por eventos internos, como na execução de instruções do processador, são chamadas de exceções síncronas. Alguns exemplos de exceções síncronas são:
+
+\begin{itemize}
+	\item Em algumas arquiteturas de processadores, as operações de escrita e leitura devem começar em um endereço de memória \textbf{par}. Ler ou escrever em um endereço de memória impar implica em um erro de acesso à memória e causa uma exceção\footnote{chamada de exceção de alinhamento}.
+
+	\item Uma operação aritmética que resulte em uma divisão por zero gera uma exceção.
+\end{itemize}
+
+Exceções causadas por eventos externos, tais como eventos que não se relacionam com a execução de instruções do processador, são chamadas de exceções assincronas. Em geral, estes eventos externos estão associados com sinais de hardware. A fonte destes sinais são, tipicamente, dispositivos de hardware. Alguns exemplos de exceções assíncronas são:
+
+\begin{itemize}
+	\item Pressionar o botão \textbf{reset} na placa do sistema embarcado resulta em uma exceção assincrona\footnote{chamada de exceção de reiniciação do sistema}.
+	\item O modulo de comunicação do processador é outro exemplo de dispositivo externo que pode gerar uma exceção assíncrona quando ele recebe um pacote de dados.
+\end{itemize}
+
+Uma \emph{interrupção}, conhecida também como \emph{interrupção externa}, é uma exceção assíncrona gerada por um evento pertencente a um dispositivo de hardware externo. Interrupções são um tipo de exceção. O que a diferencia dos demais tipos de exceção é a sua fonte para eventos. Exceções geradas pelo próprio processador são síncronas. Quando elas são geradas a partir de um processador externos, estas passam a ser assíncronas e recebem o nome de \emph{interrupções}.
+
+\emph{Exceções} e \emph{interrupções} são uma forma de os hardwares embarcados receberem a atenção do código da aplicação. As \emph{interrupções} são, ainda, uma maneira de comunicação entre hardwares e a aplicação rodando no processador embarcado.
+
+Algumas das áreas onde \emph{exceções} e \emph{interrupções} auxiliam na construção de sistemas embarcados são:
+
+\begin{itemize}
+	\item Gerenciamento de erros internos e condições especiais;
+	\item Concorrencia de harware;
+	\item Gerenciamento de requisição de serviços.
+\end{itemize}
+
+\paragraph{Controladores de Interrupções Programáveis}
+
+A maioria dos sistemas embarcados possui mais de uma fonte de interrupção externa, e estas múltiplas fontes de interrupção são priorizadas. Um controlador de interrupções programavel\footnote{PIC - Programable Interrupt Controller}\footnote{Não confundir com a série de microcontroladores da \emph{Microchip}, onde PIC significa "Peripheral Interface Controller"} pode ser implementado de diversas formas mas, em geral, ele oferece duas funcionalidades principais:
+
+\begin{itemize}
+	\item Priorização de multiplas fontes de interrupção de forma que, a qualquer momento, a interrupção de maior prioridade esteja sendo processada na \emph{CPU}.
+	\item Remover a carga de processamento da CPU na determinação da fonte exata da interrupção.
+\end{itemize}
+
+O \emph{PIC} possui um conjunto de linhas de requisição para interrupções. Uma fonte externa gera uma interrupção através da confirmação de um sinal físico na linha de requisição. Cada linha de requisição possui uma prioridade atribuida a ela. A \reffig{interrupts_priority} demonstra um \emph{PIC} sendo utilizado em conjunto com quatro fontes de interrupção.
+
+\figuracustom{interrupts_priority}{Linhas de requisição e prioridades em interrupções}{9cm}
+
+\subsubsection{Temporizadores}
+
+Em sistemas embarcados, é comum que as tarefas de usuário e do sistema agendem e executem atividades após a passagem de um intervalo de tempo. Em um sistemas operacional de tempo-real, deve-se realizar a troca de contexto em períodos constantes tempo, periodicamente, entre as tarefas de mesma prioridade. Este agendamento de atividades futuras é realizada através do uso de \emph{temporizadores} e seus serviços.
+
+Os temporizadores são uma parte integral para muitos sistemas embarcados de tempo-real. Uma temporização é o agendamento de um evento de acordo com uma quantidade de tempo pré-definida no futuro, similar a um despertador de um relógio.
+
+A maioria dos módulos em um sistema embarcado necessitam de funções de temporização. Para realização de atividades sensíveis a variação de tempo, são utilizados duas formas diferentes de temporizadores: os \emph{temporizadores físicos} e os \emph{temporizadores virtuais}.
+
+Temporizadores \emph{físicos} são implementados diretamente por dispositivos de hardware, que podem causar de maneira direta uma interrupção no processador quando seu tempo expirar. São indicados para operações que requerem extrema precisão temporal ou latência.
+
+Os temporizadores \emph{virtuais} são uma simulação de temporizador, obtido via software. Os eventos por eles disparados são gerados por código. A finalidade destes temporizadores \emph{virtuais} se faz em operações onde a precisão temporal não é crítica para o funcionamento do módulo.
+
+Um sistema de temporização por software deve ser capaz de realizar operações de:
+
+\begin{itemize}
+	\item \textbf{Gerenciamento}: i.e., decrescer a contagem em um temporizador;
+	\item \textbf{Instalação}: i.e., registrar e iniciar um temporizador;
+	\item \textbf{Remover}: i.e., parada e retirada de um temporizador;	
+\end{itemize}
+
+Muitas das aplicações que requerem algum tipo de temporização não precisam de resultados altamente precisos, sendo que desvios de nano ou, até mesmo, micro-segundos são aceitáveis. Este requisito, aliado ao fato de que diversos temporizadores \emph{virtuais} podem ser criados a partir de um único temporizador \emph{físico}, tornam o uso de temporizadores \emph{virtuais} uma opção indispensável em sistemas embarcados. Esta virtualização permite que uma economia de hardware e, consequentemente, financeira seja agregada ao sistema embarcado.
+
+\subsection{Gerenciamento de Memória}
+
+Em muitos dos sistemas embarcados (tais como celulares, câmeras digitais, \emph{tablets}) há um número limitado de aplicações (tarefas) que  podem estar em execução paralelamente em um dado momento. Contudo, estes dispositivos apresentam um quantidade limitada de memória física a bordo. Dispositivos maiores, como roteadores de rede, possuem uma maior quantidade de memória física instalada, mas também fazem maior uso dela e precisam de um gerenciamento ainda maior deste recurso. Independente do tipo de sistema embarcado, os requisitos comuns a sistemas de gerenciamento de memória são a: mínima fragmentação, mínima sobrecarga em operações de gerenciamento e tempos de alocação de determinísticos.
+
+\subsubsection{Alocação Dinâmica de Memória}
+
+O código do programa, seus dados e a pilha do sistema ocupam a memória física do sistema embarcado, uma vez carregados e inicializados. A memória restante é utilizada para alocação dinâmica pelo \emph{RTOS} ou pelo \emph{kernel}. Esta área recebe o nome de \emph{heap}\footnote{Tanto a \emph{Stack} quanto a \emph{Heap} são áreas de memória para um programa. A diferença entre elas é que a sua alocação é, respectivamente, estática e dinâmica}.
+
+Um gerenciador de memória mantém informações sobre a \emph{heap} em uma área reservada, chamada de bloco de controle. Informações típicas sobre o controle incluem:
+
+\begin{itemize}
+	\item O endereço inicial do bloco de memória física utilizado para alocação dinâmica;
+	\item O tamanho total de memória disponível;
+	\item A tabela de alocações, a qual indica quais áreas da memória estão em uso, quais estão vagas e o tamanho de cada região que ainda está livre.
+\end{itemize}
+
+Um sistema de memória deve ser capaz de executar eficientemente as seguintes operações:
+
+\begin{itemize}
+	\item Determinar se há um bloco livre que comporta a alocação requisitada;
+	\item Manter as informações internas atualizadas;
+	\item Mesclar um ou mais blocos, assim que estes forem liberados;
+\end{itemize}
+
+A estrutura da tabela de alocação é a chave para um gerenciamento de memória eficaz. Esta estrutura gera um \emph{overhead}, já que ocupa espaço de memória que, outrora, poderia ser utilizado para armazenar dados dos programas. Minimizar a tabela de alocações e maximizar o desempenho das operações anteriores é um dos principais desafios no gerenciamento de memórias.
+
+\subsection{Subsistemas de Entrada/Saída}
+
+Em sistemas embarcados, um sistema de entrada/saída são a combinação dos dispositivos de \emph{I/O}, \emph{drivers} de dispositivos associados e subsistemas de \emph{I/O}.
+
+O propósito de um subsistema de \emph{I/O} é o de esconder do \emph{kernel} as informações especificas de um dispositivo, assim como do desenvolvedor de aplicações, e prover uma método de acesso uniforme aos periféricos de \emph{I/O} do sistema embarcado.
+
+A \reffig{io_layers} ilustra o subsistema de \emph{I/O} em relação ao resto do sistema em um modelo de camadas de software. Conforme indicado, cada camada descendente agrega mais informações à arquitetura necessária para gerenciar um dado dispositivo.
+
+\figuracustom{io_layers}{Subsistema de \emph{I/O} e o modelo por camadas}{7cm}
+
+\subsubsection{Camada de Abstração}
+
+Cada dispositivo de \emph{I/O} pode oferecer um conjunto específico de interfaces de programação para os aplicativos. Este arranjo requer que cada aplicativo esteja ciente da natureza do dispositivo de \emph{I/O} subjacente, incluindo as restrições impostas pelo dispositivo. O conjunto da \emph{API} é específico à implementação, o que torna difícil a portabilidade das aplicações utilizando esta \emph{API}. Para reduzir esta dependência, é se implementado, no sistema embarcado, um subsistema de \emph{I/O}, a qual atua como uma camada de abstração.
+
+Esta camada de abstração define um conjunto padrão de funções para operações de entrada e saída, de forma a esconder as peculiaridades dos dispositivos da aplicação. Todos os \emph{drivers} de \emph{I/O} passam a se conformar e a suportar este conjunto de funções, já que o objetivo é o de prover uma camada uniforme de \emph{I/O} para as aplicações. 
+
+Para se alcançar estas operações de \emph{I/O} uniformemente no nível de aplicação, os seguintes procedimentos devem ser seguidos:
+
+\begin{enumerate}
+	\item Definir o conjunto de \emph{API}s do subsistema de \emph{I/O}.
+	\item Implementar cada função do conjunto para o driver do dispositivo.
+	\item Exportar este conjunto de funções do driver do dispositivo para o subsistema de \emph{I/O}.
+	\item Encarregar ao driver do dispositivo o prepara do mesmo para uso.
+	\item Carregar o dispositivo pelo driver do mesmo e informar o subsistema de \emph{I/O}.
+\end{enumerate}
+
+A \reffig{io_abstraction} ilustra como a camada de \emph{I/O} abstraí o dispositivo de hardware, garantindo a flexibilidade do sistema.
+
+\figura{io_abstraction}{Camada de abstração entre o aplicativo e o dispositivo}
+
+\subsection{Sistemas de Arquivos}
+
+Segundo \citeonline{mos4}, um arquivo é uma coleção nomeada de informações relacionadas que são gravadas em uma unidade secundária e persistente de armazenamento. Pela perspectiva do usuário, dados não podem ser salvos em uma unidade secundária, senão pela alocação de um arquivo nela.
+
+Os arquivos são utilizados para guardar informações referentes a dados ou programas. Arquivos de dados podem ser numéricos, alfabéticos, alfanuméricos ou binários. Eles podem também ser estruturados ou não. De maneira geral, um arquivo é uma sequência de bits, no qual o significado varia conforme o criador e usuário do arquivo.
+
+Existem diversos componentes capazes de persistirem estes dados, sendo alguns deles os: disco e fitas magnéticas, \emph{flash cards} e \emph{Compact Disks}, conforme ilustrado pela \reffig{fs_hardware}. De forma que o sistema computacional possa utilizar estes dispositivos, o sistema operacional deve abstrair as propriedades físicas dos dispositivos de armazenagem e definir uma unidade lógica de armazenagem, capaz de armazenar e localizar facilmente os dados em forma de arquivos. 
+
+\figuracustom{fs_hardware}{Exemplos de dispositivos de armazenamento permanente}{6cm}
+
+Um sistema de arquivos provê os meios para organizar os dados, de forma que eles possam ser armazenados, resgatados e atualizados, além de gerenciar o espaço disponível no dispositivo que o contém. Um sistema de arquivos organiza os dados de maneira eficiente e é otimizado para características especificas de um dispositivo \cite{file_system}.
+
+Internamente, um sistema de arquivos funciona de maneira similar a alocação dinâmica da memória principal, onde o sistema armazena informações adicionais sobre a área de dados, como seu tamanho e ponto de origem no dispositivo. Contudo, um sistema de arquivo oferece mais níveis de organização, afim de facilitar o encontro de informações posteriormente, como diretórios, ou ainda controle de permissões, para limitar o acesso de usuários. A \reffig{fs_directory} apresenta um modelo de organização de diretórios com controle de permissão.
+
+\figuracustom{fs_directory}{Modelo em árvore de diretórios por usuário}{7cm}
+
+A \reftab{fs_sample} apresenta algumas das características de sistemas de arquivos populares. \citeonline{filebenchmark4} contém um estudo mais detalhado de comparação entre sistemas de arquivos.
+
+\begin{tabela}{fs_sample}{Sistemas de Arquivos}
+	\begin{tabular}{|c|c|c|c|}
+		\hline 
+		Sistema de Arquivo & FAT32 & NTFS & ext4 \\ 
+		\hline \hline
+		Plataformas & Muitas & Windows & Linux \\ 
+		\hline 
+		Nome Máximo de Arquivo & 255 bytes & 255 bytes & 255 bytes \\ 
+		\hline 
+		Tamanho Máximo de Caminho & - & 32767 caract. & - \\ 
+		\hline 
+		Tamanho Máximo de Arquivo & 4 Gb & 16 EiB & 16 TiB \\ 
+		\hline 
+		Armazena o Dono do Arquivo & Não & Sim & Sim \\ 
+		\hline 
+		Permissões Posix & Não & Sim & Sim \\ 
+		\hline 
+	\end{tabular}
+\end{tabela}
+
+\section{Sistemas de Tempo-Real}
+
+Segundo \citeonline{qingli}, uma \textbf{aplicação de tempo-real} é aquela que é composta por múltiplas tarefas independentes em execução, as quais competem pelo tempo de processamento em um processador.
+
+Ainda segundo \citeonline{qingli}, um \textbf{sistema de tempo-real} pode ser definido como um sistema que responde a eventos externos em tempo hábil. Ou seja, onde o tempo de resposta é uma garantia do sistema. A \reffig{realtime_constraint} apresenta um apoio visual para este conceito, onde independente da entrada, há um tempo limite de resposta, o qual deverá sempre ser respeitado.
+
+\figura{realtime_constraint}{Resposta em Tempo-Real}
+
+Uma maneira mais fácil de entender a relação entre sistemas de tempo-real e sistemas embarcados é apresentado na \reffig{realtime_overloque}. Nela pode ser visto que nem todos os sistemas embarcados apresentam um comportamento de tempo-real, assim como nem todos os sistemas de tempo-real são embarcados. Também é possível ver que ambos não são mutualmente exclusivos, e que a área onde eles se sobrepõem resulta nos chamados sistemas embarcados de tempo-real.
+
+\figuracustom{realtime_overlap}{Área de Sobreposição dos Sistemas Embarcados de Tempo-Real}{7cm}
+
+A operação de um sistema de tempo-real se dá pelo recebimento de eventos, gerados pelo ambiente do sistema, os quais são tratados pelo sistema de tempo-real na forma de saídas para seus atuadores, conforme apresentado anteriormente na \reffig{realtime_constraint}.
+
+A estrutura de um sistema de tempo-real consiste em um sistema \textbf{controlador} e em um ou mais sistemas \textbf{controlados}. Três tipos de comportamentos podem ser apresentados pelos componentes desta estrutura, dependendo de onde se inicia a comunicação:
+
+\begin{enumerate}
+	\item Um sistema é dito \textbf{periódico} quando a comunicação é iniciada pelo sistema \textbf{controlador} para o sistema \textbf{controlado};
+	\item Um sistema é dito \textbf{aperiódico} quando a comunicação é iniciada pelo sistema \textbf{controlado} para o sistema \textbf{controlador}. Neste caso, a comunicação é tida como imprevisível, já que ela é determinada pela ocorrência de eventos externos;
+	\item Uma combinação de sistema \textbf{periódico} e \textbf{aperiódico}.
+\end{enumerate}
+
+Para ilustrar o conceito anterior, pode-se propor um exemplo de um navio militar com um sistema de defesa anti-mísseis. Este sistema é composto pelos sistemas de radar, decisão-e-comando (D\&C) e de disparo, conforme ilustrado pela \reffig{realtime_example}. Nele, o sistema de D\&C é o sistema \textbf{controlador}, enquanto que os sistemas de radar e disparo são os \textbf{controlados}.
+
+\figuracustom{realtime_example}{Esquema do Sistema de Defesa Anti-Mísseis}{7cm}
+
+O sistema de defesa anti-mísseis se comporta da seguinte maneira:
+
+\begin{itemize}
+	\item O sistema de radar informa o D\&C sobre possíveis ameaças;
+	\item O sistema de D\&C calcula o nível de ameaça do alvo, e decide qual ação irá tomar: ignorar ou abater;
+	\item Em caso de ameaça, o sistema de D\&C ativa o sistema de disparo no alvo de maior ameaça para o návio.
+\end{itemize}
+
+Neste exemplo, o sistema de radar representa uma comunicação aperiódica, já que está iniciou por um evento externo, enquanto que a ativação do sistema de disparo, por ter iniciado no sistema controlador (D\&C), foi uma comunicação periódica.
+
+\subsection{Sistemas Operacionais de Tempo-Real}
+
+No portal do \emph{ChibiOS}, \citeonline{chibios} define um sistema operacional de tempo-real\footnote{RTOS - Real Time Operating System} como um sistema operacional especializado para operações de tempo-real. Segundo ele, um sistema operacional precisa atender ao seguintes critérios para que possa ser considerado um \emph{RTOS}:
+
+\begin{itemize}
+	\item O sistema deve possuir um tempo de resposta previsível;
+	\item O sistema deve ser determinístico.
+\end{itemize}
+
+\citeonline{mos4} classifica os \emph{RTOS} em dois tipos, conforme o sua tolerância ao tempo de resposta:
+
+\begin{itemize}
+	\item \textbf{Sistema de Tempo Flexivel}: São aqueles onde a falha ao atender uma restrição temporal não resulta em danos permanentes ao sistema, embora ainda sejam situações indesejáveis;
+	\item \textbf{Sistema de Tempo Inflexivel}: São aqueles onde a falha ao atender uma restrição temporal causa o comprometimento do sistema e, possivelmente, danos permanentes ao conjunto.
+\end{itemize}
+
+É importante ressaltar que um tempo de resposta veloz não é o fator crucial de um sistema de tempo real, e sim sua previsibilidade e determinismo. Outras qualidades que são desejadas em um \emph{RTOS} mas que não o caracterizam são o seu conjunto de recursos implementados e tamanho reduzido.
+
+\subsubsection{Sistemas de Código Aberto}
+
+Abaixo são apresentadas algumas das soluções para sistemas operacionais de tempo-real disponíveis atualmente no mercado.
+
+\paragraph{ChibiOS}
+
+Projetado para aplicações embarcadas em microcontroladores de 8, 16 e 32 bits, com um foco em eficiência de execução e tamanho. Seu tamanho varia entre $1,2 Kb$ e $5,5 Kb$ quando possui todos os seus recursos ativos. Ele é capaz de criar/finalizar $220.000$ \emph{threads} por segundo e realizar uma troca de contexto em $1,2$ micro-segundos em um \emph{STM32} à $72 MHz$.
+
+\paragraph{FreeRTOS}
+
+Criado com o propósito de ser pequeno e simples, onde o \emph{kernel} do sistema operacional consiste em apenas 3 arquivos. Possuí a maior parte de seu código escrita na linguagem \emph{C}, com apenas algumas funções criticas em \emph{Assembly}. Disponivel para uma grande variedade de microcontroladores.
+
+\paragraph{BRTOS}
+
+Projeto brasileiro, desenvolvido para ser um sistema operacional simples, com um consumo mínimo de memória de dados e programa. Oferece suporte à prioridades e limite máximo de 32 tarefas.
+
+\paragraph{Trampolini}
+
+%TODO Citar em algum momento o OSEK/VDX e referenciar aqui.
+
+Trata-se de um projeto de código aberto, o qual busca implementar um sistema operacional de tempo-real, de acordo com as especificações da \emph{OSEK/VDX}, para veículos automotivos.
+
+Atualmente, estão adaptando o código para se tornarem compatíveis com as normas do \emph{AUTOSAR}.
+
+Utilizam uma linguagem própria, chamada \emph{OIL}, para criar os arquivos de configuração do sistema.

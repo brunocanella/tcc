@@ -17,6 +17,11 @@
 %\usepackage{pdfpages} % Possibilita a inclusão da ficha catalográfica
 \usepackage{listings} % Possibilita colocar códigos
 
+\usepackage{caption} % colocar textos em figuras
+\usepackage{subfigure}
+
+\usepackage{xifthen} % deixa fazer uns if-then-else mutcho loko
+
 \usepackage[brazil]{babel}  % usados para arrumar os caracteres em português
 \usepackage[utf8]{inputenx} % 
 \usepackage[T1]{fontenc}    %
@@ -39,16 +44,17 @@
 \newcommand{\afazer}[1]{{\color{red}{#1}}} % Para destacar uma parte a ser trabalhada
 \newcommand{\ABNTbibliographyname}{REFERÊNCIAS} % Necessário para abnTeX 0.8.2
 
-\newcommand{\figuracustom}[3]{
+\newcommand{\figura}[5][Extraido de:]{
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=#3]{#1.png}
-	\caption{#2.}
-	\label{fig:#1}
-\end{figure}\textsl{}
+	\caption{#3.}
+	\includegraphics[width=#4]{#2.png}
+	\ifthenelse{\isempty{#5}}{}{%
+		\\ #1 \citeonline{#5}.
+	}	
+	\label{fig:#2}
+\end{figure}
 }
-
-\newcommand{\figura}[2]{\figuracustom{#1}{#2}{\textwidth}}
 
 \NewDocumentEnvironment{tabela}{mm}
 {
@@ -64,6 +70,19 @@
 \newcommand{\reffig}[1]{Figura \ref{fig:#1}}
 \newcommand{\refalg}[1]{Algoritmo \ref{alg:#1}}
 \newcommand{\reftab}[1]{Tabela \ref{tab:#1}}
+\newcommand{\refcap}[1]{\footnote{vide tópico \ref{cap:#1}.}}
+\newcommand{\reftop}[1]{Seção \ref{cap:#1}}
+
+\newcommand{\criarSigla}[3][]{%
+	\ifthenelse{\isempty{#1}}{%
+		#2 - #3\sigla{#3}{#2}%
+	}{%
+		\emph{#2} - #3\sigla{#3}{\emph{#2}}\footnote{Traduzido como: #1.}%
+	}%
+}
+
+%----------------------------------------------------------------------
+
 
 %----------------------------------------------------------------------
 % Identificadores do trabalho
@@ -73,7 +92,7 @@
 \curso[a]{Universidade Federal de Santa Catarina}
 \documento[o]{Trabalho\ de\ Conclusão\ de\ Curso} % [o] para dissertação [a] para tese
 \titulo{Sistema Operacional Veícular}
-\subtitulo{Open AutOS} % Opcional
+\subtitulo{OpenAutOS} % Opcional
 \autor{Bruno Fontana Canella}
 \grau{Bacharel em Engenharia de Computação}
 \local{Araranguá} % Opcional (Florianópolis é o padrão)
@@ -95,47 +114,79 @@
 
 \dedicatoria{Este trabalho é dedicado aos meus colegas de classe e aos meus queridos pais.}
 
-\agradecimento{Inserir os agradecimentos aos colaboradores à execução do trabalho.}
+\agradecimento{Eu queria mandar um beijo pro meu pai, pra minha mãe e especialmente pra você Xuxa.}
 
-\epigrafe{Texto da Epígrafe. Citação relativa ao tema do trabalho. É opcional. A epígrafe pode também aparecer na abertura de cada seção ou capítulo.}
-{(Autor da epígrafe, ano)}
+\epigrafe{Escrever um TCC é que nem fazer estrada. Depois que tá feita a base é só passar asfalto.}
+{(Anderson, 2016)}
 
-\textoResumo {O texto do resumo deve ser digitado, em um único bloco, sem espaço de parágrafo. O resumo deve ser significativo, composto de uma sequência de frases concisas, afirmativas e não de uma enumeração de tópicos. Não deve conter citações. Deve usar o verbo na voz passiva. Abaixo do resumo, deve-se informar as palavras-chave (palavras ou expressões significativas retiradas do texto) ou, termos retirados de thesaurus da área.}
+\textoResumo {Afim de padronizar o desenvolvimento de sistemas e dispositivos para veículos automotivos, foram criados padrões abertos, regidos pelas principais montadoras de veículos. Dentre estes padrões, foi estabelecido um para governar o desenvolvimento de sistemas operacionais, capazes de gerenciar os recursos eletrônicos de um veículo. A maioria das soluções existentes hoje no mercado, e que respeitam este padrão, são de código privado. Com o intuito de criar uma alternativa de qualidade comercial, este trabalho visa desenvolver, documentar e validar um sistema operacional automotivo de código aberto, conforme as normas estabelecidas pelo padrão \emph{AUTOSAR}.}
 \palavrasChave {Palavra-chave 1. Palavra-chave 2.  Palavra-chave 3. }
  
-\textAbstract {Resumo traduzido para outros idiomas, neste caso, inglês. Segue o formato do resumo feito na língua vernácula. As palavras-chave traduzidas, versão em língua estrangeira, são colocadas abaixo do texto precedidas pela expressão ``Keywords'', separadas por ponto.}
-\keywords {Keyword 1. Keyword 2. Keyword 3.}
+\textAbstract {botar no google translate, e é isso ai.}
+\keywords {Sistemas Operacionais, Sistemas Automotivos, AUTOSAR, Open Source.}
 
 %----------------------------------------------------------------------
 % Início do documento                                
 \begin{document}
 %--------------------------------------------------------
 % Elementos pré-textuais
-%\capa  
+\capa  
 %\folhaderosto[comficha] % Se nao quiser imprimir a ficha, é só não usar o parâmetro
+
+\begin{titlepage}
+	\vfill
+	\begin{center}
+		%{\large \ABNTautordata} \\[5cm]
+		\ABNTautordata \\[5cm]
+		
+		\tituloformat{\ABNTtitulodata} \\[1cm]
+		%\tituloformat{\subtitulodata}\\[1cm] Pra quem possui subtitulo
+		
+		\hspace{.45\textwidth} % posicionando a minipage
+		\begin{minipage}{.5\textwidth}
+			\begin{espacosimples}
+				
+				Trabalho de Conclusão de Curso submetido à \ABNTinstituicaodata,
+				como parte dos requisitos necessários para a obtenção do Grau de
+				Bacharel em Engenharia de Computação.
+				
+				Orientador: Prof. Anderson Luiz Fernandes Perez, Dr.
+			\end{espacosimples}
+		\end{minipage}
+		\vfill \localformat \ABNTlocaldata, \mesdata\ de \anodata.
+	\end{center}
+	\vspace{1cm}
+\end{titlepage}
+
 %\folhaaprovacao
 %\paginadedicatoria
 %\paginaagradecimento
 %\paginaepigrafe
-%\paginaresumo
+\paginaresumo
 %\paginaabstract
 %\pretextuais % Substitui todos os elementos pre-textuais acima
-%\listadefiguras % as listas dependem da necessidade do usuário
-%\listadetabelas 
-%\listadeabreviaturas
+\listadefiguras % as listas dependem da necessidade do usuário
+\listadetabelas 
+\listadeabreviaturas
 %\listadesimbolos
-%\sumario
+\sumario
+
 %--------------------------------------------------------
 % Simbolos e Abreviaturas
-\abreviatura{RTOS}{Real Time Operating Systems}
+\abreviatura{RAM}{\emph{Random Access Memory}}
+\abreviatura{ROM}{\emph{Read-Only Memory}}
 %--------------------------------------------------------
 % Elementos textuais
 
+\include{cap_1_introducao}
+
 \include{cap_2_automacao_veicular}
 
-%\include{cap_3_sistemas_operacionais_embarcados}
+\include{cap_3_sistemas_operacionais_embarcados}
 
-%\include{cap_4_openautos}
+%%\include{cap_3_sistemas_operacionais_embarcados_old}
+
+\include{cap_4_openautos}
 
 %--------------------------------------------------------
 %Referências

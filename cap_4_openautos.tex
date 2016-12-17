@@ -1,18 +1,18 @@
 \chapter{OpenAUTOS}
 
-Este capítulo apresenta a proposta do SO OpenAUTOS, destacando as escolhas de software e a arquitetura de hardware adotada.
+Este capítulo apresenta a proposta do SO OpenAUTOS, destacando as escolhas tanto do projeto do software bem como a arquitetura de hardware adotada.
 
 \section{Proposta}
 
 O sistema OpenAUTOS é um SOE de código aberto, que busca atender a norma AUTOSAR SO, ou seja, realizar a implementação do sistema operacional proposto pelo padrão. Para tal, serão seguidas e respeitadas as guias e restrições definidas no relatório de especificações definidos em \citeonline{AUTOSAR:SOS}.
 
-Por se tratar de um SO estático, não serão implementados gerenciadores de memória e sistemas de arquivos. Porém, isto implica que todas as tarefas, semáforos e demais objetos fornecidos pelo kernel sejam definidos em tempo de compilação. Segundo a norma, é obrigatório que um parser da linguagem OIL ou, alternativamente, XML seja fornecido, para que este faça a geração do arquivo de cabeçalho da linguagem C que será utilizado durante a compilação do SO. A \reffig{cap4_parser} ilustra este cenário.
+Por se tratar de um SO estático, não serão implementados gerenciadores de memória e sistemas de arquivos. Porém, isto implica que todas as tarefas, semáforos e demais objetos fornecidos pelo kernel sejam definidos em tempo de compilação. Segundo a norma, é obrigatório que um parser da linguagem OIL ou, alternativamente, \criarSigla[Linguagem de Marcação Extensível]{eXtensible Markup Language}{XML} seja fornecido, para que este faça a geração do arquivo de cabeçalho da linguagem C que será utilizado durante a compilação do SO. A \reffig{cap4_parser} ilustra este cenário.
 
 \figura[]{cap4_parser}{Geração do cabeçalho de configuração}{7cm}{}
 
 Na \reffig{cap4_arquitetura}, é apresentada uma lista dos módulos e objetos mais comuns em um SOE. O OpenAUTOS se propõe a implementar estes módulos, com exceção da alocação dinâmica de memória e sistema de arquivos pois, por se tratar de um SO estático, todas as alocações e definições deverão ser realizadas em tempo de compilação. Filas de mensagens e áreas de memória reservadas poderão ser definidas estaticamente.
 
-\figura{cap4_arquitetura}{Arquitetura do SO ExemplOS}{8cm}{}
+\figura{cap4_arquitetura}{Módulos comuns a um SOE}{8cm}{}
 
 Em termos de escalonador, o sistema deverá oferecer suporte para as tarefas normais e estendidas do padrão. As tarefas normais fazem uso de um escalonador de prioridades com Round Robin. Já as tarefas estendidas fazem uso de \emph{tabelas de escalonamento}, as quais garantem que restrições temporais serão atendidas e que uma operação não será interrompida antes de sua conclusão \cite{AUTOSAR:SOS}.
 

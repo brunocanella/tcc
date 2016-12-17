@@ -4,13 +4,13 @@ Neste capítulo são abordados os principais conceitos sobre sistemas operaciona
 
 \section{Sistemas Operacionais}
 
-O objetivo de um \criarSigla{Sistema Operacional}{SO} é o de gerenciar os recursos de um sistema computacional, tornando transparente seu funcionamento para o usuário final. O SO é o componente de software que faz a união e abstração dos recursos de hardware e os oferece de maneira simplifica para as aplicações utilizadas pelo usuário final. A \reffig{cap3_os_parts} ilustra a visão abstrata de um SO, ou seja, o SO como um provedor de serviços para as aplicações de usuários.
+O objetivo de um SO é o de gerenciar os recursos de um sistema computacional, tornando transparente seu funcionamento para o usuário final. O SO é o componente de software que faz a união e abstração dos recursos de hardware e os oferece de maneira simplifica para as aplicações utilizadas pelo usuário final. A \reffig{cap3_os_parts} ilustra a visão abstrata de um SO, ou seja, o SO como um provedor de serviços para as aplicações de usuários.
 
-\figura[Adaptado de:]{cap3_os_parts}{Partes em um sistema computacional}{4cm}{osc9}
+\figura[Adaptado de:]{cap3_os_parts}{Visão geral da integração do SO com o sistema computacional}{4cm}{osc9}
 
-Segundo \citeonline{osc9}, um SO pode oferecer um número variável de serviços. Os serviços do \emph{SO} que estão sempre presentes na memória principal fazem parte do kernel, que é descrito na \reftop{os_kernel}. 
+Segundo \citeonline{osc9}, um SO pode oferecer um número variável de serviços. Os serviços do SO que estão sempre presentes na memória principal fazem parte do kernel, que é descrito na \reftop{os_kernel}. 
 
-Para que os aplicativos tenham acesso aos serviços oferecidos sem que haja um comprometimento de sua integridade, o \emph{SO} oferece rotinas de acesso aos serviços. A quantidade de serviços vária conforme implementação do \emph{SO}, sendo o mínimo oferecido as operações de gerenciamento de processos, memória e \criarSigla{Entrada e Saída}{E/S}. A \reffig{cap3_os_services} apresenta uma hierarquia de chama dos serviços do \emph{SO}.
+Para que os aplicativos tenham acesso aos serviços oferecidos sem que haja um comprometimento de sua integridade, o SO oferece rotinas de acesso aos serviços. A quantidade de serviços vária conforme implementação do SO, sendo o mínimo oferecido as operações de gerenciamento de processos, memória e \criarSigla{Entrada e Saída}{E/S}. A \reffig{cap3_os_services} apresenta uma hierarquia de chamada dos serviços do SO.
 
 \figura[Adaptado de:]{cap3_os_services}{Serviços de um SO}{6cm}{osc9}
 
@@ -21,32 +21,32 @@ Para que os aplicativos tenham acesso aos serviços oferecidos sem que haja um c
 
 \figura{cap3_os_kernel_layers}{Posição conceitual do \emph{kernel}}{3.5cm}{minix}
 
-Em sistemas computacionais convencionais, o \emph{kernel} é a primeira parte do \emph{SO} a ser carregada na memória durante o processo de inicialização. Uma vez carregado, o \emph{kernel} permanece na memória principal do sistema até que o mesmo seja desligado. Para \criarSigla{Sistemas Operacionais Embarcados}{SOE}, o \emph{kernel} sempre está presente na memória de programa. Após uma instrução de \emph{reset}, é sempre o primeiro código a ser executado. A \reffig{cap3_os_kernel_memory} ilustra ambos os modelos.
+Em sistemas computacionais convencionais, o \emph{kernel} é a primeira parte do SO a ser carregada na memória durante o processo de inicialização. Uma vez carregado, o \emph{kernel} permanece na memória principal do sistema até que o mesmo seja desligado. Para \criarSigla{Sistemas Operacionais Embarcados}{SOE}, o \emph{kernel} sempre está presente na memória de programa. Após uma instrução de \emph{reset}, é sempre o primeiro código a ser executado. A \reffig{cap3_os_kernel_memory} ilustra ambos os modelos.
 
 \figura[Adaptado de:]{cap3_os_kernel_memory}{Posição do \emph{kernel} na memória}{7cm}{qingli}
 
 \section{Estrutura dos Sistemas Operacionais}
 
-Independente dos serviços oferecidos, um \emph{SO} pode ser dividido em quatro áreas principais de serviços: gerenciamento de processos, de memória, de entrada e saída de dados e sistemas de arquivos.
+Independente dos serviços oferecidos, um SO pode ser separado em quatro serviços principais: gerenciamento de processos, de memória, de entrada e saída de dados e sistemas de arquivos.
 
 \subsection{Gerenciamento de Processos}
 
 O gerenciamento de processos consiste no tratamento de interrupções, controle de tarefas e acesso a recursos do sistema, de uma maneira que nenhum dos processos entre em conflito ou pare sua execução permanentemente, que não de maneira espontânea.
 
-A quantidade de elementos que compõem um \emph{SO} varia conforme implementação, mas geralmente incluem: tarefas, semáforos, filas de mensagem
+A quantidade de elementos que compõem um SO varia conforme implementação, mas geralmente incluem: tarefas, semáforos, filas de mensagem, entre outras.
 
 \subsubsection{Tarefas}
 
-Em um \emph{SO} convencional, cada programa que é executado no computador toma a forma de um processo: uma atividade que possui sua própria pilha, área de memória particular, e que pode alocar memória dinamicamente conforme a necessidade, muitas vezes sem precisar se preocupar com a falta do recurso. Mais tipos de processos podem ser adicionados a qualquer momento em um \emph{SO} para computadores.
+Em um SO convencional, cada programa que é executado no computador toma a forma de um processo, que pode ser definido como uma atividade que possui sua própria pilha, área de memória privada, e que pode alocar memória dinamicamente conforme a necessidade, muitas vezes sem precisar se preocupar com a falta do recurso. Mais programas podem ser adicionados a qualquer momento em um SO para computadores.
 
-Em sistemas embarcados, o conceito de processo é substituído pelo de \emph{tarefas}, onde a principal diferença está no fato de que todas as tarefas ja estão definidas no momento em que o \emph{SO} inicia. Para criar novos tipos de tarefas, é necessário parar o \emph{SO} e adicioná-las manualmente.
+Em sistemas embarcados, o conceito de processo é substituído pelo de \emph{tarefas}, onde a principal diferença está no fato de que todas as tarefas ja estão definidas no momento em que o SO inicia. Para criar novos tipos de tarefas é necessário parar o SO e adicioná-las manualmente.
 
-Uma tarefa pode assumir um número de estados pré-determinado, os quais variam conforme o \emph{SO} utilizado, mas geralmente incluem os estados presentes na \reffig{cap3_process_tasks_states}, conforme visto em \citeonline{osc9}. Estes estados podem ser descritos como:
+Uma tarefa pode assumir um número de estados pré-determinado, os quais variam conforme o SO utilizado, mas geralmente incluem os estados presentes na \reffig{cap3_process_tasks_states}, conforme visto em \citeonline{osc9}. Estes estados podem ser descritos como:
 
 \begin{itemize}
 	\item \textbf{Iniciando}: etapa inicial, onde são executadas instruções de preparo para a tarefa;
 	\item \textbf{Pronto}: indica que a tarefa está pronta para ser executada, mas que ela não é a tarefa ativa, no momento;
-	\item \textbf{Executando}: estado da tarefa que está em execução no \emph{SO};
+	\item \textbf{Executando}: estado da tarefa que está em execução no SO;
 	\item \textbf{Bloqueado}: a tarefa está aguardado a ocorrência de algum evento externo para que ela possa voltar a executar;
 	\item \textbf{Finalizado}: a tarefa libera recursos alocados, antes de ser encerrada definitivamente.
 \end{itemize}
@@ -61,33 +61,33 @@ Uma variante das tarefas são as fibras, que são threads de execução leves e 
 
 O escalonamento de tarefas surgiu para permitir que mais de uma tarefa fique em execução no processador, sem que ela tenha que concluir seu funcionamento para que isso aconteça. Na prática, isso gera uma situação na qual várias tarefas aparentam estar em execução ao mesmo tempo, em arquiteturas com um único processador.
 
-\citeonline{minix} descreve alguns tipos de algoritmos para escalonamento. Serão apresentados aqui apenas os escalonadores \emph{Round Robin}, \emph{Prioridade} e \emph{Prioridade com Round Robin}.
+\citeonline{minix} descreve alguns tipos de algoritmos para escalonamento. Serão apresentados aqui apenas os escalonadores mais utilizados em RTOSes, sendo eles Round Robin, Prioridade e Prioridade com Round Robin.
 
 \paragraph{Escalonador Round Robin}
 
-No escalonador \emph{Round Robin}, uma tarefa permanece em execução apenas por um valor $\Delta T$ de tempo, geralmente na casa dos $us$, após a qual ela é movida para o estado de \emph{Pronto}, colocando a próxima tarefa na fila em execução, conforme ilustrado na \reffig{cap3_process_scheduler_rr}.
+No escalonador Round Robin, uma tarefa permanece em execução apenas por um valor $\Delta T$ de tempo, geralmente na casa dos $us$, após a qual ela é movida para o estado de \emph{Pronto}, colocando a próxima tarefa na fila em execução, conforme ilustrado na \reffig{cap3_process_scheduler_rr}.
 
-\figura{cap3_process_scheduler_rr}{Escalonador por \emph{Round Robin}}{8cm}{minix}
+\figura{cap3_process_scheduler_rr}{Diagrama esquemático de funcionamento do algoritmo de escalonamento Round Robin}{8cm}{minix}
 
 \paragraph{Escalonador por Prioridade}
 
-Neste tipo de escalonador, a tarefa que se encontra em execução é sempre a de maior prioridade. Ela permanece em execução até que se auto-bloquei, seja por uma rotina de \emph{delay}, por tentar acessar um recurso indisponível no momento, ou ainda porque uma tarefa de maior prioridade ficou disponível.
+Neste tipo de escalonador, a tarefa é associada a um atributo numérico, o qual indica o nível de sua prioridade. A tarefa de mais alta prioridade que não estiver bloqueada será sempre a que estará em execução no SO. Ela permanece em execução até que se auto-bloquei, seja por uma rotina de \emph{delay}, por tentar acessar um recurso indisponível no momento, ou ainda porque uma tarefa de maior prioridade ficou disponível.
 
-A \reffig{cap3_process_scheduler_prio} apresenta um escalonador por \emph{prioridade} em dois momentos. No momento \emph{a)}, a tarefa em execução chama uma rotina que faz seu auto-bloqueio. No instante de tempo \emph{b)}, a tarefa em execução passa a ser a próxima tarefa de prioridade mais alta, disponível naquele momento.
+A \reffig{cap3_process_scheduler_prio} apresenta um escalonador por prioridade em dois momentos. No momento \emph{(a)}, a tarefa em execução chama uma rotina que faz seu auto-bloqueio. No instante de tempo \emph{(b)}, a tarefa em execução passa a ser a próxima tarefa de prioridade mais alta, disponível naquele momento.
 
-\figura{cap3_process_scheduler_prio}{Escalonador por \emph{Prioridade}}{6cm}{minix}
+\figura{cap3_process_scheduler_prio}{Diagrama esquemático de funcionamento do algoritmo de escalonamento baseado em prioridade}{6cm}{minix}
 
 \paragraph{Escalonador por Prioridade com Round Robin}
 
-Faz uma junção dos dois tipos de escalonadores apresentados anteriormente. Funciona da mesma maneira que o escalonador de \emph{Prioridades}, exceto que agora é possível ter mais de uma tarefa com o mesmo nível de prioridade. Quanto este cenário ocorrer, as tarefas de mesma prioridade ficarão alternando a posição de \emph{em execução}, através do algoritmo \emph{Round Robin}.
+Faz uma junção dos dois tipos de escalonadores apresentados anteriormente. Funciona da mesma maneira que o escalonador de prioridades, exceto que agora é possível ter mais de uma tarefa com o mesmo nível de prioridade. Quanto este cenário ocorrer, as tarefas de mesma prioridade ficarão alternando a posição de \emph{em execução}, através do algoritmo Round Robin.
 
 A \reffig{cap3_process_scheduler_rr_prio} apresenta um exemplo deste escalonador, onde após um intervalo de tempo $\Delta T$, ocorre a troca de contexto para a próxima tarefa de mesma prioridade que não se encontra bloqueada.
 
-\figura{cap3_process_scheduler_rr_prio}{Escalonador por \emph{Prioridade}}{5cm}{minix}
+\figura{cap3_process_scheduler_rr_prio}{Diagrama esquemático de funcionamento do algoritmo de escalonamento baseado em prioridade com Round Robin}{5cm}{minix}
 
 \subsubsection{Semáforos}
 
-Múltiplas tarefas em execução concorrente devem ser capazes de sincronizar suas ações e coordenar o acesso mutuamente exclusivo a recursos compartilhados. Para atender a estes requisitos, o \emph{SO} pode prover um objeto chamado semáforo.
+Múltiplas tarefas em execução concorrente devem ser capazes de sincronizar suas ações e coordenar o acesso mutuamente exclusivo a recursos compartilhados. Para atender a estes requisitos, o SO pode prover um objeto chamado semáforo.
 
 Um semáforo funciona como uma espécie de chave que permite a uma tarefa acessar algum tipo de operação ou recurso. Se a tarefa puder adquirir um semáforo, ela poderá continuar sua execução normalmente. Do contrário, a tarefa poderá ser bloqueada até que o recurso esteja disponível novamente.
 
@@ -97,7 +97,7 @@ Segundo \citeonline{minix}, existem semáforos de contagem, binários e de exclu
 
 \paragraph{Mutex}
 
-O semáforo do tipo \emph{mutex} atende a um caso especial do semáforo binário, chamado de \emph{semáforo de exclusão mútua} ou \emph{mutex}. Um \emph{mutex} pode suportar propriedades de posse, trava recursiva, deleção segura de tarefas, dentre outros serviços, afim de evitar problemas inerentes a exclusão mútua.
+O semáforo do tipo \emph{mutex} atende a um caso especial do semáforo binário, chamado de semáforo de exclusão mútua ou \emph{mutex}. Um \emph{mutex} pode suportar propriedades de posse, trava recursiva, deleção segura de tarefas, dentre outros serviços, afim de evitar problemas inerentes a exclusão mútua.
 
 \subsubsection{Filas de Mensagens}
 
@@ -105,27 +105,27 @@ Uma fila de mensagens é um objeto através do qual as tarefas e \criarSigla[Rot
 
 Uma fila de mensagens é composta por objetos chamados de \emph{elementos}, dos quais cada um pode armazenar uma única mensagem, a qual pode estar vazia. O número total de elementos na fila equivale ao seu comprimento. A \reffig{cap3_process_messages_queues} apresenta um esquema para as filas de mensagem.
 
-\figura[Adaptado de:]{cap3_process_messages_queues}{Esquema de uma Fila de Mensagens}{\textwidth}{qingli}
+\figura[Adaptado de:]{cap3_process_messages_queues}{Diagrama esquemático do funcionamento de uma fila de mensagens.}{\textwidth}{qingli}
 
 \subsubsection{Sinais}
 
-Um \emph{sinal} é uma interrupção gerada por software, a qual dispara quando ocorre um evento. Assim como numa interrupção, um \emph{sinal} faz com que o processo em execução seja interrompido para executar uma outra rotina assíncrona.
+Um sinal é uma interrupção gerada por software, a qual dispara quando ocorre um evento. Assim como numa interrupção, um sinal faz com que o processo em execução seja interrompido para executar uma outra rotina assíncrona.
 
-Na essência, os \emph{sinais} notificam as tarefas de eventos que ocorreram durante a execução de outras tarefas ou \emph{ISR}s. Assim como as interrupções, estes eventos são assíncronos para a tarefa notificada e não ocorrem em nenhum ponto pré-determinado durante sua execução. A principal diferença entre uma interrupção e um sinal é que o primeiro é gerado por hardware, como quando um pino passa de $0V$ para $5V$, enquanto o último é gerador por software.
+Na essência, os sinais notificam as tarefas de eventos que ocorreram durante a execução de outras tarefas ou ISRs. Assim como as interrupções, estes eventos são assíncronos para a tarefa notificada e não ocorrem em nenhum ponto pré-determinado durante sua execução. A principal diferença entre uma interrupção e um sinal é que o primeiro é gerado por hardware, como quando um pino de um microcontrolador passa de $0V$ para $5V$, enquanto o último é gerado por software.
 
-Quando há a chegada de um sinal, a tarefa diverge de seu caminho normal de execução, e a \criarSigla[Rotina de Sinal Assíncrona]{Asynchronous Signal Routine}{ASR} correspondente é invocada, conforme ilustrado na \reffig{cap3_process_signals}.
+Quando há a chegada de um sinal, a tarefa desvia de seu fluxo normal de execução, e a \criarSigla[Rotina de Sinal Assíncrona]{Asynchronous Signal Routine}{ASR} correspondente é invocada, conforme ilustrado na \reffig{cap3_process_signals}.
 
 \figura[Adaptado de:]{cap3_process_signals}{Tratamento de sinal em uma tarefa}{8cm}{qingli}
 
 \subsection{Gerenciamento de Memória}
 
-Em muitos dos sistemas embarcados (tais como celulares, câmeras digitais, \emph{tablets}) há um número limitado de aplicações (tarefas) que  podem estar em execução paralelamente em um dado momento. Parte do motivo é que estes dispositivos apresentam um quantidade limitada de memória física a bordo. Dispositivos maiores, como roteadores de rede, possuem uma maior quantidade de memória física instalada, mas também fazem maior uso dela e precisam de um gerenciamento ainda maior deste recurso.
+Em muitos dos sistemas embarcados (tais como celulares, câmeras digitais, \emph{tablets}) há um número limitado de aplicações (tarefas) que  podem estar em execução em um dado momento. Parte do motivo é que estes dispositivos apresentam um quantidade limitada de memória física. Dispositivos maiores, como roteadores de rede, possuem uma maior quantidade de memória física instalada, mas também fazem maior uso dela e precisam de um gerenciamento ainda maior deste recurso.
 
 Independente do tipo de sistema embarcado, os requisitos comuns a sistemas de gerenciamento de memória são a mínima fragmentação, mínima sobrecarga em operações de gerenciamento e tempos de alocação determinísticos.
 
 \subsubsection{Alocação Dinâmica de Memória}
 
-O código do programa, seus dados e a pilha do sistema ocupam a memória física do sistema embarcado, uma vez carregados e inicializados. A memória restante é utilizada para alocação dinâmica pelo \emph{RTOS} ou pelo \emph{kernel}. Esta área recebe o nome de \emph{heap}\footnote{Tanto a \emph{Stack} quanto a \emph{Heap} são áreas de memória para um programa. A diferença entre elas é que a sua alocação é, respectivamente, estática e dinâmica}.
+O código do programa, seus dados e a pilha do sistema ocupam a memória física do sistema embarcado, uma vez carregados e inicializados. A memória restante é utilizada para alocação dinâmica pelo RTOS ou pelo \emph{kernel}. Esta área recebe o nome de \emph{heap}\footnote{Tanto a \emph{Stack} quanto a \emph{Heap} são áreas de memória para um programa. A diferença entre elas é que a sua alocação é, respectivamente, estática e dinâmica}.
 
 Um gerenciador de memória mantém informações sobre a \emph{heap} em uma área reservada, chamada de bloco de controle. Informações típicas sobre o controle incluem:
 
@@ -147,31 +147,31 @@ A estrutura da tabela de alocação é a chave para um gerenciamento de memória
 
 \subsection{Subsistemas de Entrada/Saída}
 
-Em sistemas embarcados, um sistema de entrada/saída são a combinação dos dispositivos de \emph{I/O}, \emph{drivers} de dispositivos associados e subsistemas de \emph{I/O}.
+Em sistemas embarcados, um sistema de entrada/saída são a combinação dos dispositivos de E/S, \emph{drivers} de dispositivos associados e subsistemas de E/S.
 
-O propósito de um subsistema de \emph{I/O} é o de esconder do \emph{kernel} as informações especificas de um dispositivo, assim como do desenvolvedor de aplicações, e prover uma método de acesso uniforme aos periféricos de \emph{I/O} do sistema embarcado.
+O propósito de um subsistema de E/S é o de esconder do \emph{kernel} as informações especificas de um dispositivo, assim como do desenvolvedor de aplicações, e prover uma método de acesso uniforme aos periféricos de E/S do sistema embarcado.
 
-A \reffig{cap3_io_layers} ilustra o subsistema de \emph{I/O} em relação ao resto do sistema em um modelo de camadas de software. Conforme indicado, cada camada descendente agrega mais informações à arquitetura necessária para gerenciar um dado dispositivo.
+A \reffig{cap3_io_layers} ilustra o subsistema de E/S em relação ao resto do sistema em um modelo de camadas de software. Conforme indicado, cada camada descendente agrega mais informações à arquitetura necessária para gerenciar um dado dispositivo.
 
-\figura[Adaptado de:]{cap3_io_layers}{Subsistema de \emph{I/O} e o modelo por camadas}{7cm}{minix}
+\figura[Adaptado de:]{cap3_io_layers}{Subsistema de E/S e o modelo por camadas}{7cm}{minix}
 
 \subsubsection{Camada de Abstração}
 
-Cada dispositivo de \emph{I/O} pode oferecer um conjunto específico de interfaces de programação para os aplicativos. Este arranjo requer que cada aplicativo esteja ciente da natureza do dispositivo de \emph{I/O} subjacente, incluindo as restrições impostas pelo dispositivo. O conjunto da \emph{API} é específico à implementação, o que torna difícil a portabilidade das aplicações utilizando esta \emph{API}. Para reduzir esta dependência, é implementado no sistema embarcado um subsistema de \emph{I/O}, a qual atua como uma camada de abstração.
+Cada dispositivo de E/S pode oferecer um conjunto específico de interfaces de programação para os aplicativos. Este arranjo requer que cada aplicativo esteja ciente da natureza do dispositivo de E/S subjacente, incluindo as restrições impostas pelo dispositivo. O conjunto da \criarSigla[Interface de Programação de Aplicação]{Application Programming Interface}{API} é específico à implementação, o que torna difícil a portabilidade das aplicações utilizando esta API. Para reduzir esta dependência, é implementado no sistema embarcado um subsistema de E/S, a qual atua como uma camada de abstração.
 
-Esta camada de abstração define um conjunto padrão de funções para operações de entrada e saída, de forma a esconder as peculiaridades dos dispositivos da aplicação. Todos os \emph{drivers} de \emph{I/O} passam a se conformar e a suportar este conjunto de funções, já que o objetivo é o de prover uma camada uniforme de \emph{I/O} para as aplicações. 
+Esta camada de abstração define um conjunto padrão de funções para operações de entrada e saída, de forma a esconder as peculiaridades dos dispositivos da aplicação. Todos os \emph{drivers} de E/S passam a se conformar e a suportar este conjunto de funções, já que o objetivo é o de prover uma camada uniforme de E/S para as aplicações. 
 
-Para se alcançar estas operações de \emph{I/O} uniformemente no nível de aplicação, os seguintes procedimentos devem ser seguidos:
+Para se alcançar estas operações de E/S uniformemente no nível de aplicação, os seguintes procedimentos devem ser seguidos:
 
 \begin{enumerate}
-	\item Definir o conjunto de \emph{API}s do subsistema de \emph{I/O}.
+	\item Definir o conjunto de APIs do subsistema de E/S.
 	\item Implementar cada função do conjunto para o driver do dispositivo.
-	\item Exportar este conjunto de funções do driver do dispositivo para o subsistema de \emph{I/O}.
+	\item Exportar este conjunto de funções do driver do dispositivo para o subsistema de E/S.
 	\item Encarregar ao driver do dispositivo o prepara do mesmo para uso.
-	\item Carregar o dispositivo pelo driver do mesmo e informar o subsistema de \emph{I/O}.
+	\item Carregar o dispositivo pelo driver do mesmo e informar o subsistema de E/S.
 \end{enumerate}
 
-A \reffig{cap3_io_abstraction} ilustra como a camada de \emph{I/O} abstraí o dispositivo de hardware, garantindo a flexibilidade do sistema.
+A \reffig{cap3_io_abstraction} ilustra como a camada de E/S abstraí o dispositivo de hardware, garantindo a flexibilidade do sistema.
 
 \figura[Adaptado de:]{cap3_io_abstraction}{Camada de abstração entre o aplicativo e o dispositivo}{\textwidth}{qingli}
 
@@ -181,41 +181,41 @@ Segundo \citeonline{mos4}, um arquivo é uma coleção nomeada de informações 
 
 Os arquivos são utilizados para guardar informações referentes a dados ou programas. Arquivos de dados podem ser numéricos, alfabéticos, alfanuméricos ou binários. Eles podem também ser estruturados ou não. De maneira geral, um arquivo é uma sequência de bits, no qual o significado varia conforme o criador e usuário do arquivo.
 
-Existem diversos componentes capazes de persistirem estes dados, sendo alguns deles os: disco e fitas magnéticas, \emph{flash cards} e \emph{Compact Disks}. De forma que o sistema computacional possa utilizar estes dispositivos, o sistema operacional deve abstrair as propriedades físicas dos dispositivos de armazenagem e definir uma unidade lógica de armazenagem, capaz de armazenar e localizar facilmente os dados em forma de arquivos.
+Existem diversos componentes capazes de persistirem estes dados, sendo alguns deles discos e fitas magnéticas, \emph{flash cards} e \emph{Compact Disks}. Para que que o sistema computacional possa utilizar estes dispositivos, o SO deve abstrair as propriedades físicas dos dispositivos de armazenagem e definir uma unidade lógica de armazenagem, capaz de armazenar e localizar facilmente os dados em forma de arquivos.
 
-Um sistema de arquivos provê os meios para organizar os dados, de forma que eles possam ser armazenados, resgatados e atualizados, além de gerenciar o espaço disponível no dispositivo que o contém. Um sistema de arquivos organiza os dados de maneira eficiente e é otimizado para características especificas de um dispositivo \cite{file_system}.
+Um sistema de arquivos provê os meios para organizar os dados, de forma que eles possam ser armazenados, resgatados e atualizados, além de gerenciar o espaço disponível no dispositivo que o contém. Um sistema de arquivos organiza os dados de maneira eficiente e é otimizado para características específicas de um dispositivo \cite{file_system}.
 
 Internamente, um sistema de arquivos funciona de maneira similar a alocação dinâmica da memória principal, onde o sistema armazena informações adicionais sobre a área de dados, como seu tamanho e ponto de origem no dispositivo. Contudo, um sistema de arquivo oferece mais níveis de organização, afim de facilitar o encontro de informações posteriormente, como diretórios, ou ainda controle de permissões, para limitar o acesso de usuários. A \reffig{cap3_fs_directory} apresenta um modelo de organização de diretórios com controle de permissão.
 
 \figura[Adaptado de:]{cap3_fs_directory}{Modelo em árvore de diretórios por usuário}{7cm}{minix}
 
-A \reftab{fs_sample} apresenta algumas das características de sistemas de arquivos populares. \citeonline{filebenchmark4} contém um estudo mais detalhado de comparação entre sistemas de arquivos.
-
-\begin{tabela}{fs_sample}{Sistemas de Arquivos}
-	\begin{tabular}{|c|c|c|c|}
-		\hline 
-		Sistema de Arquivo & FAT32 & NTFS & ext4 \\ 
-		\hline \hline
-		Plataformas & Muitas & Windows & Linux \\ 
-		\hline 
-		Nome Máximo de Arquivo & 255 bytes & 255 bytes & 255 bytes \\ 
-		\hline 
-		Tamanho Máximo de Caminho & - & 32767 caract. & - \\ 
-		\hline 
-		Tamanho Máximo de Arquivo & 4 Gb & 16 EiB & 16 TiB \\ 
-		\hline 
-		Armazena o Dono do Arquivo & Não & Sim & Sim \\ 
-		\hline 
-		Permissões Posix & Não & Sim & Sim \\ 
-		\hline 
-	\end{tabular}
-\end{tabela}
+%A \reftab{fs_sample} apresenta algumas das características de sistemas de arquivos populares. \citeonline{filebenchmark4} contém um estudo mais detalhado de comparação entre sistemas de arquivos.
+%
+%\begin{tabela}{fs_sample}{Sistemas de Arquivos}
+%	\begin{tabular}{|c|c|c|c|}
+%		\hline 
+%		Sistema de Arquivo & FAT32 & NTFS & ext4 \\ 
+%		\hline \hline
+%		Plataformas & Muitas & Windows & Linux \\ 
+%		\hline 
+%		Nome Máximo de Arquivo & 255 bytes & 255 bytes & 255 bytes \\ 
+%		\hline 
+%		Tamanho Máximo de Caminho & - & 32767 caract. & - \\ 
+%		\hline 
+%		Tamanho Máximo de Arquivo & 4 Gb & 16 EiB & 16 TiB \\ 
+%		\hline 
+%		Armazena o Dono do Arquivo & Não & Sim & Sim \\ 
+%		\hline 
+%		Permissões Posix & Não & Sim & Sim \\ 
+%		\hline 
+%	\end{tabular}
+%\end{tabela}
 
 \section{Sistemas Embarcados}
 
 Um sistema embarcado é um sistema computacional cujo propósito é bem definido e especifico. Ele é geralmente conceituado para atender a uma situação particular, com hardware bem definido e, muitas vezes, imutável.
 
-Diferente de um sistema computacional convencional, como os utilizados em residencias (\emph{Desktops} e \emph{Laptops}), um sistema embarcado possuí recursos de hardware bem mais restritos. Por possuir um propósito bem especificado, o mesmo muitas vezes não requer tecnologia de ponta para executar sua tarefa, o que permite a criação de sistemas de baixo custo.
+Diferente de um sistema computacional convencional, como os \emph{Desktops} e \emph{Laptops}, um sistema embarcado possuí recursos de hardware bem mais restritos. Por ser projetado para um propósito específico, o mesmo muitas vezes não requer tecnologia de ponta para executar sua tarefa, o que permite a criação de sistemas de baixo custo.
 
 Um sistema embarcado pode ser composto, por exemplo, de sensores e atuadores, bem como uma central de processamento. Em veículos, um exemplo equivalente seria o dos sensores e atuadores para travamento das portas, bem como a central eletrônica responsável por sua operação. A \reffig{cap3_embedded_systems} demonstra diversos sistemas embarcados presentes em um automóvel.
 
@@ -225,11 +225,11 @@ Um sistema embarcado pode ser composto, por exemplo, de sensores e atuadores, be
 
 Segundo \citeonline{qingli}, uma aplicação de tempo-real é aquela que é composta por múltiplas tarefas independentes em execução, as quais competem pelo tempo de processamento em um processador.
 
-Um sistema de tempo-real pode ser definido como um sistema que responde a eventos externos em tempo hábil. Ou seja, onde o tempo de resposta é uma garantia do sistema. A \reffig{cap3_rtos_constraint} apresenta um apoio visual para este conceito, onde independente da entrada, há um tempo limite de resposta, o qual deverá sempre ser respeitado.
+Um sistema de tempo-real pode ser definido como um sistema que responde a eventos externos em tempo hábil. Ou seja, onde o tempo de resposta é uma garantia do sistema. A \reffig{cap3_rtos_constraint} ilustra o conceito de sistema de tempo real, onde independente da entrada, há um tempo limite de resposta, o qual deverá sempre ser respeitado.
 
 \figura[Adaptado de:]{cap3_rtos_constraint}{Resposta em Tempo-Real}{\textwidth}{qingli}
 
-Uma restrição temporal pode ser rígida ou flexível. Restrições rígidas causam uma falha do sistema quando não respeitadas, geralmente causando danos físicos ao equipamento e possível risco humano. Um sistema de restrição flexível não sofre consequências tão graves quando o mesmo falha, mas ainda assim pode causar invalidação do sistema ou de processos. Há exemplo, um veículo possui diversos sistemas embarcados, muitos dos quais possuem restrições temporais, tanto rígidas quanto flexíveis.
+Uma restrição temporal pode ser rígida ou flexível. Restrições rígidas causam uma falha do sistema quando não respeitadas, geralmente causando danos físicos ao equipamento e possível risco humano. Um sistema de restrição flexível não sofre consequências tão graves quando o mesmo falha, mas ainda assim pode causar invalidação do sistema ou de processos. Um veículo possui diversos sistemas embarcados, muitos dos quais possuem restrições temporais, tanto rígidas quanto flexíveis.
 
 \section{Estudos de Caso}
 
@@ -244,7 +244,7 @@ Dentre as características oferecidas pelo SO, podem-se destacar:
 	\item Escalonador de tarefas baseado em prioridades com \emph{Round Robin};
 	\item Ocupa pouco espaço da memória do microcontrolador;
 	\item Oferece recursos como semáforos, filas de mensagens e co-rotinas;
-	\item Timers e interrupções por softwares;
+	\item Timers e interrupções por softwares.
 \end{itemize}
 
 Sua interface é resumida a três arquivos de código fonte. Os demais arquivos atendem a adaptação para o hardware alvo.
@@ -255,7 +255,7 @@ Em desenvolvimento a mais de 12 anos, o FreeRTOS é o SOE mais utilizado no merc
 
 Conforme \citeonline{PICOS18}, o PICOS18 é considerado um kernel de tempo-real. Ele surgiu como uma implementação de um SOE para a arquitetura PIC18, utilizando o compilador C18 da Microchip\textsuperscript{\textregistered}.
 
-Embora descontinuado, seu destaque veio dele surgir como uma das primeiras soluções de código aberto para sistemas operacionais dedicados a automação veicular, apresentando uma implementação não-homologada da norma OSEK/VDX.
+Embora descontinuado, se destaca por ser uma das primeiras soluções de código aberto para sistemas operacionais dedicados a automação veicular, apresentando uma implementação não-homologada da norma OSEK/VDX.
 
 \subsection{Trampoline}
 

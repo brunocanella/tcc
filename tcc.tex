@@ -45,7 +45,7 @@
 \newcommand{\ABNTbibliographyname}{REFERÊNCIAS} % Necessário para abnTeX 0.8.2
 
 \newcommand{\figura}[5][Extraido de:]{
-\begin{figure}[htb]
+\begin{figure}[h!tb]
 	\centering
 	\caption{#3.}
 	\includegraphics[width=#4]{#2.png}
@@ -91,8 +91,8 @@
 \departamento[a]{} %TODO departamento de engenharia da computação?
 \curso[a]{Universidade Federal de Santa Catarina}
 \documento[o]{Trabalho\ de\ Conclusão\ de\ Curso} % [o] para dissertação [a] para tese
-\titulo{Sistema Operacional Veícular}
-\subtitulo{OpenAutOS} % Opcional
+\titulo{OpenAutOS}
+\subtitulo{Um Sistema Operacional Veícular} % Opcional
 \autor{Bruno Fontana Canella}
 \grau{Bacharel em Engenharia de Computação}
 \local{Araranguá} % Opcional (Florianópolis é o padrão)
@@ -119,11 +119,11 @@
 \epigrafe{Escrever um TCC é que nem fazer estrada. Depois que tá feita a base é só passar asfalto.}
 {(Anderson, 2016)}
 
-\textoResumo {Afim de padronizar o desenvolvimento de sistemas e dispositivos para veículos automotivos, foram criados padrões abertos, regidos pelas principais montadoras de veículos. Dentre estes padrões, foi estabelecido um para governar o desenvolvimento de sistemas operacionais, capazes de gerenciar os recursos eletrônicos de um veículo. A maioria das soluções existentes hoje no mercado, e que respeitam este padrão, são de código privado. Com o intuito de criar uma alternativa de qualidade comercial, este trabalho visa desenvolver, documentar e validar um sistema operacional automotivo de código aberto, conforme as normas estabelecidas pelo padrão \emph{AUTOSAR}.}
-\palavrasChave {Palavra-chave 1. Palavra-chave 2.  Palavra-chave 3. }
- 
+\textoResumo {Afim de padronizar o desenvolvimento de sistemas e dispositivos para veículos automotivos, foram criados padrões abertos, regidos pelas principais montadoras de veículos, as quais os batizaram como AUTOSAR. Dentre estes padrões, foi estabelecido um para governar o desenvolvimento de sistemas operacionais, capazes de gerenciar os recursos eletrônicos de um veículo. A maioria das soluções existentes hoje no mercado, e que respeitam este padrão, são proprietárias. Com o intuito de criar uma alternativa de qualidade comercial, este trabalho visa desenvolver, documentar e validar um sistema operacional automotivo de código aberto, nas normas estabelecidas pelo padrão AUTOSAR.}
+\palavrasChave {Automação Veicular, Sistema Operacional Embarcado, AUTOSAR, OpenAUTOS.}
+
 \textAbstract {botar no google translate, e é isso ai.}
-\keywords {Sistemas Operacionais, Sistemas Automotivos, AUTOSAR, Open Source.}
+\keywords {Operating Systems, Vehicle Automation, AUTOSAR, Open Source.}
 
 %----------------------------------------------------------------------
 % Início do documento                                
@@ -139,8 +139,8 @@
 		%{\large \ABNTautordata} \\[5cm]
 		\ABNTautordata \\[5cm]
 		
-		\tituloformat{\ABNTtitulodata} \\[1cm]
-		%\tituloformat{\subtitulodata}\\[1cm] Pra quem possui subtitulo
+		\tituloformat{\ABNTtitulodata}: \\
+		\tituloformat{\subtitulodata} \\[1cm]
 		
 		\hspace{.45\textwidth} % posicionando a minipage
 		\begin{minipage}{.5\textwidth}

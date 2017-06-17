@@ -28,14 +28,23 @@
 
 \usepackage{bibentry} % permite usar o comando nobibliography
 
-\usepackage{minted} % Sintaxe colorida
+\usepackage[newfloat]{minted} % Sintaxe colorida
 
 \usepackage{xparse} % Permite definir umas funções com mais recursos.
 
+\usepackage{amsmath} % Permite usar equation*
+
 %----------------------------------------------------------------------
 % comandos de customização dos pacotes
-\renewcommand\listingscaption{Algoritmo}
-% \renewcommand{\lstlistlistingname}{Lista de \lstlistingname s}% List of Listings -> List of Algorithms
+\renewcommand{\thelisting}{\arabic{listing}}
+\SetupFloatingEnvironment{listing}{name=Algoritmo}
+\captionsetup[listing]{position=above,skip=-10pt}
+\captionsetup[figure]{position=above,skip=2pt}
+\captionsetup[table]{position=above,skip=2pt}
+
+\DeclareFloatingEnvironment[name=Equação,listname={Lista de Equações}]{equacao}
+\renewcommand{\theequacao}{\arabic{equacao}}
+\captionsetup[equacao]{position=above,skip=0pt}
 
 \graphicspath{{figuras/}}
 
@@ -67,11 +76,23 @@
 	\end{table}
 }
 
+\newenvironment{algoritmo}[4][]{
+\VerbatimEnvironment
+\begin{listing}
+	\caption{#3.}
+	\label{alg:#2}
+	\centering
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,tabsize=4,fontsize=\footnotesize,#1]{#4}}{
+	\end{minted}
+\end{listing}
+}
+
 \newcommand{\reffig}[1]{Figura \ref{fig:#1}}
 \newcommand{\refalg}[1]{Algoritmo \ref{alg:#1}}
 \newcommand{\reftab}[1]{Tabela \ref{tab:#1}}
 \newcommand{\refcap}[1]{\footnote{vide tópico \ref{cap:#1}.}}
 \newcommand{\reftop}[1]{Seção \ref{cap:#1}}
+\newcommand{\refequ}[1]{Equação \ref{equ:#1}}
 
 \newcommand{\criarSigla}[3][]{%
 	\ifthenelse{\isempty{#1}}{%

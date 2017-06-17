@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{c+cp}{\PYGZsh{}if defined(PLATFORM) \PYGZam{}\PYGZam{}  PLATFORM == PIC18F25K80}
+\PYG{c+cp}{\PYGZsh{}include \PYGZdq{}platform/pic18f25k80/task\PYGZus{}context.h\PYGZdq{}}
+\PYG{c+cp}{\PYGZsh{}else}
+\PYG{c+cp}{\PYGZsh{}error Platform not defined!}
+\PYG{c+cp}{\PYGZsh{}endif}
+
+\PYG{c+cp}{\PYGZsh{}define SaveTask(TaskRef) PlatformSaveTask((TaskRef))}
+\end{Verbatim}

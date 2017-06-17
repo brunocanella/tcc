@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{n}{TASK}\PYG{p}{(}\PYG{n}{task1}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+	\PYG{k}{while}\PYG{p}{(} \PYG{n}{TRUE} \PYG{p}{)} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{// Allocate Resource}
+		\PYG{k}{if}\PYG{p}{(} \PYG{n}{GetResource}\PYG{p}{(} \PYG{n}{Resource1} \PYG{p}{)} \PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{BlinkLed}\PYG{p}{();}
+			\PYG{n}{ReleaseResource}\PYG{p}{(} \PYG{n}{Resource1} \PYG{p}{);}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{n}{Sleep}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+	\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

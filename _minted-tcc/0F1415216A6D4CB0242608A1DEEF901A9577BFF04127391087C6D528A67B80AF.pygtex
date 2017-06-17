@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{n}{CPU} \PYG{n}{PIC\PYGZus{}MASTER} \PYG{p}{\PYGZob{}}
+	\PYG{n}{OS} \PYG{n}{OpenAUTOS} \PYG{p}{\PYGZob{}}
+		\PYG{n}{STARTUPHOOK} \PYG{o}{=} \PYG{n}{TRUE}\PYG{p}{;}
+		\PYG{n}{PLATFORM} \PYG{o}{=} \PYG{n}{PIC18F25K80}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{};}
+
+	\PYG{n}{TASK} \PYG{n}{task1} \PYG{p}{\PYGZob{}}
+		\PYG{n}{PRIORITY} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{p}{;}
+		\PYG{n}{SCHEDULE} \PYG{o}{=} \PYG{n}{FULL}\PYG{p}{;}
+		\PYG{n}{ACTIVATION} \PYG{o}{=} \PYG{l+m+mi}{2}\PYG{p}{;}
+		\PYG{n}{AUTOSTART} \PYG{o}{=} \PYG{n}{FALSE}\PYG{p}{;}
+		\PYG{n}{RESOURCE} \PYG{o}{=} \PYG{n}{Resource1}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}} \PYG{l+s}{\PYGZdq{}Tarefa de Testes\PYGZdq{}}\PYG{p}{;}
+
+	\PYG{n}{RESOURCE} \PYG{n}{Resource1} \PYG{p}{\PYGZob{}}
+		\PYG{n}{RESOURCEPROPERTY} \PYG{o}{=} \PYG{n}{STANDARD}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{};}
+\PYG{p}{\PYGZcb{}} \PYG{l+s}{\PYGZdq{}Plataforma para testes\PYGZdq{}}\PYG{p}{;}
+\end{Verbatim}

@@ -1,46 +1,205 @@
 \chapter{OpenAUTOS}
 
-Este capítulo apresenta a proposta do SO OpenAUTOS, destacando as escolhas tanto do projeto do software bem como a arquitetura de hardware adotada.
+Este capítulo apresenta o SO OpenAUTOS, oferecendo uma visão geral sobre sua implementação, estrutura de arquivos, funcionamento do SO e sistemas implementados, destacando os algorítimo para troca de contexto, alocação de recursos nas tarefas e prevenção de deadlocks por prioridade-teto.
 
-\section{Proposta}
+\section{Implementação}
 
-O sistema OpenAUTOS é um SOE de código aberto, que busca atender a norma AUTOSAR SO, ou seja, realizar a implementação do sistema operacional proposto pelo padrão. Para tal, serão seguidas e respeitadas as guias e restrições definidas no relatório de especificações definidos em \citeonline{AUTOSAR:SOS}.
+A estratégia de implementação adotada para o OpenAUTOS, afim de que em um dado momento ele passe a conformar as normas do AUTOSAR, foi a de oferecer suporte as interfaces da norma do OSEK/VDX, na qual o AUTOSAR foi originado, já que elas também estão de acordo com o AUTOSAR OS.
 
-Por se tratar de um SO estático, não serão implementados gerenciadores de memória e sistemas de arquivos. Porém, isto implica que todas as tarefas, semáforos e demais objetos fornecidos pelo kernel sejam definidos em tempo de compilação. Segundo a norma, é obrigatório que um parser da linguagem OIL ou, alternativamente, \criarSigla[Linguagem de Marcação Extensível]{eXtensible Markup Language}{XML} seja fornecido, para que este faça a geração do arquivo de cabeçalho da linguagem C que será utilizado durante a compilação do SO. A \reffig{cap4_parser} ilustra este cenário.
+Até a presente data, o SO OpenAUTOS oferece suporte básico as sessões mais criticas de um SO, que seriam a declaração e instanciação dos componentes utilizados por ele, como tarefas e recursos, a troca de contexto entre as tarefas e um mecanismo para prevenção de deadlocks de sistema, alcançado através do algoritmo de prioridade-teto. O SO também conta com um parser para a linguagem OIL que, embora ainda não ofereça suporte a todas as instruções da linguagem, já se apresenta em um estado funcional.
 
-\figura[]{cap4_parser}{Geração do cabeçalho de configuração}{7cm}{}
+O SO ainda foi projetado pensando em atender a múltiplas plataformas de microcontroladores, abstraindo e interfaceando as chamadas de funções críticas ao sistema, enquanto que os códigos específicos para as plataformas foram separados e chamados por compilação condicional. A plataforma utilizada como base para realização das compilações foi o Linux, com o compiladores \emph{gcc}, versão 4.8.4, para compilações internas do SO e o compilador \emph{XC8} da Microchip Technology Inc., versão 1.37, para geração do código da plataforma PIC18F25K80.
 
-Na \reffig{cap4_arquitetura}, é apresentada uma lista dos módulos e objetos mais comuns em um SOE. O OpenAUTOS se propõe a implementar estes módulos, com exceção da alocação dinâmica de memória e sistema de arquivos pois, por se tratar de um SO estático, todas as alocações e definições deverão ser realizadas em tempo de compilação. Filas de mensagens e áreas de memória reservadas poderão ser definidas estaticamente.
+% Inserir mini-capitulo sobre multiplataforma
 
-\figura{cap4_arquitetura}{Módulos comuns a um SOE}{8cm}{}
+%Plataforma base e plataforma alvo.
 
-Em termos de escalonador, o sistema deverá oferecer suporte para as tarefas normais e estendidas do padrão. As tarefas normais fazem uso de um escalonador de prioridades com Round Robin. Já as tarefas estendidas fazem uso de \emph{tabelas de escalonamento}, as quais garantem que restrições temporais serão atendidas e que uma operação não será interrompida antes de sua conclusão \cite{AUTOSAR:SOS}.
+%sistema utilizou XC8 e declarou todas as variaveis usando stdint
 
-Segundo a norma \citeonline{AUTOSAR:SOS}, é necessário que a interface das funções sejam realizadas em C. Logo, está será a linguagem de implementação primária do projeto. Em seções críticas de performance, poderá ser utilizado a linguagem Assembly, mas nunca para a definição de métodos.
+\section{Estrutura de Arquivos} \label{cap:cap4_estrutura}
 
-\section{Arquitetura}
+A estruturação dos arquivos do OpenAUTOS foi inspirada no sistema SDVOS, buscando atender ao critério de que o código poderia ser facilmente portado para novas plataformas, além de fazer uma distinção e possível migração dos cabeçalhos do OSEK/VDX para o AUTOSAR. A \reffig{cap4_file_structure} apresenta um modelo das pastas do sistema.
 
-Devido a disponibilidade, bem como o suporte as linguagens escolhidas, serão utilizadas as placas FRDM-KL25Z da \emph{freescale}, com processador \emph{ARM Cortex-M0}, ilustrado em \reffig{cap4_hardware_freescale}. Com base neste hardware, a implementação do OpenAUTOS utilizará uma arquitetura de processador único, centralizando todas as responsabilidades do SO em uma única ECU.
+\figura{cap4_file_structure}{Estrutura de Arquivos do OpenAUTOS}{4cm}{}
 
-\figura{cap4_hardware_freescale}{FRDM-KL25Z}{7cm}{Freescale}
+A pasta raiz do OpenAUTOS contém um arquivo \emph{make}, chamado de Makefile, o qual é responsável por iniciar a sequência de compilação do programa.
 
-Para fins de simulações e demonstração, cada placa FRDM-KL25Z representará um sistema ou ECU de um veículo. Uma ECU será responsável por executar o SO OpenAUTOS, enquanto que as demais farão a manipulação de sistemas automotivos, como ABS, travamentos de portas, dentre outros, conforme ilustra a \reffig{cap4_arquitetura_comunicacao}
+O diretório \emph{app} representa a pasta do programa que irá executar no SO. Esta pasta deve conter dois arquivos, ambos escritos pelo usuário, descritos em mais detalhes na \reftop{cap4_utilizando_o_sistema}.
 
-\figura{cap4_arquitetura_comunicacao}{Comunicação entre ECUs e Sistemas}{7cm}{}
+Na pasta \emph{build} serão gerados os arquivos binários compilados, bem como a imagem do SO pronta para ser gravada na memória de programa do microcontrolador.
 
-Na comunicação entre os diferentes módulos eletrônicos serão utilizados os protocolos CAN e LIN. Será necessário o uso de dois pares de pinos TX/RX, um para cada protocolo. O protocolo LIN não precisa de nenhum tratamento especial, pois é baseado na UART. O procolo CAN, porém, não é disponibilizado nativamente. Sendo assim, serão utilizados \emph{transceivers} MPC2551 para comunicação entre ECUs.
+No diretório \emph{oiler} estão os fontes e executável do parser para linguagem OIL. Estes arquivos são automaticamente gerados e executados pelo comando make, no diretório raiz do OpenAUTOS. A \reftop{cap4_oiler} apresenta mais detalhes sobre sua implementação.
 
-A comunicação entre os diferentes módulos também deverá usar as normas do AUTOSAR para aplicativos, utilizando o interfaceamento definido na norma.
+Em \emph{so}, são encontrados os códigos-fonte referentes ao sistema operacional. Nela, estão contidos as estruturas de dados e funções que dão base para o funcionamento do SO. Também contém o arquivo de cabeçalho \emph{openautos.h}, que contém as declarações de todas as funções que podem ser chamadas pela interface OSEK/VDX. 
 
-\section{Cronograma}
+Na subpasta \emph{osek} estão as interfaces e funções previstas pela norma do OSEK/VDX. Estes arquivos foram assim estruturados para que fique distinguível os elementos que pertencem ao OSEK/VDX e os que, num futuro próximo, pertencerão ao AUTOSAR OS, que também possuirão seu próprio diretório.
 
-Com base no trabalho proposto, a Tabela \ref{tab:cap4_cronograma} propõe um cronograma para estudo e implementação do projeto.
+Finalmente, no diretório \emph{platform} estão contidos toda a parte não-portável do código. Cada plataforma adotada pelo projeto deverá conter aqui uma pasta com o nome da arquitetura alvo, a qual conterá o código responsável por executar uma determinada tarefa nesta arquitetura. Exemplos de instruções que são exclusivos a plataforma alvo são:
 
-\begin{table}[h!]
-	\centering
-	\caption{Cronograma.}
-	\begin{tabular}{c}
-		\includegraphics[width=\textwidth]{cap4_cronograma.png}		
-	\end{tabular}
-	\label{tab:cap4_cronograma}
-\end{table}
+\begin{itemize}
+	\item Algoritmos para troca de contexto;
+	\item Definição de algumas constantes\footnote{À exemplo, valores para indicar se uma porta atua como INPUT ou OUTPUT.};
+	\item Rotinas de inicialização da plataforma;
+	\item Rotina de interrupção;
+	\item Contador padrão.
+\end{itemize}
+
+Como desvantagem, esta estrutura permite que apenas um programa seja compilado por vez. Como sugestão, a pasta \emph{app} pode ser substituída por um atalho para a pasta que contenham os fontes do programa que se deseja compilar.
+
+Esta estrutura esta sujeita a adepções no futuro, principalmente quando o SO passar a oferecer mais funcionalidades.
+
+\section{Funcionamento do SO} \label{cap:cap4_utilizando_o_sistema}
+
+Conforme mencionado na \reftop{cap4_estrutura}, o OpenAUTOS requer que o usuário escreva dois arquivos na pasta \emph{app}. Estes arquivos são:
+
+\begin{itemize}
+	\item \textbf{program.oil}: É o arquivo de declarações e configurações dos recursos utilizados pelo SO, escrito de acordo com as normas da linguagem OIL. Um exemplo de arquivo OIL pode ser visto em \refalg{cap4_program_oil};
+	\item \textbf{program.d}: Este arquivo corresponde a implementação das rotinas das tarefas declaradas em \emph{program.oil}. Basicamente, envolve chamadas à macro TASK, definida nos cabeçalhos do OSEK/VDX. Um exemplo de um arquivo \emph{program.d} pode ser visto em \refalg{cap4_program_d}.
+\end{itemize}
+
+\begin{algoritmo}{cap4_program_oil}{Exemplo de arquivo \emph{program.oil}}{c}
+CPU PIC_MASTER {
+	OS OpenAUTOS {
+		STARTUPHOOK = TRUE;
+		PLATFORM = PIC18F25K80;
+	};
+	
+	TASK task1 {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 2;
+		AUTOSTART = FALSE;
+		RESOURCE = Resource1;
+	} "Tarefa de Testes";
+	
+	RESOURCE Resource1 {
+		RESOURCEPROPERTY = STANDARD;
+	};
+} "Plataforma para testes";
+\end{algoritmo}
+
+\begin{algoritmo}{cap4_program_d}{Exemplo de arquivo \emph{program.d}}{c}
+TASK(task1) {
+	while( TRUE ) {
+		// Allocate Resource
+		if( GetResource( Resource1 ) ) {
+			BlinkLed();
+			ReleaseResource( Resource1 );
+		}
+		Sleep(1000);
+	}	
+}
+\end{algoritmo}
+
+Uma vez que ambos os arquivos estejam devidamente escritos, basta que o usuário abra um terminal da plataforma base, navegue até a pasta raiz do OpenAUTOS e execute o comando \emph{make}, conforme ilustrado pela \reffig{cap4_make_terminal}, passando para o parâmetro PLATFORM o valor da plataforma desejada\footnote{No momento, o único valor suportado pelo OpenAUTOS é PIC18F25K80.}. Este comando executará os seguintes passos:
+
+\begin{enumerate}
+	\item Compilar os códigos-fonte do parser \emph{oiler};
+	\item Gerar o arquivo \emph{oiler.d} a partir do arquivo \emph{program.oil};
+	\item Combinar os arquivos \emph{program.d}, \emph{oiler.d} e \emph{main.d} em um unico arquivo \emph{main.c} no diretório \emph{os}. Uma ilustração deste processo pode ser vista na \reffig{cap4_oiler_merge};
+	\item Compilar os arquivos fontes da pasta \emph{os} em arquivos de objeto na pasta \emph{build};
+	\item Linkar os arquivos de objeto da pasta \emph{build} em um arquivo de imagem para a plataforma especificada, também localizado na pasta \emph{build}.
+\end{enumerate}
+
+\figura{cap4_make_terminal}{Comando Make pelo terminal}{10cm}{}
+
+\figura{cap4_oiler_merge}{Geração do arquivo \emph{main.c}}{10cm}{}
+
+Encerrado este processo, cabe ao usuário agora gravar a imagem gerada pelo OpenAUTOS na plataforma escolhida.
+
+\section{Sistemas Implementados}
+
+Como foi primeiramente apresentado, o projeto OpenAUTOS optou por iniciar sua implementação a partir da norma do OSEK/VDX que, apesar de ser um projeto descontinuado, representa uma base compatível com o AUTOSAR, além de possuir um nível de complexidade bem mais acessível para um projeto iniciante. Infelizmente, este conjunto de normas se provou bastante extenso para a realização no intervalo proposto e uma parte significativa dos recursos por ela oferecido não puderam ser implementados ainda.
+
+O trabalho focou unicamente nos documentos voltado a implementação do SO e da linguagem OIL, deixando para trabalhos futuros os documentos que falam sobre os protocolos de comunicação e tratamento de falhas.
+
+Em seu estado atual, o OpenAUTOS possuí um parser parcial para a linguagem OIL, funcionalidades para declaração de tarefas, trocas de contexto e alocação de recursos com uso de prioridade-teto. Na sequencia, estes tópicos serão abordados em maiores detalhes, explicando suas limitações conforme a norma, quando estas existirem.
+
+\subsection{Oiler: parser para linguagem OIL} \label{cap:cap4_oiler}
+
+O parser para linguagem OIL, chamado de oiler, foi escrito utilizando as bibliotecas \emph{flex} e \emph{lemon}\footnote{Desenvolvido por \citeonline{lemon} como parte do gerenciador de banco de dados SQLite} para linguagem C. Para sua utilização, é necessário que a plataforma Linux base tenha instalado a biblioteca \emph{flex}. Os fontes da biblioteca \emph{lemon} já estão inclusos com o projeto.
+
+O parser oiler reconhece já todas as configurações para tarefas e recursos do OSEK/VDX, respectivamente declarados em arquivos OIL como TASK e RESOURCE. Infelizmente, algumas destas configurações ainda não são devidamente tratadas no OpenAUTOS, sendo elas:
+
+\begin{itemize}
+	\item Em TASK, a opção SCHEDULE é sempre tratada como FULL, caso exista mais de uma tarefa com a mesma prioridade. Para tarefas marcadas como $SCHEDULE = NON$, estas tarefas não deveriam ser interrompidas pelo escalonamento por tempo;
+	\item Em RESOURCE, a opção RESOURCEPROPERTY está sendo sempre tratada como STANDARD. É necessário ainda oferecer suporte aos valores LINKED e INTERNAL.
+\end{itemize}
+
+\subsection{Constantes, Tipos e Compilação Condicional}
+
+Para manter a portabilidade do sistema, o OpenAUTOS fez amplo uso de constantes externas, as quais são definidas automaticamente no arquivo gerado \emph{os/main.c}. Estas variaveis são responsáveis por especificar o tamanho de arrays globais ou outras constantes utilizadas pelo sistema.
+
+Como o tipo primitivo \emph{int} não possui tamanho definido na linguagem C, o OpenAUTOS faz uso da biblioteca \emph{stdint.h}, quando disponível\footnote{Em casos onde ela não se encontra disponível, é possível a utilização de \emph{typedef}s para estabelecer os tamanhos padrões.}. Desta forma, sempre é especificado o tamanho real da variável, buscando-se sempre utilizar o menor tamanho possível para cada variável. Conforme pode ser observado também no \refalg{cap4_task_structure}, membros de uma estrutura sempre tem seu tipo especificado por um \emph{typedef}, afim de facilitar adaptações para novas plataformas no futuro.
+
+Para seleção dos códigos da plataforma alvo, utilizou-se o mecanismo de compilação condicional da linguagem c. O \refalg{cap4_conditional_compiling} demonstra os casos mais comuns onde este recurso foi utilizado. Em síntese, ele é usado para fazer a seleção de trechos de código e o renomeamento de funções definidas nos fontes da plataforma.
+
+\begin{algoritmo}{cap4_conditional compiling}{Compilação condicional}{c}
+#if defined(PLATFORM) &&  PLATFORM == PIC18F25K80
+#include "platform/pic18f25k80/task_context.h"
+#else
+#error Platform not defined!
+#endif
+
+#define SaveTask(TaskRef) PlatformSaveTask((TaskRef))
+\end{algoritmo}
+
+\subsection{Tarefas}
+
+Para realizar o gerenciamento das tarefas, foi criada uma estrutura de dados e funções de manipulação \emph{os/task.h}. Como pode ser visto no \refalg{cap4_task_structure}, esta estrutura armazena informações sobre a tarefa decorrentes do arquivo de configuração OIL, bem como outras estruturas internas para controle da tarefa, como a da troca de contexto e rotina de callback.
+
+\begin{algoritmo}{cap4_task_structure}{Estrutura de dados interna para tarefas}{c}
+typedef struct STaskDataType {
+	TaskType id;
+	TaskPriorityType priority;
+	TaskPriorityType priority_base;
+	TaskStateType state;
+	TaskContextType context;
+	TaskCallbackType callback;
+	struct STaskDataType* next_task_same_priority;
+	ResourceDataType resources;
+} TaskDataType;
+\end{algoritmo}
+
+A estrutura também mantém um ponteiro para uma outra tarefa de mesma prioridade, para que o algoritmo de escalonamento por tempo saiba qual a próxima tarefa a ser executada\footnote{Importante ressaltar que o escalonamento por tempo só ocorre quando duas ou mais tarefas de mesma e maior prioridade se encontram no estado READY.}, conforme na \reffig{cap4_task_next}. Uma alternativa a ela seria uma pilha de ordenação para execução das tarefas ativas de mesma prioridade. Porém, dada a natureza de alocação estática para todos os recursos do sistema, o modelo pensado originalmente resultaria em um maior uso de memória, que é um recurso geralmente escasso para sistemas embarcados.
+
+\figura{cap4_task_next}{Lista encadeada para tarefas de mesma prioridade}{7cm}{}
+
+O sistema oferece rotinas de manipulação para esta e outras estruturas. A exemplo, tem-se a rotina de inicialização de tarefas, chamada de \emph{InitializeTaskData}. Estas rotinas internas nunca devem ser utilizadas pelo usuário do sistema, porém. Elas são chamadas internamente pelo próprio SO, que pode utiliza-las, também, nos arquivos gerados pelo sistema, como em \emph{main.c}.
+
+As rotinas de manipulação de tarefas disponíveis para o usuário estão todas definidas em \emph{os/osek/tasks.h}, seguindo as interfaces presentes na norma do OSEK/VDX\footnote{O cabeçalho \emph{openautos.h}, que inclui todas as declarações de rotinas da norma OSEK/VDX já é inclusa automaticamente no arquivo gerado pelo \emph{oiler}.}.
+
+Para atender a natureza estática do OSEK/VDX, todas as tarefas, incluindo uma tarefa para quando o sistema estiver ocioso, chamada de IDLE, são declaras por meio de um array global. O cálculo para o tamanho deste array pode ser visto na Equação 1. Basicamente, cada ativação de um mesmo tipo de tarefa é tratado como uma entidade separada.
+
+\begin{equacao}[!ht]
+	\label{foo}
+	\caption{Calculo do total de tarefas do sistema.}
+	\begin{equation*}
+	TASKS\_TOTAL = \sum\limits_{i=1}^{n} task[i].activations) + 1
+	\end{equation*}
+\end{equacao}
+
+A partir deste array global de tarefas, são criadas referencias por ponteiros, os quais servem para realizar a manipulação destas tarefas em funções do sistema.
+
+\subsection{Troca de Contexto}
+
+A troca de contexto das tarefas é sempre realizada em um trecho de código específico para a plataforma alvo. Segundo a norma do OSEK/VDX, uma troca de contexto pode ocorrer apenas nas seguintes ocasiões:
+
+\begin{itemize}
+	\item Quando a tarefa em execução não for interrompivel, o SO só realizará uma troca de contexto quando esta tarefa em execução realizar a chamada a uma das seguintes funções: ActivateTask, TerminateTask, ChainTask, Schedule, GetResource, ReleaseResource;
+	\item Quando a tarefa em execução for interrompivel e existir outra tarefa de mesma prioridade que esteja no estado READY, o OpenAUTOS fará a troca de contexto entre estas tarefas a cada intervalo de $1ms$. Este tempo é escolhido arbritariamente pelo SO, já que a norma do OSEK/VDX não estipula um valor mínimo/máximo para o mesmo.
+\end{itemize}
+
+Na plataforma do PIC18F25K80, sempre que há uma troca de contexto, os dados que são salvo pelo sistema são os registradores de trabalho, seleção de banco de memória e status do microcontrolador, além da pilha de memória.
+
+As rotinas que realizam esta troca de contexto são: SaveTaskContext e LoadTaskContext. Elas são um dos poucos trechos do código que utilizam explicitamente instruções em assembly, devido a um bug do compilador XC8, no qual o assembly gerado pela linguagem C não produzia um código funcional.
+
+\subsection{Alocação de Recursos e Elevação de Prioridade}
+
+Conforme especificado pelas normas do OSEK/VDX, uma tarefa pode alocar um recurso utilizando a rotina GetResource. Tarefas que conseguem alocar este recurso tem sua prioridade elevada para a prioridade do recurso, que é sempre superior a de todas as tarefas que podem aloca-lo, mas inferior a de tarefas cuja prioridade é maior que a do recurso e que não podem aloca-lo. A \reffig{cap4_resource_alloc} demonstra um exemplo de uma tarefa \textbf{Task1b}, a qual em um primeiro momento aloca um recurso e tem sua prioridade elevada, para logo em seguida, quando o recurso é liberado, ter sua prioridade resetada ao seu valor original, representado na estrutura para tarefas como \emph{priority\_base}.
+
+\figura{cap4_resource_alloc}{Elevação de prioridade}{7cm}{}
+
+Ainda segundo a norma, caso uma tarefa possa alocar mais de um recurso, este deve ser feito na ordem de menos prioritario para mais prioritario\footnote{Um recurso de menor prioridade não pode ser alocado após a alocação de um recurso com maior prioridade}. A liberação destes recursos deve ocorrer na ordem inversa a alocada. Este controle é alcançado pelo uso de uma pilha de recursos.
+
+Ainda de acord com a \reffig{cap4_resource_alloc}, mesmo que uma tarefa aloque um recurso, ela ainda poderá ser interrompida por uma tarefa de maior prioridade, caso esta entre em seu estado de prontidão.

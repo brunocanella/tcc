@@ -1,0 +1,3 @@
+[submodule "OpenAUTOS"]
+	path = OpenAUTOS
+	url = https://github.com/brunocanella/OpenAUTOS.git

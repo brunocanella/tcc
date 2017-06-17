@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{typedef} \PYG{k}{struct} \PYG{n}{STaskDataType} \PYG{p}{\PYGZob{}}
+	\PYG{n}{TaskType} \PYG{n}{id}\PYG{p}{;}
+	\PYG{n}{TaskPriorityType} \PYG{n}{priority}\PYG{p}{;}
+	\PYG{n}{TaskPriorityType} \PYG{n}{priority\PYGZus{}base}\PYG{p}{;}
+	\PYG{n}{TaskStateType} \PYG{n}{state}\PYG{p}{;}
+	\PYG{n}{TaskContextType} \PYG{n}{context}\PYG{p}{;}
+	\PYG{n}{TaskCallbackType} \PYG{n}{callback}\PYG{p}{;}
+	\PYG{k}{struct} \PYG{n}{STaskDataType}\PYG{o}{*} \PYG{n}{next\PYGZus{}task\PYGZus{}same\PYGZus{}priority}\PYG{p}{;}
+	\PYG{n}{ResourceDataType} \PYG{n}{resources}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}} \PYG{n}{TaskDataType}\PYG{p}{;}
+\end{Verbatim}

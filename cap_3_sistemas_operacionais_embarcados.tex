@@ -10,7 +10,7 @@ O objetivo de um SO é o de gerenciar os recursos de um sistema computacional, t
 
 Segundo \citeonline{osc9}, um SO pode oferecer um número variável de serviços. Os serviços do SO que estão sempre presentes na memória principal fazem parte do kernel, que é descrito na \reftop{os_kernel}. 
 
-Para que os aplicativos tenham acesso aos serviços oferecidos sem que haja um comprometimento de sua integridade, o SO oferece rotinas de acesso aos serviços. A quantidade de serviços vária conforme implementação do SO, sendo o mínimo oferecido as operações de gerenciamento de processos, memória e \criarSigla{Entrada e Saída}{E/S}. A \reffig{cap3_os_services} apresenta uma hierarquia de chamada dos serviços do SO.
+Para que os aplicativos tenham acesso aos serviços oferecidos sem que haja um comprometimento de sua integridade, o SO oferece rotinas de acesso aos serviços. A quantidade de serviços varia conforme implementação do SO, sendo o mínimo oferecido as operações de gerenciamento de processos, memória e \criarSigla{Entrada e Saída}{E/S}. A \reffig{cap3_os_services} apresenta uma hierarquia de chamada dos serviços do SO.
 
 \figura[Adaptado de:]{cap3_os_services}{Serviços de um SO}{6cm}{osc9}
 
@@ -55,7 +55,7 @@ Uma tarefa pode assumir um número de estados pré-determinado, os quais variam 
 
 \paragraph{Fibras}
 
-Uma variante das tarefas são as fibras, que são threads de execução leves e não-preemptivas, normalmente utilizadas para executar porções de código responsáveis pelos drivers de dispositivos  e outros trabalhos de desempenho crítico \cite{rocket}.
+Uma variante das tarefas são as fibras, que são threads de execução leves e não-preemptivas, normalmente utilizadas para executar porções de código responsáveis pelos drivers de dispositivos e outras atividades consideradas de desempenho crítico \cite{rocket}.
 
 \subsubsection{Escalonadores de Tarefas}
 
@@ -140,14 +140,14 @@ Um sistema de memória deve ser capaz de executar eficientemente as seguintes op
 \begin{itemize}
 	\item Determinar se há um bloco livre que comporta a alocação requisitada;
 	\item Manter as informações internas atualizadas;
-	\item Mesclar um ou mais blocos, assim que estes forem liberados;
+	\item Mesclar um ou mais blocos, assim que estes forem liberados.
 \end{itemize}
 
 A estrutura da tabela de alocação é a chave para um gerenciamento de memória eficaz. Esta estrutura gera um \emph{overhead}, já que ocupa espaço de memória que, outrora, poderia ser utilizado para armazenar dados dos programas. Minimizar a tabela de alocações e maximizar o desempenho das operações anteriores é um dos principais desafios no gerenciamento de memórias.
 
 \subsection{Subsistemas de Entrada/Saída}
 
-Em sistemas embarcados, um sistema de entrada/saída são a combinação dos dispositivos de E/S, \emph{drivers} de dispositivos associados e subsistemas de E/S.
+Em sistemas embarcados, um sistema de entrada/saída é a combinação dos dispositivos de E/S com os \emph{drivers} de dispositivos associados e subsistemas de E/S.
 
 O propósito de um subsistema de E/S é o de esconder do \emph{kernel} as informações especificas de um dispositivo, assim como do desenvolvedor de aplicações, e prover uma método de acesso uniforme aos periféricos de E/S do sistema embarcado.
 
@@ -164,14 +164,14 @@ Esta camada de abstração define um conjunto padrão de funções para operaç�
 Para se alcançar estas operações de E/S uniformemente no nível de aplicação, os seguintes procedimentos devem ser seguidos:
 
 \begin{enumerate}
-	\item Definir o conjunto de APIs do subsistema de E/S.
-	\item Implementar cada função do conjunto para o driver do dispositivo.
-	\item Exportar este conjunto de funções do driver do dispositivo para o subsistema de E/S.
-	\item Encarregar ao driver do dispositivo o prepara do mesmo para uso.
+	\item Definir o conjunto de APIs do subsistema de E/S;
+	\item Implementar cada função do conjunto para o driver do dispositivo;
+	\item Exportar este conjunto de funções do driver do dispositivo para o subsistema de E/S;
+	\item Encarregar ao driver do dispositivo o prepara do mesmo para uso;
 	\item Carregar o dispositivo pelo driver do mesmo e informar o subsistema de E/S.
 \end{enumerate}
 
-A \reffig{cap3_io_abstraction} ilustra como a camada de E/S abstraí o dispositivo de hardware, garantindo a flexibilidade do sistema.
+A \reffig{cap3_io_abstraction} ilustra como a camada de E/S abstrai o dispositivo de hardware, garantindo a flexibilidade do sistema.
 
 \figura[Adaptado de:]{cap3_io_abstraction}{Camada de abstração entre o aplicativo e o dispositivo}{\textwidth}{qingli}
 
@@ -213,11 +213,11 @@ Internamente, um sistema de arquivos funciona de maneira similar a alocação di
 
 \section{Sistemas Embarcados}
 
-Um sistema embarcado é um sistema computacional cujo propósito é bem definido e especifico. Ele é geralmente conceituado para atender a uma situação particular, com hardware bem definido e, muitas vezes, imutável.
+Um sistema embarcado é um sistema computacional cujo propósito é bem definido e específico. Ele é geralmente conceituado para atender a uma situação particular, com hardware bem definido e, muitas vezes, imutável.
 
 Diferente de um sistema computacional convencional, como os \emph{Desktops} e \emph{Laptops}, um sistema embarcado possuí recursos de hardware bem mais restritos. Por ser projetado para um propósito específico, o mesmo muitas vezes não requer tecnologia de ponta para executar sua tarefa, o que permite a criação de sistemas de baixo custo.
 
-Um sistema embarcado pode ser composto, por exemplo, de sensores e atuadores, bem como uma central de processamento. Em veículos, um exemplo equivalente seria o dos sensores e atuadores para travamento das portas, bem como a central eletrônica responsável por sua operação. A \reffig{cap3_embedded_systems} demonstra diversos sistemas embarcados presentes em um automóvel.
+Um sistema embarcado pode ser composto, por exemplo, de sensores e atuadores, bem como uma central de processamento. Em veículos, um exemplo equivalente seria o dos sensores e atuadores para travamento das portas, bem como a central eletrônica responsável por sua operação. A \reffig{cap3_embedded_systems} ilustra diversos sistemas embarcados presentes em um automóvel.
 
 \figura{cap3_embedded_systems}{Sistemas embarcados em um veículo}{\textwidth}{embedded_systems}
 
@@ -279,13 +279,13 @@ O foco do SO é voltado para hardwares de baixo custo, com especificações de:
 	\item \textbf{Arquitetura}: entre 16 ou 32 bits;
 	\item \textbf{Clock}: até 20MHz;
 	\item \textbf{RAM}: até 32KB;
-	\item \textbf{ROM}:	até 128KB;	
+	\item \textbf{ROM}:	até 128KB.
 \end{itemize}
 
 Sua implementação oferece suporte a modelos regido temporalmente e regidos por eventos, ambos necessários à premeditabilidade em tempo-real. Também oferece suporte para computações regidas por eventos.
 
 \subsection{SDVOS}
 
-Desenvolvido em 2015 pelo Dr. Yu Li, durante seu tempo livre, o SDVOS é um SO de código aberto, multi-plataforma e que atende ao padrão do OSEK/VDX, além de oferecer os recursos de tabelas de agendamento e temporizadores por software do AUTOSAR \cite{sdvos}.
+Desenvolvido em 2015 pelo Dr. Yu Li, o SDVOS é um SO de código aberto, multi-plataforma e que atende ao padrão do OSEK/VDX, além de oferecer os recursos de tabelas de agendamento e temporizadores por software do AUTOSAR \cite{sdvos}.
 
-Atualmente, ele oferece suporte a múltiplas arquiteturas de microcontroladores e processadores, incluindo o AVR5 e ARMv7-M. Ele também oferece suporte a execução como um processo em sistemas operacionais Linux.
+Atualmente ele oferece suporte a múltiplas arquiteturas de microcontroladores e processadores, incluindo o AVR5 e ARMv7-M. Ele também pode ser executado como um processo em sistemas operacionais Linux.

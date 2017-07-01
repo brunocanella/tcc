@@ -20,6 +20,8 @@
 \usepackage{caption} % colocar textos em figuras
 \usepackage{subfigure}
 
+%\usepackage{hyperref} % colocar hyperlinks no texto
+
 \usepackage{xifthen} % deixa fazer uns if-then-else mutcho loko
 
 \usepackage[brazil]{babel}  % usados para arrumar os caracteres em português
@@ -34,17 +36,22 @@
 
 \usepackage{amsmath} % Permite usar equation*
 
+\usepackage{mdframed}
+
 %----------------------------------------------------------------------
 % comandos de customização dos pacotes
 \renewcommand{\thelisting}{\arabic{listing}}
-\SetupFloatingEnvironment{listing}{name=Algoritmo}
-\captionsetup[listing]{position=above,skip=-10pt}
+\SetupFloatingEnvironment{listing}{name=Algoritmo,listname={Lista de Algoritmos},within=none}
+\captionsetup[listing]{position=above,skip=2pt}
 \captionsetup[figure]{position=above,skip=2pt}
 \captionsetup[table]{position=above,skip=2pt}
 
-\DeclareFloatingEnvironment[name=Equação,listname={Lista de Equações}]{equacao}
+\DeclareFloatingEnvironment[name=Equação,listname={Lista de Equações}]{equacao} % \listof...
 \renewcommand{\theequacao}{\arabic{equacao}}
 \captionsetup[equacao]{position=above,skip=0pt}
+
+\DeclareFloatingEnvironment[name=Apêndice,listname={Apêndices},within=none]{lstappendix}
+%\renewcommand{\thelstappendix}{\arabic{listing}}
 
 \graphicspath{{figuras/}}
 
@@ -78,17 +85,39 @@
 
 \newenvironment{algoritmo}[4][]{
 \VerbatimEnvironment
-\begin{listing}
-	\caption{#3.}
+\begin{mdframed}[linecolor=black,topline=false,bottomline=false,leftline=false,rightline=false,backgroundcolor=white]
+	\captionof{listing}{#3.}
 	\label{alg:#2}
-	\centering
-	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,tabsize=4,fontsize=\footnotesize,#1]{#4}}{
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,tabsize=4,fontsize=\footnotesize,breaklines=true,#1]{#4}}{
 	\end{minted}
-\end{listing}
+\end{mdframed}
+}
+
+%\newenvironment{algoritmo}[4][]{
+%	\VerbatimEnvironment
+%	\begin{listing}
+%		\caption{#3.}
+%		\label{alg:#2}
+%		\centering
+%		\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,tabsize=4,fontsize=\footnotesize,breaklines=true,#1]{#4}}{
+%		\end{minted}
+%	\end{listing}
+%}
+
+\newenvironment{apendiceAlgoritmo}[4][]{
+	\VerbatimEnvironment
+	\begin{lstappendix}
+		\caption{#3.}
+		\label{ape:#2}
+		\centering
+		\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,tabsize=4,fontsize=\footnotesize,#1]{#4}}{
+		\end{minted}
+	\end{lstappendix}
 }
 
 \newcommand{\reffig}[1]{Figura \ref{fig:#1}}
 \newcommand{\refalg}[1]{Algoritmo \ref{alg:#1}}
+\newcommand{\refape}[1]{Apêndice \ref{ape:#1}}
 \newcommand{\reftab}[1]{Tabela \ref{tab:#1}}
 \newcommand{\refcap}[1]{\footnote{vide tópico \ref{cap:#1}.}}
 \newcommand{\reftop}[1]{Seção \ref{cap:#1}}
@@ -96,10 +125,18 @@
 
 \newcommand{\criarSigla}[3][]{%
 	\ifthenelse{\isempty{#1}}{%
-		#2 - #3\sigla{#3}{#2}%
+		#2 (#3)\sigla{#3}{#2}%
 	}{%
-		\emph{#2} - #3\sigla{#3}{\emph{#2}}\footnote{Traduzido como: #1.}%
+		\emph{#2} (#3)\sigla{#3}{\emph{#2}}\footnote{Traduzido como: #1.}%
 	}%
+}
+
+\newcommand*\justify{%
+	\fontdimen2\font=0.4em% interword space
+	\fontdimen3\font=0.2em% interword stretch
+	\fontdimen4\font=0.1em% interword shrink
+	\fontdimen7\font=0.1em% extra space
+	\hyphenchar\font=`\-% allowing hyphenation
 }
 
 %----------------------------------------------------------------------
@@ -117,34 +154,48 @@
 \autor{Bruno Fontana Canella}
 \grau{Bacharel em Engenharia de Computação}
 \local{Araranguá} % Opcional (Florianópolis é o padrão)
-\data{04}{dezembro}{2016}
+\data{04}{Julho}{2017}
 \coordenador[Coordenador\\Universidade Federal de Santa Catarina]{Prof. Dr. Anderson Luiz Fernandes Perez}
 \orientador[Orientador\\Universidade Federal de Santa Catarina]{Prof. Dr. Anderson Luiz Fernandes Perez}
 %\coorientador[Coorientador\\Universidade ...]{Prof. Dr.}
 
-\numerodemembrosnabanca{3} % Isso decide se haverá uma folha adicional
-\orientadornabanca{sim} % Se faz parte da banca definir como sim
+\numerodemembrosnabanca{2} % Isso decide se haverá uma folha adicional
+\orientadornabanca{não} % Se faz parte da banca definir como sim
 \coorientadornabanca{não} % Se faz parte da banca definir como sim
-\bancaMembroA{Primeiro membro\\Universidade ...} %Nome do presidente da banca
-\bancaMembroB{Segundo membro\\Universidade ...}      % Nome do membro da Banca
-\bancaMembroC{Terceiro membro\\Universidade ...}     % Nome do membro da Banca
-\bancaMembroD{Quarto membro\\Universidade ...}       % Nome do membro da Banca
+\bancaMembroA{Prof. Dr. Anderson Luiz Fernandes Perez\\Universidade Federal de Santa Catarina} %Nome do presidente da banca
+\bancaMembroB{Prof. Dr. Fábio Rodrigues De La Rocha\\Universidade Federal de Santa Catarina}      % Nome do membro da Banca
+\bancaMembroC{Prof. Dr. Marcelo Daniel Berejuck\\Universidade ...}     % Nome do membro da Banca
+%\bancaMembroD{Quarto membro\\Universidade ...}       % Nome do membro da Banca
 %\bancaMembroE{Quinto membro\\Universidade ...}       % Nome do membro da Banca
 %\bancaMembroF{Sexto membro\\Universidade ...}        % Nome do membro da Banca
 %\bancaMembroG{Sétimo membro\\Universidade ...}       % Nome do membro da Banca
 
-\dedicatoria{Este trabalho é dedicado aos meus colegas de classe e aos meus queridos pais.}
+\dedicatoria{Dedico este trabalho ao meu orientador, Anderson Luiz Fernandes Perez, a todos os amigos que fiz durante meu período de graduação na UFSC Araranguá, incluindo alunos, docentes e funcionários em geral, e a minha família.}
 
-\agradecimento{Eu queria mandar um beijo pro meu pai, pra minha mãe e especialmente pra você Xuxa.}
+\agradecimento{Gostaria de começar prestando meus agradecimentos a dois alunos e amigos do curso de Engenharia da Computação da UFSC Araranguá: Alan Kunz Cechinel e Thiago Dal Pont, sem os quais minha jornada até a entrega do TCC e graduação teriam sido bem mais árduas e demoradas. Por todas as tarde me ensinando, pacientemente, os conteúdos de difícil compreensão do curso, bem como nas ajudas nos trabalhos e pela amizade em geral, deixo aqui o meu muito obrigado.
 
-\epigrafe{Escrever um TCC é que nem fazer estrada. Depois que tá feita a base é só passar asfalto.}
-{(Anderson, 2016)}
+Gostaria também de agradecer formalmente ao professor Anderson Luiz Fernandes Perez por todo o esforço, compreensão e incentivo na produção deste trabalho de conclusão de curso. Não fosse pelo seu encorajamento, este trabalho seria algo bem mais simples e menos desafiador do que meu esforço e dedicação poderiam alcançar. 
 
-\textoResumo {Afim de padronizar o desenvolvimento de sistemas e dispositivos para veículos automotivos, foram criados padrões abertos, regidos pelas principais montadoras de veículos, as quais os batizaram como AUTOSAR. Dentre estes padrões, foi estabelecido um para governar o desenvolvimento de sistemas operacionais, capazes de gerenciar os recursos eletrônicos de um veículo. A maioria das soluções existentes hoje no mercado, e que respeitam este padrão, são proprietárias. Com o intuito de criar uma alternativa de qualidade comercial, este trabalho visa desenvolver, documentar e validar um sistema operacional automotivo de código aberto, nas normas estabelecidas pelo padrão AUTOSAR.}
+A minha família, que em nenhum momento duvidou das minhas capacidades e que sempre acreditou que eu terminaria o TCC sem reprovar nenhuma vez, dessa vez, e que também não ficou pegando no meu pé por causa do TCC da faculdade passada.
+
+A todas as pessoas do Laboratório de Automação e Robótica Móvel (LARM), do qual fiz parte, e que conseguiu sempre manter uma atmosfera acolhedora e focada no aprendizado e desenvolvimento do campus e do curso.
+
+E por fim, mas não menos importante, a todas as amizades que eu fiz durante este período da minha vida aqui na UFSC Araranguá.}
+
+\epigrafe{Escrever um TCC é que nem fazer estrada. Depois que tá feita a base é só passar asfalto.}{(Anderson, 2016)}
+% "knowledge is power, and I like power" - Cobra Bubbles - Lilo & Stitch
+
+\textoResumo {
+	Com a quantidade cada vez maior de dispositivos eletrônicos sendo agregados aos veículos automotivos e, por consequência, de ECUs para gerência-los, tornou-se necessário a criação de padrões de comportamento e comunicação para estas centrais, afim de garantir que diferentes fabricantes pudessem desenvolver soluções veiculares intercambiáveis, sem que se preocupassem com estes pontos de integração.
+	Como resultado da padronização surgiram padrões tanto para o desenvolvimento de hardware quanto para o de software, sendo que atualmente o padrão AUTOSAR é o mais utilizado pela indústria automotiva.
+	Devido a maioria das soluções existentes hoje no mercado, que respeitam este padrão, serem proprietárias, este trabalho propõe o desenvolvimento de um sistema operacional de qualidade comercial e código aberto, baseado nestas mesmas normas, e que possa ser utilizada como referencia de aprendizagem e, até mesmo, como uma alternativa para a programação de ECUs automotivas.}
 \palavrasChave {Automação Veicular, Sistema Operacional Embarcado, AUTOSAR, OpenAUTOS.}
 
-\textAbstract {botar no google translate, e é isso ai.}
-\keywords {Operating Systems, Vehicle Automation, AUTOSAR, Open Source.}
+\textAbstract {
+	Due to the increasing amount of electronic devices being added to automotive vehicles and, by consequence, of ECUs to manage them, it became necessary to create behavioral and communication standards for these centrals in order to ensure that different manufacturers could develop interchangeable vehicle solutions without having to worry about these points of integration.
+	As a result of standardization, standards have emerged for both hardware and software development, and today AUTOSAR standard is the one most used by the automotive industry.	
+	Due to the majority of the existing solutions in the market that respect this standard being proprietary, this thesis proposes the development of a commercial quality and open source operating system, based on those same standards, and that can be used as a learning reference and even as an alternative in the development of automotive ECUs.}
+\keywords {Vehicle Automation, Embedded Operating Systems, AUTOSAR, OpenAUTOS.}
 
 %----------------------------------------------------------------------
 % Início do documento                                
@@ -180,16 +231,27 @@
 \end{titlepage}
 
 %\folhaaprovacao
-%\paginadedicatoria
-%\paginaagradecimento
-%\paginaepigrafe
+\paginadedicatoria
+\paginaagradecimento
+\paginaepigrafe
 \paginaresumo
-%\paginaabstract
+\paginaabstract
 %\pretextuais % Substitui todos os elementos pre-textuais acima
 \listadefiguras % as listas dependem da necessidade do usuário
 \listadetabelas 
 \listadeabreviaturas
 %\listadesimbolos
+%\listoflisting
+{%
+	\renewcommand{\figurename}{}%
+	\let\oldnumberline\numberline%
+	\renewcommand{\numberline}{\listingname~\oldnumberline}%
+	\listoflisting%
+}
+%{%
+%	\renewcommand{\figurename}{}%
+%	\listoflstappendix%
+%}
 \sumario
 
 %--------------------------------------------------------
@@ -209,6 +271,10 @@
 
 \include{cap_4_openautos}
 
+\include{cap_5_resultados}
+
+\include{cap_6_consideracoes_finais}
+
 %--------------------------------------------------------
 %Referências
 
@@ -217,10 +283,12 @@
 
 %-------------------------\textsl{}-------------------------------
 % Elementos pós-textuais
+\include{apendice}
 %\apendice
 %\chapter{Exemplificando um Apêndice}
 %Texto do Apêndice aqui. 
 
+\include{anexo}
 %\anexo
 %\chapter{Exemplificando um Anexo}
 %Texto do anexo aqui.

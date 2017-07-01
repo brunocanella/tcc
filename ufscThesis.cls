@@ -49,7 +49,7 @@
 %\renewcommand{\normalsize}{\fontsize{10.5pt}{12.5pt}\selectfont}
 %---------------------------------------------------------------------------
 \newlength{\espacosumario}
-\setlength{\espacosumario}{3.3em}
+\setlength{\espacosumario}{4em}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Substituicao e criacao de comandos relacionados ao ABNTex
@@ -356,7 +356,7 @@
 \newcommand{\sigla}{\abreviatura}
 \newcommand{\l@sig}[2]{
        \vskip -1em
-       \leftskip -4.5em
+       \leftskip -6.0em
        \rightskip 1.6em
        \parfillskip -\rightskip
        \parindent 0em

@@ -1,0 +1,373 @@
+\apendice
+\chapter{Algoritmos dos Testes de Validação do OpenAUTOS} \label{ape:capA_validacao}
+
+\begin{algoritmo}{cap5_scheduler_p_program}{Algoritmo do escalonador por prioridade}{c}
+TASK( task_init ) {
+	TRISB = 0x00; // Output Lower Bits
+	LATB = 0x00;
+	
+	ChainTask( task_start );
+}
+#define _XTAL_FREQ 64000000
+TASK( task_rb0 ) {
+	LATBbits.LATB0 = 1;
+	__delay_ms(1);
+	ChainTask(task_start);	
+}
+TASK( task_rb1 ) {
+	LATBbits.LATB1 = 1;
+	__delay_ms(1);
+	TerminateTask();
+}
+TASK( task_rb2 ) {
+	LATBbits.LATB2 = 1;
+	__delay_ms(1);
+	TerminateTask();
+}
+TASK( task_start ) {
+	LATB = 0;
+	__delay_ms(1);
+	ActivateTask( task_rb0 );
+	ActivateTask( task_rb1 );
+	ActivateTask( task_rb2 );
+	TerminateTask();
+}
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_p_oil}{Configuração OIL do escalonador por prioridade}{c}
+OIL_VERSION = "2.5" "DESC_OIL_VERSION";
+
+CPU PIC18F25K80 {
+	OS OpenAUTOS {
+		STATUS = EXTENDED;
+		STARTUPHOOK = TRUE;
+		ERRORHOOK = TRUE;
+		SHUTDOWNHOOK = FALSE;
+		PRETASKHOOK = FALSE;
+		POSTTASKHOOK = FALSE;
+		USEGETSERVICEID = TRUE;
+		USEPARAMETERACCESS = TRUE;
+		USERESSCHEDULER = TRUE;
+	} "DESC_OS";
+	
+	TASK task_rb0 {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb1 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb2 {
+		PRIORITY = 3;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_start {
+		PRIORITY = 5;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_init {
+		PRIORITY = 254;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = TRUE {
+			APPMODE = AppMode0;
+		};
+	};	
+};
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_rr_program}{Algoritmo do escalonador por \emph{Round-Robin}}{c}
+TASK( task_init ) {
+	TRISB = 0x00; // Output Lower Bits
+	LATB = 0x00;
+	
+	ActivateTask( task_rb0 );
+	ActivateTask( task_rb1 );
+	ActivateTask( task_rb2 );
+	ActivateTask( task_off );
+	TerminateTask();
+}
+
+TASK( task_rb0 ) {
+	while( TRUE ) {
+		LATBbits.LATB0 = 1;
+	}
+}
+
+TASK( task_rb1 ) {
+	while( TRUE ) {
+		LATBbits.LATB1 = 1;
+	}
+}
+
+TASK( task_rb2 ) {
+	while( TRUE ) {
+		LATBbits.LATB2 = 1;
+	}
+}
+
+TASK( task_off ) {	
+	while( TRUE ) {
+		LATB = 0;
+	}
+}
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_rr_oil}{Configuração OIL do escalonador por \emph{Round-Robin}}{c}
+OIL_VERSION = "2.5" "DESC_OIL_VERSION";
+
+CPU PIC18F25K80 {
+	OS OpenAUTOS {
+		STATUS = EXTENDED;
+		STARTUPHOOK = TRUE;
+		ERRORHOOK = TRUE;
+		SHUTDOWNHOOK = FALSE;
+		PRETASKHOOK = FALSE;
+		POSTTASKHOOK = FALSE;
+		USEGETSERVICEID = TRUE;
+		USEPARAMETERACCESS = TRUE;
+		USERESSCHEDULER = TRUE;
+	} "DESC_OS";
+	
+	TASK task_rb0 {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb1 {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb2 {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_off {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_init {
+		PRIORITY = 254;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = TRUE {
+			APPMODE = AppMode0;
+		};
+	};	
+};
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_prr_program}{Algoritmo do escalonador por prioridade e \emph{Round-Robin}}{c}
+#include <stdint.h>
+
+#define _XTAL_FREQ 64000000
+
+void delay_s( uint8_t s ) {
+	while( s > 0 ) {
+		s--;
+		for( uint8_t i = 0; i < 100; i++ ) {
+			__delay_ms(10);
+		}
+	}
+}
+
+TASK( task_init ) {
+	TRISB = 0x00; // Output Lower Bits
+	LATB = 0x00;
+	
+	while( TRUE ) {
+		ActivateTask( task_start );		
+	}
+}
+
+TASK( task_start ) {		
+	ActivateTask( task_rb0 );
+	ActivateTask( task_rb1 );
+	ActivateTask( task_rb2 );	
+	LATB = 0;
+	TerminateTask();
+}
+
+TASK( task_rb0 ) {
+	LATBbits.LATB0 = 1;
+	delay_s(2);
+	TerminateTask();
+}
+
+TASK( task_rb1 ) {
+	LATBbits.LATB1 = 1;
+	delay_s(2);
+	TerminateTask();
+}
+
+TASK( task_rb2 ) {
+	LATBbits.LATB2 = 1;
+	delay_s(2);
+	TerminateTask();
+}
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_prr_oil}{Configuração OIL do escalonador por prioridade e \emph{Round-Robin}}{c}
+OIL_VERSION = "2.5" "DESC_OIL_VERSION";
+
+CPU PIC18F25K80 {
+	OS OpenAUTOS {
+		STATUS = EXTENDED;
+		STARTUPHOOK = TRUE;
+		ERRORHOOK = TRUE;
+		SHUTDOWNHOOK = FALSE;
+		PRETASKHOOK = FALSE;
+		POSTTASKHOOK = FALSE;
+		USEGETSERVICEID = TRUE;
+		USEPARAMETERACCESS = TRUE;
+		USERESSCHEDULER = TRUE;
+	} "DESC_OS";
+	
+	TASK task_rb0 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb1 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb2 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_start {
+		PRIORITY = 3;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_init {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = TRUE {
+			APPMODE = AppMode0;
+		};
+	};	
+};
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_res_program}{Algoritmo da alocação de recurso e prioridade-teto}{c}
+#include <stdint.h>
+
+#define _XTAL_FREQ 64000000
+
+void delay_s( uint8_t s ) {
+	while( s > 0 ) {
+		s--;
+		for( uint8_t i = 0; i < 100; i++ ) {
+			__delay_ms(10);
+		}
+	}
+}
+
+TASK( task_init ) {
+	TRISB = 0x00; // Output Lower Bits
+	LATB = 0x00;
+	
+	while( TRUE ) {
+		GetResource( res_a );
+		ActivateTask( task_rb0 );
+		ActivateTask( task_rb1 );
+		ActivateTask( task_rb2 );
+		LATB = 0;
+		delay_s(1);
+		ReleaseResource( res_a );
+	}
+}
+
+TASK( task_rb0 ) {
+	LATBbits.LATB0 = 1;
+	delay_s(1);
+	TerminateTask();
+}
+
+TASK( task_rb1 ) {
+	LATBbits.LATB1 = 1;
+	delay_s(1);
+	TerminateTask();
+}
+
+TASK( task_rb2 ) {
+	LATBbits.LATB2 = 1;
+	delay_s(1);
+	TerminateTask();
+}
+\end{algoritmo}
+
+\begin{algoritmo}{cap5_scheduler_res_oil}{Configuração OIL da alocação de recurso e prioridade-teto}{c}
+OIL_VERSION = "2.5" "DESC_OIL_VERSION";
+
+CPU PIC18F25K80 {
+	OS OpenAUTOS {
+		STATUS = EXTENDED;
+		STARTUPHOOK = TRUE;
+		ERRORHOOK = TRUE;
+		SHUTDOWNHOOK = FALSE;
+		PRETASKHOOK = FALSE;
+		POSTTASKHOOK = FALSE;
+		USEGETSERVICEID = TRUE;
+		USEPARAMETERACCESS = TRUE;
+		USERESSCHEDULER = TRUE;
+	} "DESC_OS";
+	
+	TASK task_rb0 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb1 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	TASK task_rb2 {
+		PRIORITY = 2;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+	};
+	
+	TASK task_init {
+		PRIORITY = 1;
+		SCHEDULE = FULL;
+		ACTIVATION = 1;
+		AUTOSTART = TRUE {
+			APPMODE = AppMode0;
+		};
+		RESOURCE = res_a;
+	};
+	RESOURCE res_a {
+		RESOURCEPROPERTY = STANDARD;
+	};
+};
+\end{algoritmo}

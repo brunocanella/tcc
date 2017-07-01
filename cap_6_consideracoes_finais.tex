@@ -1,0 +1,27 @@
+\chapter{Considerações Finais}
+
+O desenvolvimento de um sistema operacional embarcado é uma tarefa extensa, desafiadora e complexa, tendo em vista a quantidade funcionalidades que este deve oferecer, bem como a estabilidade, desempenho, portabilidade, dentre vários outros aspectos possíveis.
+
+Desenvolver um SOE que visa atender a um conjunto de normas como as do OSEK/VDX e AUTOSAR apresentou-se um desafio ainda maior do que o que era originalmente esperado, tamanha a complexidade do sistema proposto por elas.
+
+Embora o trabalho tenha apresentado sucesso no desenvolvimento parcial de um SOE baseado nestas normas, existem ainda diversos módulos e funcionalidades que precisam serem implementadas para que o SOE se adeque totalmente as normas.
+
+Este trabalho tem sua importância marcada como o inicio do SOE OpenAUTOS que, no momento, oferece uma estrutura preparada para o desenvolvimento em múltiplas plataformas de micro-controladores, um compilador para a linguagem OIL, sistemas para o gerenciamento de tarefas, trocas de contexto e alocação de recursos, bem como uma base de código para a implementação das demais funcionalidades.
+
+Embora todas estas funcionalidades tenham sido testadas e validadas conforme especifica a norma, há ainda bastante espaço para melhorias, pois muitas das funções e estruturas de dados utilizadas foram implementadas sem revisões de otimização ou um planejamento de longo prazo, com o intuito de deixar o OpenAUTOS em um ponto usável o mais cedo possível, para que a partir dali ele evoluísse para um sistema mais complexo.
+
+Espera-se que o OpenAUTOS continue a evoluir, mesmo com a conclusão deste trabalho, e que, eventualmente, ele venha a se tornar uma referência no mercado de sistemas embarcados automobilísticos, tanto como uma ferramenta de ensino como em usabilidade. Para isso, seu código está disponível no repositório online GitHub, sobre o endereço \url{https://github.com/brunocanella/OpenAUTOS}.
+
+\section{Propostas para Trabalhos Futuros}
+
+Neste seção são listadas algumas propostas como trabalhos futuros que visam estender e melhorar o SOE OpenAUTOS:
+
+\begin{enumerate}
+	\item Implementar os módulos restantes para a conclusão do SO, conforme a norma do OSEK/VDX;
+	\item Implementar as funcionalidades de SO acrescentada pelas normas do AUTOSAR;
+	\item Realizar \emph{benchmarks} comparativos com outras soluções em SOE disponiveis;
+	\item Fazer o porte do SOE OpenAUTOS para outros microcontroladores;
+	\item Otimizar o espaço de memória utilizado pelo SO, principalmente quanto ao aproveitamento dos espaços nos bancos de memória dos microcontroladores PIC18F;
+	\item Iniciar o desenvolvimento dos modulos complementares ao SOE, como a \criarSigla{Run-Time Environment}{RTE} do AUTOSAR, ou ainda as normas de comunicação do OSEK-COM;
+	\item Desenvolver um projeto veícular que utilize como SOE o OpenAUTOS.
+\end{enumerate}

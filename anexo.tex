@@ -1,0 +1,628 @@
+\anexo
+\chapter{OpenAUTOS API: OSEK/VDX}
+
+\begin{algoritmo}{ane_openautos_api_osek_hook}{Interfaces do OSEK/VDX - Rotinas de Hooks}{c}
+/**
+* @brief This hook routine is called by the operating system at the end of a system service which returns StatusType not equal E_OK. It is called before returning to the task level.
+* @brief This hook routine is called when an alarm expires and an error is detected during task activation or event setting.
+* @brief The ErrorHook is not called, if a system service called from ErrorHook does not return E_OK as status value. Any error by calling of system services from the ErrorHook can only be detected by evaluating the status value.
+*
+* @remark See chapter 11.1 for general description of hook routines.
+*
+* @param[in] Error The Error occurred.
+*/
+void ErrorHook( StatusType Error );
+
+/**
+* This hook routine is called by the operating system before executing a new task, but after the transition of the task to the running state (to allow evaluation of the TaskID by GetTaskID).
+* 
+* @remark See chapter 11.1 for general description of hook routines.
+*/
+void PreTaskHook( void );
+
+/**
+* This hook routine is called by the operating system after executing the current task, but before leaving the task's running state (to allow evaluation of the TaskID by GetTaskID).
+*
+* @remark See chapter 11.1 for general description of hook routines.
+*/
+void PostTaskHook( void );
+
+/**
+* This hook routine is called by the operating system at the end of the operating system initialisation and before the scheduler is running. At this time the application can initialise device drivers etc.
+*
+* @remark See chapter 11.1 for general description of hook routines.
+*/
+void StartupHook( void );
+
+/**
+* This hook routine is called by the operating system when the OS service ShutdownOS has been called. This routine is called during the operating system shut down.
+*
+* @remark ShutdownHook is a hook routine for user defined shutdown functionality, see chapter 11.4.
+*
+* @param[in] Error Error occurred
+*/
+void ShutdownHook( StatusType Error );
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_osek_int}{Interfaces do OSEK/VDX - Rotinas de Interrupção}{c}
+/**
+* This service restores the state saved by DisableAllInterrupts.
+* @remark The service may be called from an ISR category 1 and category 2 and from the task level, but not from hook routines.
+* @remark This service is a counterpart of DisableAllInterrupts service, which has to be called before, and its aim is the completion of the critical section of code. No API service calls are allowed within this critical section.
+* @remark The implementation should adapt this service to the target hardware providing a minimum overhead. Usually, this service enables recognition of interrupts by the central processing unit.
+*/
+void EnableAllInterrupts( void );
+
+/**
+* This service disables all interrupts for which the hardware supports disabling. The state before is saved for the EnableAllInterrupts call.
+* 
+* @remark The service may be called from an ISR category 1 and category 2 and from the task level, but not from hook routines.
+* @remark This service is intended to start a critical section of the code. 
+* @remark This section shall be finished by calling the EnableAllInterrupts service. No API service calls are allowed within this critical section.
+* @remark The implementation should adapt this service to the target hardware providing a minimum overhead. Usually, this service disables recognition of interrupts by the central processing unit.
+* @remark Note that this service does not support nesting. If nesting is needed for critical sections e.g: for libraries SuspendOSInterrupts/ResumeOSInterrupts or SuspendAllInterrupt/ResumeAllInterrupts should be used.
+*/
+void DisableAllInterrupts( void );
+
+
+/**
+* This service restores the recognition status of all interrupts saved by the SuspendAllInterrupts service.
+* 
+* @remark The service may be called from an ISR category 1 and category 2, from alarm-callbacks and from the task level, but not from all hook routines.
+* @remark This service is the counterpart of SuspendAllInterrupts service, which has to have been called before, and its aim is the completion of the critical section of code. No API service calls beside SuspendAllInterrupts/ResumeAllInterrupts pairs and SuspendOSInterrupts/ResumeOSInterrupts pairs are allowed within this critical section.
+* @remark The implementation should adapt this service to the target hardware providing a minimum overhead. 
+* @remark SuspendAllInterrupts/ResumeAllInterrupts can be nested. In case of nesting pairs of the calls SuspendAllInterrupts and ResumeAllInterrupts the interrupt recognition status saved by the first call of SuspendAllInterrupts is restored by the last call of the ResumeAllInterrupts service.
+*/
+void ResumeAllInterrupts( void );
+
+/**
+* This service saves the recognition status of all interrupts and disables all interrupts for which the hardware supports disabling.
+* @remark The service may be called from an ISR category 1 and category 2, from alarm-callbacks and from the task level, but not from all hook routines.
+* @remark This service is intended to protect a critical section of code from interruptions of any kind. This section shall be finished by calling the ResumeAllInterrupts service. No API service calls beside SuspendAllInterrupts/ResumeAllInterrupts pairs and SuspendOSInterrupts/ResumeOSInterrupts pairs are allowed within this critical section.
+* @remark The implementation should adapt this service to the target hardware providing a minimum overhead.
+*/
+void SuspendAllInterrupts( void );
+
+/**
+* This service restores the recognition status of interrupts saved by the SuspendOSInterrupts service.
+* 
+* @remark The service may be called from an ISR category 1 and category 2 and from the task level, but not from hook routines.
+* @remark This service is the counterpart of SuspendOSInterrupts service, which has to have been called before, and its aim is the completion of the critical section of code. No API service calls beside SuspendAllInterrupts/ResumeAllInterrupts pairs and SuspendOSInterrupts/ResumeOSInterrupts pairs are allowed within this critical section.
+* @remark The implementation should adapt this service to the target hardware providing a minimum overhead.
+* @remark SuspendOSInterrupts/ResumeOSInterrupts can be nested. In case of nesting pairs of the calls SuspendOSInterrupts and ResumeOSInterrupts the interrupt recognition status saved by the first call of SuspendOSInterrupts is restored by the last call of the ResumeOSInterrupts service.
+*/
+void ResumeOSInterrupts( void );
+
+/**
+* This service saves the recognition status of interrupts of category 2 and disables the recognition of these interrupts.
+* @remark The service may be called from an ISR and from the task level, but not from hook routines.
+* @remark This service is intended to protect a critical section of code. This section shall be finished by calling the ResumeOSInterrupts service. No API service calls beside SuspendAllInterrupts/ResumeAllInterrupts pairs and SuspendOSInterrupts/ResumeOSInterrupts pairs are allowed within this critical section.
+* @remark The implementation should adapt this service to the target hardware providing a minimum overhead.
+* @remark It is intended only to disable interrupts of category 2. However, if this is not possible in an efficient way more interrupts may be disabled.
+*/
+void SuspendOSInterrupts( void );
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_osek_os}{Interfaces do OSEK/VDX - Rotinas de SO}{c}
+/**
+* This service returns the current application mode. It may be used to write mode dependent code.
+* 
+* @remark See chapter 5 for a general description of application modes.
+* @remark Allowed for task, ISR and all hook routines.
+*
+* @return The current application mode.
+* 
+* @remark [Conformance] BCC1, BCC2, ECC1, ECC2
+*/
+AppModeType GetActiveApplicationMode( void );
+
+/**
+* The user can call this system service to start the operating system in a specific mode, see chapter 5, Application modes.
+*
+* @remark Only allowed outside of the operating system, therefore implementation specific restrictions may apply. See also chapter 11.3, System start-up, especially with respect to systems where OSEK and OSEKtime coexist. This call does not need to return.
+*
+* @param[in] Mode The application mode to start the OS.
+* 
+* @remark [Conformance] BCC1, BCC2, ECC1, ECC2
+*/
+void StartOS( AppModeType Mode );
+
+/**
+* @brief The user can call this system service to abort the overall system (e.g. emergency off). The operating system also calls this function internally, if it has reached an undefined internal state and is no longer ready to run.
+* @brief If a ShutdownHook is configured the hook routine ShutdownHook is always called (with <Error> as argument) before shutting down the operating system. If ShutdownHook returns, further behaviour of ShutdownOS is implementation specific.
+* @brief In case of a system where OSEK OS and OSEKtime OS coexist, ShutdownHook has to return.
+* @brief <Error> needs to be a valid error code supported by OSEK OS. In case of a system where OSEK OS and OSEKtime OS coexist, <Error> might also be a value accepted by OSEKtime OS. In this case, if enabled by an OSEKtime configuration parameter, OSEKtime OS will be shut down after OSEK OS shutdown.
+*
+* @remark After this service the operating system is shut down.
+* @remark Allowed at task level, ISR level, in ErrorHook and StartupHook, and also called internally by the operating system.
+* @remark If the operating system calls ShutdownOS it never uses E_OK as the passed parameter value.
+*
+* @param[in]  Error  The error
+*/
+void ShutdownOS( StatusType Error );
+\end{algoritmo}
+	
+\begin{algoritmo}{ane_openautos_api_osek_res}{Interfaces do OSEK/VDX - Rotinas de Recursos}{c}
+/**
+* DeclareResource serves as an external declaration of a resource. The function and use of this service are similar to that of the external declaration of variables.
+*
+* @param[in] ResourceIdentifier Resource identifier (Duh).
+*/
+#define DeclareResource( ResourceIdentifier ) extern ResourceType ##ResourceIdentifier;
+
+/**
+* This call serves to enter critical sections in the code that are assigned to the resource referenced by ResID. A critical section shall always be left using ReleaseResource.
+*
+* @remark The OSEK priority ceiling protocol for resource management is described in chapter 8.5.
+* @remark Nested resource occupation is only allowed if the inner critical sections are completely executed within the surrounding critical section (strictly stacked, see chapter 8.2, Restrictions when using resources). Nested occupation of one and the same resource is also forbidden!
+* @remark It is recommended that corresponding calls to GetResource and ReleaseResource appear within the same function.
+* @remark It is not allowed to use services which are points of rescheduling for non preemptable tasks (TerminateTask, ChainTask, Schedule and WaitEvent, see chapter 4.6.2) in critical sections. Additionally, critical sections are to be left before completion of an interrupt service routine.
+* @remark Generally speaking, critical sections should be short.
+* @remark The service may be called from an ISR and from task level (see Figure 12-1).
+*
+* @param[in] ResID Reference to resource
+*
+* @return [Standard] No error, E_OK.
+* @return [Extended] Resource <ResID> is invalid, E_OS_ID.
+* @return [Extended] Attempt to get a resource which is already occupied by any task or ISR, or the statically assigned priority of the calling task or interrupt routine is higher than the calculated ceiling priority, E_OS_ACCESS
+*/
+StatusType GetResource( ResourceType ResID );
+
+/**
+* ReleaseResource is the counterpart of GetResource and serves to leave critical sections in the code that are assigned to the resource referenced by ResID.
+*
+* @param[in] ResID Reference to resource.
+*
+* @remark For information on nesting conditions, see particularities of GetResource.
+* @remark The service may be called from an ISR and from task level (see Figure 12-1).
+* 
+* @return [Standard] No error, E_OK.
+* @return [Extended] Resource <ResID> is invalid, E_OS_ID.
+* @return Attempt to release a resource which is not occupied by any task or ISR, or another resource shall be released before, E_OS_NOFUNC.
+* @return Attempt to release a resource which has a lower ceiling priority than the statically assigned priority of the calling task or interrupt routine, E_OS_ACCESS.
+*/
+StatusType ReleaseResource( ResourceType ResID );
+\end{algoritmo}
+	
+\begin{algoritmo}{ane_openautos_api_osek_task}{Interfaces do OSEK/VDX - Rotinas de Escalonamento}{c}
+/**
+* DeclareTask serves as an external declaration of a task. The
+* function and use of this service are similar to that of the external
+* declaration of variables.
+*/
+#define DeclareTask( TaskName, TaskID ) const TaskType TaskType_##TaskName = (TaskID)
+
+#define TASK( TaskName ) void TASK_FUNC_##TaskName(void)
+
+////////////////////////////////////////////////////////////////////////////////
+//  System Services
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+* The task TaskID is transferred from the suspended state into the ready state. The operating system ensures that the task code is being executed from the first statement.
+*
+* @remark When an extended task is transferred from suspended state into ready state all its events are cleared.
+*
+* @remark The service may be called from interrupt level and from task level (see Figure 12-1). Rescheduling after the call to ActivateTask depends on the place it is called from (ISR, non preemptable task, preemptable task).
+*
+* If E_OS_LIMIT is returned the activation is ignored.
+*
+* @param TaskID[in] Task reference
+* 
+* @return [Standard] No error, E_OK.
+* @return [Extended] Too many task activations of TaskID, E_OS_LIMIT
+* @return [Extended] Task TaskID is invalid, E_OS_ID
+* 
+* @remark [Conformance] BCC1, BCC2, ECC1, ECC2
+*/
+StatusType ActivateTask( TaskType TaskID );
+
+/**
+* This service causes the termination of the calling task. The calling task is transferred from the running state into the suspended state.
+*
+* @remark An internal resource assigned to the calling task is automatically released. Other resources occupied by the task shall have been released before the call to TerminateTask. If a resource is still occupied in standard status the behaviour is undefined.
+* @remark If the call was successful, TerminateTask does not return to the call level and the status can not be evaluated. If the version with extended status is used, the service returns in case of error, and provides a status which can be evaluated in the application. If the service TerminateTask is called successfully, it enforces a rescheduling.
+* @remark Ending a task function without call to TerminateTask or ChainTask is strictly forbidden and may leave the system in an undefined state.
+*
+* @return Task still occupies resources, E_OS_RESOURCE
+* @return Call at interrupt level, E_OS_CALLEVEL
+*/
+StatusType TerminateTask( void );
+
+/**
+* This service causes the termination of the calling task. After termination of the calling task a succeeding task <TaskID> is activated. Using this service, it ensures that the succeeding task starts to run at the earliest after the calling task has been terminated.
+*
+* @remark If the succeeding task is identical with the current task, this does not result in multiple requests. The task is not transferred to the suspended state, but will immediately become ready again.
+* @remark An internal resource assigned to the calling task is automatically released, even if the succeeding task is identical with the current task. Other resources occupied by the calling shall have been released before ChainTask is called. If a resource is still occupied in standard status the behaviour is undefined.
+* @remark If called successfully, ChainTask does not return to the call level and the status can not be evaluated.
+* @remark In case of error the service returns to the calling task and provides a status which can then be evaluated in the application.
+* @remark If the service ChainTask is called successfully, this enforces a rescheduling.
+* @remark Ending a task function without call to TerminateTask or ChainTask is strictly forbidden and may leave the system in an undefined state.
+* @remark If E_OS_LIMIT is returned the activation is ignored. When an extended task is transferred from suspended state into ready state all its events are cleared.
+*
+* @param TaskID[in] Reference to the sequential succeeding task to be activated.
+*
+* @return [Standard] No return to call level.
+* @return [Standard] Too many task activations of <TaskID>, E_OS_LIMIT.
+* @return [Extended] Task <TaskID> is invalid, E_OS_ID.
+* @return [Extended] Calling task still occupies resources, E_OS_RESOURCE.
+* @return [Extended] Call at interrupt level, E_OS_CALLEVEL.
+*/
+StatusType ChainTask( TaskType TaskID );
+
+/**
+* GetTaskID returns the information about the TaskID of the task which is currently running.
+* 
+* @remark Allowed on task level, ISR level and in several hook routines (see Figure 12-1).
+* @remark This service is intended to be used by library functions and hook routines.
+* @remark If <TaskID> can’t be evaluated (no task currently running), the service returns INVALID_TASK as TaskType.
+*
+* @param TaskID[out] Reference to the task which is currently running.
+*
+* @return [Standard] No error, E_OK
+* @return [Extended] No error, E_OK
+*/
+StatusType GetTaskID( TaskRefType TaskID );
+
+/**
+* Returns the state of a task (running, ready, waiting, suspended) at the time 
+* of calling GetTaskState.
+*
+* @remark The service may be called from interrupt service routines, task level, and some hook routines (see Figure 12-1).
+* @remark When a call is made from a task in a full preemptive system, the result may already be incorrect at the time of evaluation.
+* @remark When the service is called for a task, which is activated more than once, the state is set to running if any instance of the task is running.
+*
+* @param TaskID[in] Task reference
+* @param State[out] Reference to the state of the task TaskID
+*
+* @return [Standard] No error, E_OK
+* @return [Extended] Task TaskID is invalid, E_OS_ID
+*/
+StatusType GetTaskState( TaskType TaskID, TaskStateRefType State );
+
+/**
+* If a higher-priority task is ready, the internal resource of the task is released, the current task is put into the ready state, its context is saved and the higher-priority task is executed. Otherwise the calling task is continued.
+*
+* @remark Rescheduling only takes place if the task an internal resource is assigned to the calling task during system generation. For these tasks, Schedule enables a processor assignment to other tasks with lower or equal priority than the ceiling priority of the internal resource and higher priority than the priority of the calling task in application-specific locations. When returning from Schedule, the internal resource has been taken again. This service has no influence on tasks with no internal resource assigned (preemptable tasks).
+*
+* @return [Standard] No error, E_OK.
+* @return [Extended] Call at interrupt level, E_OS_CALLEVEL
+* @return [Extended] Calling task occupies resources, E_OS_RESOURCE
+*/
+StatusType Schedule( void );
+\end{algoritmo}
+
+\chapter{OpenAUTOS API: Rotinas de Uso Interno do SO}
+
+\begin{algoritmo}{ane_openautos_api_os_resources}{Interfaces do OpenAUTOS - Rotinas de Recursos}{c}
+/**Type for the Resource Id*/
+typedef uint8_t ResourceType;
+/**Type for the Resource ceiling Priority*/
+typedef uint8_t ResourceDataPriorityType;
+
+/**
+* @brief The structure that stores data about the resource. Also serves as a linked list node
+* 
+* @remark Due to an odd bug with the xc8 1.37 compiler, where he does not allow it to declare an extern const
+* as the size of an array (altough it works sometimes), I changed the model to use "movable" nodes with linked lists.
+* 
+* Basically, every Task and ISR has a variable which is used as the start of its own linked list. There is also a
+* global variable (g_resources) which is the main linked list for resources.
+* 
+* Initially, all resources are allocated to the g_resources linked list. When a Task or ISR requests a resource,
+* it is moved from g_resources to the linked list in the Task/ISR. When this resource is released, it is put back
+* in the g_resources list.
+*/
+typedef struct SResourceDataType {
+	ResourceType id;                    ///< The unique identifier for this resource.
+	ResourceDataPriorityType priority;  ///< The ceiling priority for this resource
+	struct SResourceDataType* next;     ///< Link to the next node
+	struct SResourceDataType* prev;     ///< Link to the previous node
+} ResourceDataType;
+/**Type for pointers of the ResourceDataType*/
+typedef ResourceDataType* ResourceDataRefType;
+
+/**
+* Initializes an empty List of resource Data.
+*/
+void InitializeResourceDataList( ResourceDataRefType List );
+/**
+* Moves a global resource data to the global list of resources. It also initializes this node.
+*/
+void AddResourceDataToResources( ResourceDataRefType Resource, ResourceType ResID, ResourceDataPriorityType Priority );
+
+/**
+* A linked list to the resources of this project.
+*/
+extern ResourceDataType g_resources;
+
+/**
+* Finds the resource with ResID in the given list
+*/
+ResourceDataRefType FindResource( ResourceDataRefType First, ResourceType ResID );
+/**
+* Moves the resource with ResID from one linked list to another.
+*/
+void MoveResourceData( ResourceType ResID, ResourceDataRefType From, ResourceDataRefType To );
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_os_setup}{Interfaces do OpenAUTOS - Rotinas de Configuração}{c}
+/**
+* Initializes the internal structures of the OS.
+*/
+void Setup();
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_os_system_counter}{Interfaces do OpenAUTOS - Rotinas do Contador do Sistema}{c}
+/**
+* Initializes the internal system counter
+*/
+void InitializeSystemCounter();
+
+/**
+* Detects if the system counter has triggered
+*/
+uint8_t HasInterruptSystemCounter();
+
+/**
+* A callback registered to the system counter will be called by this rotine.
+*/
+void TimeoutRoutineSystemCounter();
+
+/**
+* Resets the system counter to perform another countdown.
+*/
+void ResetSystemCounter();
+
+/**
+* The type for the callback rotine for TimeoutRoutineSystemCounter.
+*/
+typedef void (*TimeoutCallbackSystemCounterType)();
+
+/**
+* The callback rotine to be called by TimeoutRoutineSystemCounter
+*/
+extern TimeoutCallbackSystemCounterType g_callback_timeoutsystemcounter;
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_os_system_task}{Interfaces do OpenAUTOS - Rotinas de Tarefas}{c}
+/**Type for task priority*/
+typedef uint8_t TaskPriorityType;
+/**Type for task callback method*/
+typedef CallbackType TaskCallbackType;
+
+/**
+* This type represents a Task in the operating system.
+*/
+typedef struct STaskDataType {
+	TaskType id;											///< Task "unique" identifier. Actually, this indicates the "type" of the task.
+	TaskPriorityType priority;								///< Current priority of the task
+	TaskPriorityType priority_base;							///< Original priority of the task (Resets to this value after releasing a resource).
+	TaskStateType state;									///< Current state of the task (RUNNING, WAITING, SUSPENDED or READY).
+	TaskContextType context;								///< The context of the task. Used for prempting tasks.
+	TaskCallbackType callback;								///< The "body" of the task.
+	struct STaskDataType* next_task_same_priority;			///< Links together tasks that have the same priority.    	
+	ResourceDataType resources;                             ///< Keeps a stack of the resources allocated, in order to know the next resource that shall be released.
+} TaskDataType;
+/**A pointer type for tasks*/
+typedef TaskDataType* TaskDataRefType;
+
+/**
+* Initializes a TaskData item passed by reference.
+*/
+void InitializeTaskData( TaskDataRefType Task, TaskType Id, TaskPriorityType Priority, TaskStateType State, TaskCallbackType Callback );
+
+/**
+* Groups tasks with the same priority for the Round-Robin Scheduler.
+*/
+void GroupTasksSamePriority();
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_os_task_context}{Interfaces do OpenAUTOS - Rotinas para Contexto de Tarefas}{c}
+typedef PlatformTaskContextType TaskContextType;
+typedef PlatformTaskContextRefType TaskContextRefType;
+
+/**
+* Saves the context data of a task
+*/
+#define SaveTaskContext(TaskContextRef) PlatformSaveTaskContext((TaskContextRef))
+
+/**
+* Loads the context data of a task
+*/
+#if defined(PLATFORM) &&  PLATFORM == PIC18F25K80
+#define LoadTaskContext(TaskContextRef,FuncNameStr) PlatformLoadTaskContext((TaskContextRef),FuncNameStr)
+#else
+#define LoadTaskContext(TaskContextRef) PlatformLoadTaskContext((TaskContextRef))
+#endif
+\end{algoritmo}
+
+\chapter{OpenAUTOS API: Rotinas especificas para as plataformas}
+
+\begin{algoritmo}{ane_openautos_api_plat_setup}{Interfaces da Plataforma - Rotinas de Configuração}{c}
+/**
+* Pragma configuration of the PIC18F25K80 bit settings
+*/
+
+// CONFIG1L
+#pragma config RETEN = OFF      // VREG Sleep Enable bit (Ultra low-power regulator is Disabled (Controlled by REGSLP bit))
+#pragma config INTOSCSEL = HIGH // LF-INTOSC Low-power Enable bit (LF-INTOSC in High-power mode during Sleep)
+#pragma config SOSCSEL = HIGH   // SOSC Power Selection and mode Configuration bits (High Power SOSC circuit selected)
+#pragma config XINST = OFF      // Extended Instruction Set (Disabled)
+
+// CONFIG1H
+#pragma config FOSC = INTIO1    // Oscillator (Internal RC oscillator, CLKOUT function on OSC2)
+#pragma config PLLCFG = ON      // PLL x4 Enable bit (Enabled)
+#pragma config FCMEN = OFF      // Fail-Safe Clock Monitor (Disabled)
+#pragma config IESO = OFF       // Internal External Oscillator Switch Over Mode (Disabled)
+
+// CONFIG2L
+#pragma config PWRTEN = OFF     // Power Up Timer (Disabled)
+#pragma config BOREN = OFF      // Brown Out Detect (Disabled in hardware, SBOREN disabled)
+#pragma config BORV = 3         // Brown-out Reset Voltage bits (1.8V)
+#pragma config BORPWR = ZPBORMV // BORMV Power level (ZPBORMV instead of BORMV is selected)
+
+// CONFIG2H
+#pragma config WDTEN = OFF      // Watchdog Timer (WDT disabled in hardware; SWDTEN bit disabled)
+#pragma config WDTPS = 1048576  // Watchdog Postscaler (1:1048576)
+
+// CONFIG3H
+#pragma config CANMX = PORTB    // ECAN Mux bit (ECAN TX and RX pins are located on RB2 and RB3, respectively)
+#pragma config MSSPMSK = MSK7   // MSSP address masking (7 Bit address masking mode)
+#pragma config MCLRE = ON       // Master Clear Enable (MCLR Enabled, RE3 Disabled)
+
+// CONFIG4L
+#pragma config STVREN = ON      // Stack Overflow Reset (Enabled)
+#pragma config BBSIZ = BB2K     // Boot Block Size (2K word Boot Block size)
+
+// CONFIG5L
+#pragma config CP0 = OFF        // Code Protect 00800-01FFF (Disabled)
+#pragma config CP1 = OFF        // Code Protect 02000-03FFF (Disabled)
+#pragma config CP2 = OFF        // Code Protect 04000-05FFF (Disabled)
+#pragma config CP3 = OFF        // Code Protect 06000-07FFF (Disabled)
+
+// CONFIG5H
+#pragma config CPB = OFF        // Code Protect Boot (Disabled)
+#pragma config CPD = OFF        // Data EE Read Protect (Disabled)
+
+// CONFIG6L
+#pragma config WRT0 = OFF       // Table Write Protect 00800-01FFF (Disabled)
+#pragma config WRT1 = OFF       // Table Write Protect 02000-03FFF (Disabled)
+#pragma config WRT2 = OFF       // Table Write Protect 04000-05FFF (Disabled)
+#pragma config WRT3 = OFF       // Table Write Protect 06000-07FFF (Disabled)
+
+// CONFIG6H
+#pragma config WRTC = OFF       // Config. Write Protect (Disabled)
+#pragma config WRTB = OFF       // Table Write Protect Boot (Disabled)
+#pragma config WRTD = OFF       // Data EE Write Protect (Disabled)
+
+// CONFIG7L
+#pragma config EBTR0 = OFF      // Table Read Protect 00800-01FFF (Disabled)
+#pragma config EBTR1 = OFF      // Table Read Protect 02000-03FFF (Disabled)
+#pragma config EBTR2 = OFF      // Table Read Protect 04000-05FFF (Disabled)
+#pragma config EBTR3 = OFF      // Table Read Protect 06000-07FFF (Disabled)
+
+// CONFIG7H
+#pragma config EBTRB = OFF      // Table Read Protect Boot (Disabled)
+
+// #pragma config statements should precede project file includes.
+// Use project enums instead of #define for ON and OFF.
+
+#include <xc.h>
+
+/**
+* Performs the Setup specific to this plataform
+*/
+void PlatformSetup();
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_plat_system_counter}{Interfaces da Plataforma - Rotinas do Contador do Sistema}{c}
+/**
+* Performs the reset of the system counter in this platform.
+*/
+void PlatformResetSystemCounter();
+
+/**
+* Performs the initialization of the system clock in this platform.
+*/
+void PlatformInitializeSystemCounter();
+
+/**
+* Checks if there is an interruption due to countdown in this platform.
+*/
+uint8_t PlatformHasInterruptSystemCounter();
+\end{algoritmo}
+
+\begin{algoritmo}{ane_openautos_api_plat_task_context}{Interfaces da Plataforma - Rotinas para Contexto de Tarefas}{c}
+#define PLATFORM_CONTEXT_STACK_SIZE 31
+// Variables used to temporaly store the registers (otherwise, the value would be lost)
+extern uint8_t _wreg;
+extern uint8_t _bsr;
+extern uint8_t _status;
+
+/**Retrives the value part of the uController Stack */
+#define uControllerStackValue() ( STKPTRbits.STKPTR )
+
+typedef uint32_t PlatformTaskContextStackType;
+typedef PlatformTaskContextStackType* PlatformTaskContextStackRefType;
+
+/**
+* PIC18F25K80 Data struct to store task context information
+*/
+typedef struct {
+	uint8_t work;
+	uint8_t bsr;
+	uint8_t status;
+	PlatformTaskContextStackType stack[PLATFORM_CONTEXT_STACK_SIZE];
+	uint8_t stack_top;
+} PlatformTaskContextType;
+
+typedef PlatformTaskContextType* PlatformTaskContextRefType;
+
+/**
+* @brief (Re)Initializes the context of a task
+*
+* @param[in] Context A pointer to the task's context to be reset.
+*
+* @return No error, E_OS_OK.
+*/
+StatusType ResetTaskContext( PlatformTaskContextRefType Context, CallbackType Callback );
+
+#ifndef PUSH
+#define PUSH() asm(" PUSH")
+#endif
+
+#ifndef POP
+#define POP() asm(" POP")
+#endif
+
+
+
+/**
+* @brief Clears the uController's stack and saves it in the current task stack.
+*
+* @param[in] TaskContextRef Context The context of the current active task
+*/
+#define PlatformSaveTaskContext( TaskContextRef )                               \
+do {                                                                            \
+	TaskContextRef->work = _wreg;                                               \// Saving Work Register
+	TaskContextRef->bsr = _bsr;                                                 \// Saving Bank Select Register
+	TaskContextRef->status = _status;                                           \// Saving Status Register
+	PlatformTaskContextStackRefType stack = (TaskContextRef->stack);            \// Shortcut to the stack
+	while( uControllerStackValue() > 0 ) {                                      \// Loops Through the values on the Stack
+		uint8_t i = TaskContextRef->stack_top++;                                \//     Gets the position for the local stack and then increases the top of the local stack
+		stack[i] = TOS;                                                         \//     Saves the uController's value that on the top of the stack
+		POP();                                                                  \//     Removes the top most value from the uController's stack
+	}                                                                           \
+} while(0)
+
+/**
+* @brief Loads the uController's stack and clears the current task stack.
+*
+* @param[in] TaskContextRef Context The context of the current active task
+*/
+#define PlatformLoadTaskContext( TaskContextRef, FuncNameStr )                  \
+do {                                                                            \
+	PlatformTaskContextStackRefType stack = (TaskContextRef->stack);            \// Shortcut to the stack
+	while( TaskContextRef->stack_top > 0 ) {                                    \// Loops while there are values to push to the Stack
+		uint8_t i = --TaskContextRef->stack_top;                                \//     Reduces the size of the stack and then gets the index position
+		PUSH();                                                                 \//     Moves the uC stack position to the next available
+		uint32_t callback = stack[i];                                           \
+		uint8_t tosu = (uint8_t)(callback >> 16);                               \
+		uint8_t tosh = (uint8_t)(callback >>  8);                               \
+		uint8_t tosl = (uint8_t)(callback >>  0);                               \
+		asm("BANKSEL("FuncNameStr"@tosu)");                                     \
+		asm("MOVF (("FuncNameStr"@tosu) and 0FFh),w");                          \
+		asm("MOVWF TOSU");                                                      \
+		asm("BANKSEL("FuncNameStr"@tosh)");                                     \
+		asm("MOVF (("FuncNameStr"@tosh) and 0FFh),w");                          \
+		asm("MOVWF TOSH");                                                      \
+		asm("BANKSEL("FuncNameStr"@tosl)");                                     \
+		asm("MOVF (("FuncNameStr"@tosl) and 0FFh),w");                          \
+		asm("MOVWF TOSL");                                                      \
+	}                                                                           \
+	_wreg = TaskContextRef->work;                                               \// Loading the Work Register
+	_bsr = TaskContextRef->bsr;                                                 \// Loading Bank Select Register
+	_status = TaskContextRef->status;                                           \// Loading Status Register
+} while(0)
+\end{algoritmo}

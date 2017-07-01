@@ -5,9 +5,9 @@ A automação veicular faz um extenso uso de componentes eletrônicos em seus si
 
 \section{Transição da Mecânica para Eletrônica}
 
-De acordo com \citeonline{BoschBiblia}, os motivos para evolução automotiva variam entre ganhos de desempenho e segurança, barateamento de sistemas sem perda de qualidade e a adequação as leis de trânsito e meio-ambiente. 
+De acordo com \citeonline{BoschBiblia}, os motivos para evolução automotiva variam entre ganhos de desempenho e segurança, barateamento de sistemas sem perda de qualidade e a adequação à novas legislações relacionadas ao controle de emissão de poluentes.
 
-Contudo, independente da motivação, é notável que há cada vez mais a adoção de sistemas eletrônicos embarcados. A \reffig{cap2_car_evolution} ilustra veículos de eras diferentes, a primeira dotada de recursos mecânicos, enquanto que a segunda destaca as centrais eletrônicas, as quais vem aumentando em número a cada ano que passa.
+Contudo, independente da motivação, é notável que há cada vez mais a adoção de sistemas eletrônicos embarcados. A \reffig{cap2_car_evolution} ilustra veículos de eras diferentes, a primeira dotada exclusivamente de recursos mecânicos, enquanto que a segunda destaca as centrais eletrônicas, as quais vem aumentando em número a cada ano que passa.
 
 \begin{figure}[htb]
 	\centering
@@ -18,7 +18,7 @@ Contudo, independente da motivação, é notável que há cada vez mais a adoç�
 	\label{fig:cap2_car_evolution}
 \end{figure}
 
-Nos dias de hoje, recursos como injeção eletrônica e freios \criarSigla[Sistema de Anti-Bloqueio]{Antiblockier-Bremssystem}{ABS} são exigências para que um novo modelo de carro possa entrar em circulação.
+Nos dias de hoje, recursos como injeção eletrônica e freios ABS são exigências para que um novo modelo de carro possa entrar em circulação.
 
 O crescente uso de recursos eletrônicos demanda também que os mesmos possam se comunicar e cooperar entre si, para que o máximo de desempenho possa ser extraído dos sistemas. Neste caso, os domínios funcionais auxiliam na classificação e responsabilidade destes sistemas.
 
@@ -28,17 +28,17 @@ De modo a facilitar a classificação e identificação de sistemas eletrônicos
 
 Com o avanço das últimas décadas, recursos veiculares pertencentes a estes domínios que até então eram implementados via sistemas mecânicos e elétricos puderam ser substituídos por elementos da eletrônica, agregando confiabilidade, segurança e, em alguns casos, possibilitando o atendimento de requisitos que antes eram inviáveis de implementação.
 
-Nas demais subseções, serão apresentados em mais detalhes cada um dos domínios funcionais e serão levantados exemplos de como eles se beneficiaram nos últimos anos com o uso de microeletrônicos e microprocessadores.
+Nas demais subseções, serão apresentados em mais detalhes cada um dos domínios funcionais e serão levantados exemplos de como eles se beneficiaram nos últimos anos com o uso a microeletrônica e microprocessadores.
 
 \subsection{Trem de Força}
 
-O domínio do trem de força está relacionado aos sistemas que participam na propulsão longitudinal de um veículo. Conforme pode ser observado pela \reffig{cap2_power_train}, estes sistemas são compreendidos pelo \emph{motor}, \emph{transmissão} e demais componentes subsidiários, como o \emph{trem de rodagem}\footnote{Drive Train, no inglês.}.
+O domínio trem de força está relacionado aos sistemas que participam na propulsão longitudinal de um veículo. Conforme pode ser observado na \reffig{cap2_power_train}, estes sistemas são compreendidos pelo \emph{motor}, \emph{transmissão} e demais componentes subsidiários, como o \emph{trem de rodagem}\footnote{Drive Train, no inglês.}.
 
 \figura{cap2_power_train}{Trem de força de um veículo automotivo}{7cm}{Auto:Lion2008}
 
 Os sistemas presentes neste domínio buscam otimizar componentes para condução, conforto, economia de combustível, dentre outros. Há uma grande quantidade de sistemas embarcados vinculados principalmente ao motor, onde desde $1939$ a empresa Bosch já fazia pesquisas sobre o gerenciamento eletrônico de motores \cite{BoschHistory}.
 
-Um sistema bastante conhecido no ramo automobilístico, e que veio a substituir completamente o uso de carburadores, é a injeção eletrônica, implementado comercialmente pela primeira vez pela Bendix Corporation, em $1958$\footnote{Na época batizado de \emph{Electrojector} pela empresa.}\cite{Electrojector}. Este sistema é responsável pela injeção de combustível dentro do motor e controla as quantidades e proporção entre ar e comburente, bem como a produção da centelha pelas velas de ignição. O controle de tempos e proporções parte de uma \criarSigla[Unidade de Controle Eletrônica]{Eletronic Control Unit}{ECU}, componente o qual será discutido em maior detalhes na \reftop{ecu}. A \reffig{cap2_eletronic_injection} apresenta um modelo com os bicos injetores e sua respectiva ECU.
+Um sistema bastante conhecido no ramo automobilístico, e que veio a substituir completamente o uso de carburadores, é a injeção eletrônica, implementado comercialmente pela primeira vez pela Bendix Corporation, em $1958$\footnote{Na época batizado de \emph{Electrojector} pela empresa.}\cite{Electrojector}. Este sistema é responsável pela injeção de combustível dentro do motor e controla as quantidades e proporção entre ar e comburente, bem como a produção da centelha pelas velas de ignição. O controle de tempos e proporções é feito por uma ECU, componente o qual será discutido em maior detalhes na \reftop{ecu}. A \reffig{cap2_eletronic_injection} apresenta um modelo com os bicos injetores e sua respectiva ECU.
 
 \figura{cap2_eletronic_injection}{Injeção Eletrônica e ECU}{7cm}{BoschInjecao}
 
@@ -173,7 +173,7 @@ Outro fator que determina seu desempenho é o tamanho das mensagens. Alguns bits
 
 Existem duas normas da \criarSigla{Organização Internacional de Normalização}{ISO} que especificam os fundamentos do protocolo CAN. A ISO 11898 determina as características de uma rede CAN de alta velocidade, entre 125Kbps e 1Mbps, enquanto que a ISO 11519-2 possuí especificações para uma rede de baixa velocidades, entre 10Kbps e 125Kbps.
 
-Outro ponto que merece destaque é quanto ao formato de envio dos dados na rede. Diferente do formato eletrônico tradicional, onde são utilizados níveis fixos de tensão para representar os valores 0 e 1, no protocolo CAN são utilizados \emph{bits recessivos e dominantes}. Dois fios trançados, chamados de CAN\_H e CAN\_L, transmitem um diferencial de tensão, e é a partir desta diferença que se estipula os valores de 0 e 1. Caso o par trançado sofra ruídos externos em seu sinal, isto não afetara o valor final, pois ambos serão igualmente distorcidos, mantendo o diferencial original. A \reffig{cap2_network_can_data} ilustra um exemplo desta transmissão.
+Outro ponto que merece destaque é quanto ao formato de envio dos dados na rede. Diferente do formato eletrônico tradicional, onde são utilizados níveis fixos de tensão para representar os valores 0 e 1, no protocolo CAN são utilizados \emph{bits recessivos e dominantes}. Dois fios trançados, chamados de \texttt{CAN\_H} e \texttt{CAN\_L}, transmitem um diferencial de tensão, e é a partir desta diferença que se estipula os valores de 0 e 1. Caso o par trançado sofra ruídos externos em seu sinal, isto não afetara o valor final, pois ambos serão igualmente distorcidos, mantendo o diferencial original. A \reffig{cap2_network_can_data} ilustra um exemplo desta transmissão.
 
 \figura[Adaptado de:]{cap2_network_can_data}{Valores de transmissão do protocolo CAN}{7cm}{EletroEmb}
 
@@ -195,11 +195,11 @@ Para redução de custos, os componentes podem ser guiados sem o uso de um crist
 
 Conforme \citeonline{EletroEmb}, as unidades de controle eletrônicas são os dispositivos responsáveis por fazer a leitura de sensores, o acionamento de saídas, a comunicação entre módulos e pelo gerenciamento do funcionamento de sistemas. Uma ECU pode ser responsável por um ou mais sistemas em um veículo, geralmente pertencentes a um mesmo domínio.
 
-Fisicamente, a ECU pode ser comparado a um computador. No geral, elas são compostos por um microprocessador ou microcontrolador, memórias e portas de entrada e saída, todos soldados em uma placa de circuito integrado. Também possuem \emph{transceivers} para redes CAN e LIN, para que as ECUs possam trocar informações entre sí e entre sensores e atuadores. Uma representação lógica dos seus componentes pode ser vista na \reffig{cap2_ecu_parts}.
+Fisicamente, a ECU pode ser comparada a um computador. Geralmente são compostas por um microprocessador ou microcontrolador, memórias e portas de entrada e saída soldadas em uma placa de circuito integrado. Também possuem \emph{transceivers} para redes CAN e LIN, para que as ECUs possam trocar informações entre sí e entre sensores e atuadores. Uma representação lógica e física de uma ECU pode ser vista na \reffig{cap2_ecu_image}.
 
 \begin{figure}[htb]
 	\centering
-	\caption{Placa lógico e física de uma ECU.}
+	\caption{Modelos lógico e físico de uma ECU.}
 	\subfigure[Lógico]{\label{fig:cap2_ecu_parts}\includegraphics[width=0.45\textwidth]{cap2_ecu_parts.png}}
 	\subfigure[Físico]{\label{fig:cap2_ecu_board}\includegraphics[width=0.45\textwidth]{cap2_ecu_board.png}}
 	Adaptado de: \citeonline{EletroEmb}.
@@ -210,13 +210,13 @@ As quantidade de entradas e saídas disponíveis está associada ao microprocess
 
 Em um veículo, existem diversas ECUs, ligadas por uma ou mais redes CAN \emph{bus}. Dependendo da quantidade e distribuição no veículo, podem ser que diversas ECUs pertençam a um mesmo domínio e que uma delas sirva como uma central para as demais, ou ainda que uma ECU seja responsável por repassar informações de uma rede CAN para outra.
 
-Como cada ECU deverá executar um algoritmo específico, o qual varia conforme a função para a qual a mesma foi designada, surge a necessidade de que haja um gerenciamento dos vários módulos espalhados pelo veículo. Esta responsabilidade cai em uma das ECUs, a qual faz uso de um sistema operacional padronizado, que é capaz de se comunicar com as demais unidades de maneira intermitente e que dê prioridade para recursos de maior importância.
+Como cada ECU deverá executar um algoritmo específico, o qual varia conforme a função para a qual a mesma foi designada, surge a necessidade de que haja um gerenciamento dos vários módulos espalhados pelo veículo. Esta responsabilidade recai em uma das ECUs, a qual faz uso de um sistema operacional padronizado, que é capaz de se comunicar com as demais unidades de maneira intermitente e que dê prioridade para recursos de maior importância.
 
 \section{Padrões de Desenvolvimento de Software Automotivo}
 
 Com o crescente uso de componentes eletrônicos embarcados nos veículos automotivos, também surgiu a necessidade de padronizar as etapas do desenvolvimento de novos sistemas, afim de garantir a interoperabilidade e a intercambialidade entre eles.
 
-Serão apresentados aqui um padrão relacionado a engenharia de software e outro dedicado a implementação de sistemas veiculares.
+Serão apresentados um padrão relacionado a engenharia de software e outro dedicado a implementação de sistemas veiculares.
 
 \subsection{Modelo V}
 
@@ -226,13 +226,13 @@ Segundo \citeonline{ModelV}, o Modelo V, ou modelo de Verificação e Validaçã
 
 Como vantagens, trata-se de um modelo de fácil utilização, que incentiva a criação de cenários de testes antes mesmo da produção do código. Permite também que defeitos sejam encontrados em fases iniciais e apresenta bom resultados em projetos de pequeno porte.
 
-Entre suas desvantagens, pode-se destacar que trata-se de um modelo pouco flexível. A produção de código só tem seu início na fase de implementação, tornando impraticável a criação de um protótipo.
+Entre suas desvantagens, pode-se destacar que trata-se de um modelo pouco flexível. A produção de código somente tem seu início na fase de implementação, tornando impraticável a criação de um protótipo.
 
 \subsection{OSEK/VDX}
 
-Conforme \citeonline{OsekVdx}, o padrão OSEK/VDX foi idealizado como uma arquitetura aberta para ECUs veiculares. Ele surgiu a partir da união do padrões OSEK\footnote{\textbf{O}ffene \textbf{S}ysteme und deren Schnittstellen für die \textbf{E}lektronik in \textbf{K}raftfahrzeugen}, criado por um consórcio de fabricantes de veículos alemãs, com o padrão VDX\footnote{\textbf{V}ehicle \textbf{D}istributed e\textbf{X}ecutive}, criado pelas empresas francesas Renault e Peugeot. 
+Conforme \citeonline{OsekVdx}, o padrão OSEK/VDX foi idealizado como uma arquitetura aberta para ECUs veiculares. Ele surgiu a partir da união dos padrões \criarSigla[Sistemas abertos e suas interfaces para eletrônicos em motores veículares]{\textbf{O}ffene \textbf{S}ysteme und deren Schnittstellen für die \textbf{E}lektronik in \textbf{K}raftfahrzeugen}{OSEK}, criado por um consórcio de fabricantes de veículos alemãs, com o padrão \criarSigla[Veículo distribuído executivo]{\textbf{V}ehicle \textbf{D}istributed e\textbf{X}ecutive}{VDX}, criado pelas empresas francesas Renault e Peugeot. 
 
-A principal motivação para a criação deste padrão se decorreu por conta do número cada vez maior de sistema eletrônicos nos veículos. Com a introdução do padrão, problemas recorrentes puderam ser corrigidos, como a imcompatibilidade entre ECUs de diferentes fabricantes, bem como a contenção de custos com o desenvolvimento de protocolos para as ECUs.
+A principal motivação para a criação deste padrão se decorreu por conta do número cada vez maior de sistema eletrônicos nos veículos. Com a introdução do padrão, problemas recorrentes puderam ser corrigidos, como a incompatibilidade entre ECUs de diferentes fabricantes, bem como a contenção de custos com o desenvolvimento de protocolos para as ECUs.
 
 O padrão utiliza uma abordagem estática para as configurações do sistema, forçando com que todas as configurações sejam definidas antes da inicialização do sistema. Isto impede que novas tarefas sejam criadas ou que a memória seja alocada dinamicamente durante a execução do programa.
 
@@ -249,14 +249,16 @@ O padrão conta com sete especificações, cada qual atendendo a uma área difer
 	\item \textbf{OSEK FTCOM}: Comunicação com tolerância a falhas;
 	\item \textbf{OSEK NM}: Gerenciamento de rede;
 	\item \textbf{OSEK OIL}: Configuração do kernel;
-	\item \textbf{OSEK ORTI}: Configuração do kernel com suporte a debuggers;
+	\item \textbf{OSEK ORTI}: Configuração do kernel com suporte a debuggers.
 \end{itemize}
 
 Por ser um padrão mais antigo e restrito, atualmente existem soluções comerciais de código aberto, dentre elas: FreeOSEK\footnote{https://github.com/ciaa/Firmware/}, ERIKA Enterprise\footnote{http://erika.tuxfamily.org/drupal/} e Trampoline\footnote{http://trampoline.rts-software.org/}.
 
 \subsection{AUTOSAR}
 
-Confome \citeonline{AUTOSAR:HOME}, o projeto AUTOSAR surgiu da cooperação entre manufaturadores e fornecedores de veículos e industrias de componentes eletrônicos e de software. Desde sua concepção, em 2003, foi idealizado como um projeto aberto, focado na padronização de arquiteturas de software para a industria automotiva. O AUTOSAR também incorpora a maior parte do OSEK/VDX, expandindo suas funcionalidades mas mantendo a compatibilidade.
+Confome \citeonline{AUTOSAR:HOME}, o projeto AUTOSAR surgiu da cooperação entre manufaturadores e fornecedores de veículos e industrias de componentes eletrônicos e de software. Desde sua concepção, em 2003, foi idealizado como um projeto aberto, focado na padronização de arquiteturas de software para a indústria automotiva. O AUTOSAR também incorpora a maior parte do OSEK/VDX, expandindo suas funcionalidades mas mantendo a compatibilidade. Sua arquitetura e módulos básicos podem ser visualizados na \reffig{cap2_autosar_modules}.
+
+\figura{cap2_autosar_modules}{Visão geral técnica do AUTOSAR}{9cm}{AUTOSAR:HOME}
 
 A motivação por trás do desenvolvimento do padrão AUTOSAR visava atender as otimizações a nível de sistema, e não apenas em componentes individuais, obtendo assim a máxima reutilização de código possível. Para tal, uma arquitetura aberta, escalar e de módulos de software intercambiáveis era necessária, exigindo um esforço coletivo do consórcio de empresas envolvidas.
 
@@ -267,12 +269,8 @@ O principal objetivo do AUTOSAR é a padronização de funções básicas de sis
 Para cumprir seus objetivos técnicos de prover uma infraestrutura comum de software para sistemas automotivos, quatro características foram tidas como essenciais, sendo elas:
 
 \begin{itemize}
-	\item \textbf{Modularidade}: permite que pedaços de código sejam agregados conforme requerimento do software;
+	\item \textbf{Modularidade}: permite que partes de código sejam agregados conforme requerimento do software;
 	\item \textbf{Escalabilidade}: promove a adaptação de módulos de software comuns para diferentes veículos;
 	\item \textbf{Transferibilidade}: otimiza o uso de recursos disponíveis através da arquitetura eletrônica de um veículo;
-	\item \textbf{Reusabilidade}: aumenta a qualidade do produto, utilizando códigos já testados;
+	\item \textbf{Reusabilidade}: aumenta a qualidade do produto, utilizando códigos já testados.
 \end{itemize}
-
-Com base nestes conceitos, a arquitetura básica pode ser ilustrada na \reffig{cap2_autosar_modules}. Ela também demonstra como os módulos do AUTOSAR estão associados.
-
-\figura{cap2_autosar_modules}{Visão geral técnica do AUTOSAR}{\textwidth}{AUTOSAR:HOME}

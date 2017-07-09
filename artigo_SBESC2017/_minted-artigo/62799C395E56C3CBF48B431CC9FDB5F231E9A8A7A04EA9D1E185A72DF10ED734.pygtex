@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+	\PYG{err}{\PYGZsh{}}\PYG{k}{if} \PYG{n}{defined}\PYG{p}{(}\PYG{n}{PLATFORM}\PYG{p}{)} \PYG{o}{\PYGZam{}\PYGZam{}}  \PYG{n}{PLATFORM} \PYG{o}{==} \PYG{n}{PIC18F25K80}
+	\PYG{err}{\PYGZsh{}}\PYG{n}{include} \PYG{l+s}{\PYGZdq{}platform/pic18f25k80/task\PYGZus{}context.h\PYGZdq{}}
+	\PYG{err}{\PYGZsh{}}\PYG{k}{else}
+	\PYG{err}{\PYGZsh{}}\PYG{n}{error} \PYG{n}{Platform} \PYG{n}{not} \PYG{n}{defined}\PYG{o}{!}
+	\PYG{err}{\PYGZsh{}}\PYG{n}{endif}
+
+	\PYG{err}{\PYGZsh{}}\PYG{n}{define} \PYG{n}{SaveTask}\PYG{p}{(}\PYG{n}{TaskRef}\PYG{p}{)} \PYG{n}{PlatformSaveTask}\PYG{p}{((}\PYG{n}{TaskRef}\PYG{p}{))}
+\end{Verbatim}

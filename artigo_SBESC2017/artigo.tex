@@ -1,0 +1,643 @@
+
+%% bare_conf_compsoc.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% See:
+%% http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE Computer
+%% Society conference paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. The IEEE's font choices and paper sizes can   ***
+% *** trigger bugs that do not appear when using other class files.       ***                          ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
+
+
+
+\documentclass[conference,compsoc]{IEEEtran}
+% Some/most Computer Society conferences require the compsoc mode option,
+% but others may want the standard conference format.
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[conference,compsoc]{../sty/IEEEtran}
+
+% Pacotes usados especificamente neste documento
+\usepackage[pdftex]{graphicx} % Possibilita o uso de figuras e gráficos
+\usepackage{color}    % Possibilita o uso de cores no documento
+%\usepackage{pdfpages} % Possibilita a inclusão da ficha catalográfica
+\usepackage{listings} % Possibilita colocar códigos
+
+\usepackage{caption} % colocar textos em figuras
+\usepackage{subfigure}
+
+%\usepackage{hyperref} % colocar hyperlinks no texto
+
+\usepackage{xifthen} % deixa fazer uns if-then-else mutcho loko
+
+\usepackage[brazil]{babel}  % usados para arrumar os caracteres em português
+\usepackage[utf8]{inputenx} % 
+\usepackage[T1]{fontenc}    %
+
+\usepackage{bibentry} % permite usar o comando nobibliography
+
+\usepackage[newfloat]{minted} % Sintaxe colorida
+
+\usepackage{xparse} % Permite definir umas funções com mais recursos.
+
+\usepackage{amsmath} % Permite usar equation*
+
+\usepackage{mdframed}
+
+
+\ifCLASSOPTIONcompsoc
+  % IEEE Computer Society needs nocompress option
+  % requires cite.sty v4.0 or later (November 2003)
+  \usepackage[nocompress]{cite}
+\else
+  % normal IEEE
+  \usepackage{cite}
+\fi
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+%----------------------------------------------------------------
+%--------------------------- Bruno ------------------------------
+%----------------------------------------------------------------
+
+\graphicspath{{../figuras/}}
+
+\DeclareFloatingEnvironment[name=Equação,listname={Lista de Equações}]{equacao} % \listof...
+\renewcommand{\theequacao}{\arabic{equacao}}
+\captionsetup[equacao]{position=above,skip=0pt}
+
+\newcommand{\criarSigla}[3][]{%
+	\ifthenelse{\isempty{#1}}{%
+		#2 (#3)%
+	}{%
+	\emph{#2} (#3)\footnote{Traduzido como: #1.}%
+}%
+}
+
+\newcommand{\reffig}[1]{Figura \ref{fig:#1}}
+\newcommand{\refalg}[1]{Algoritmo \ref{alg:#1}}
+\newcommand{\refape}[1]{Apêndice \ref{ape:#1}}
+\newcommand{\reftab}[1]{Tabela \ref{tab:#1}}
+\newcommand{\refcap}[1]{\footnote{vide tópico \ref{cap:#1}.}}
+\newcommand{\reftop}[1]{Seção \ref{cap:#1}}
+\newcommand{\refequ}[1]{Equação \ref{equ:#1}}
+
+\newcommand{\figura}[5][Extraido de:]{
+	\begin{figure}[h!tb]
+		\centering
+		\caption{#3.}
+		\includegraphics[width=#4]{#2.png}
+		\ifthenelse{\isempty{#5}}{}{%
+			\\ #1 \cite{#5}.
+		}	
+		\label{fig:#2}
+	\end{figure}
+}
+
+\newenvironment{algoritmo}[4][]{
+	\VerbatimEnvironment
+	\begin{mdframed}[linecolor=black,topline=false,bottomline=false,leftline=false,rightline=false,backgroundcolor=white]
+		\captionof{listing}{#3.}
+		\label{alg:#2}
+		\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,tabsize=4,fontsize=\footnotesize,breaklines=true,#1]{#4}}{
+		\end{minted}
+	\end{mdframed}
+}
+
+\begin{document}
+%
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{OpenAUTOS\\Um Sistema Operacional Automotivo}
+
+% author names and affiliations use a multiple column layout for up to three different affiliations
+\author{
+	\IEEEauthorblockN{Bruno Fontana Canella}
+	\IEEEauthorblockA{Engenharia de Computação\\
+	Universidade Federal de Santa Catarina\\
+	Araranguá - SC - CEP: 88.906-072\\
+	Email: brunocanella@yahoo.com.br}
+	\and
+	\IEEEauthorblockN{Prof. Anderson Luiz Fernandes Perez}
+	\IEEEauthorblockA{Departamento de Computação\\
+	Universidade Federal de Santa Catarina\\
+	Araranguá - SC - CEP: 88.906-072\\
+	Email: anderson.perez@ufsc.br}
+}
+
+% conference papers do not typically use \thanks and this command
+% is locked out in conference mode. If really needed, such as for
+% the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
+% after \documentclass
+
+% for over three affiliations, or if they all won't fit within the width
+% of the page (and note that there is less available width in this regard for
+% compsoc conferences compared to traditional conferences), use this
+% alternative format:
+% 
+%\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
+%Homer Simpson\IEEEauthorrefmark{2},
+%James Kirk\IEEEauthorrefmark{3}, 
+%Montgomery Scott\IEEEauthorrefmark{3} and
+%Eldon Tyrell\IEEEauthorrefmark{4}}
+%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
+%Georgia Institute of Technology,
+%Atlanta, Georgia 30332--0250\\ Email: see http://www.michaelshell.org/contact.html}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
+%Email: homer@thesimpsons.com}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\
+%Telephone: (800) 555--1212, Fax: (888) 555--1212}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}}
+
+
+
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+
+
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract
+\begin{abstract}
+The abstract goes here.
+\end{abstract}
+
+% no keywords
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+\section{Introduction}
+
+Desde seu surgimento, popularização e evolução até os dias atuais, os veículos automotivos aumentaram em muito a sua complexidade, a ponto de que apenas o conhecimento mecânico do veículo não é mais suficiente. A quantidade de componentes eletrônicos presentes nos veículos automotivos aumentou consideravelmente passando, inclusive, a substituir sistemas puramente mecânicos. Dentre os fatores que alavancaram estas mudanças destacam-se o barateamento, miniaturização e popularização dos componentes eletrônicos, bem como a adequação da indústria automobilística as novas legislações, que passaram a ditar a emissão máxima de poluentes e a exigir mecanismos de segurança, como o \criarSigla[Sistema de Anti-Bloqueio]{Antiblockier-Bremssystem}{ABS} e o \emph{Airbag} \cite{Auto:Lion2008}.
+
+Este aumento de componentes eletrônicos nos automóveis passou a exigir, também, um maior número de \criarSigla[Unidades de Controle Eletrônica]{Eletronic Control Units}{ECU} para realizar seu gerenciamento, que passaram a ser espalhadas pelo chassi do veículo conforme a proximidade ao sistema tal qual gerenciam. Com o grande número de desenvolvedores de sistemas para veículos e, consequentemente, de ECUs, surgiu um novo desafio no mercado, de garantir que estas centrais pudessem se comunicar umas com as outras, bem como serem diagnosticadas quanto a presença de erros, como quando um sistema restrito temporalmente venha a falhar \cite{BoschBiblia}.
+
+Com o propósito de padronizar e, assim, facilitar o desenvolvimento e intercambialidade de auto-peças por terceiros, as principais montadoras e fabricantes de veículos entraram em um consenso, estipulando um padrão de normas de desenvolvimento para veículos automotivos, chamada de \criarSigla{AUTomotive Open System ARchitecture}{AUTOSAR}, a qual se encontra em sua quarta revisão \cite{AUTOSAR:HOME}.
+
+Para gerenciar os diversos módulos eletrônicos agora presentes em um veículo, bem como garantir a interoperabilidade entre eles, foram criadas normas referente ao desenvolvimento de sistemas operacionais embarcados. Estas normas visam o estabelecimento de padrões para o funcionamento, comunicação e especificações do \criarSigla{sistema operacional}{SO}, sem sacrificar a liberdade criativa de desenvolvimento do sistema, como a seleção de hardwares e implementação de algoritmos.
+
+Embora a maioria das soluções em SOs automotivos sejam exclusivamente comerciais e de código fechado, existem soluções de código aberto. Porém, estas alternativas livres atendem apenas a norma do OSEK/VDX, que é a base do AUTOSAR. Dentre estas alternativas, a solução que mais se aproxima do AUTOSAR é o Trampoline, que se encontra em fase de transição e, posteriormente, homologação \cite{Trampoline:HOME}.
+
+\section{OpenAUTOS}
+
+Visando a criação de um SO embarcado que mantivesse um modelo de desenvolvimento de código aberto, surgiu a idealização do \criarSigla[Sistema Operacional Automotivo Aberto]{Open AUTomotive Operating System}{OpenAUTOS}. Através do desenvolvimento do OpenAUTOS, deseja-se alcançar um SO nacional que seja referência na área, utilizando componentes e tecnologias com alta disponibilidade e de fácil acesso, além de agregar contribuições com a própria comunidade acadêmica.
+
+Na sequencia, o SO OpenAUTOS é apresentado, oferecendo uma visão geral sobre sua implementação, estrutura de arquivos, funcionamento do SO e sistemas implementados. São descritos em detalhes os algorítimo para troca de contexto, alocação de recursos nas tarefas e prevenção de deadlocks por prioridade-teto.
+
+\subsection{Implementação}
+
+A estratégia de implementação adotada para o OpenAUTOS, afim de que em um dado momento ele passe a conformar as normas do AUTOSAR, foi a de oferecer suporte as interfaces da norma do OSEK/VDX, na qual o AUTOSAR foi originado, já que elas também estão de acordo com o AUTOSAR OS.
+
+O SO OpenAUTOS oferece suporte básico as sessões mais criticas de um SO, que são a declaração e instanciação dos componentes utilizados por ele, como tarefas e recursos, a troca de contexto entre as tarefas e um mecanismo para prevenção de deadlocks de sistema, alcançado através do algoritmo de prioridade-teto \cite{osc9}. O SO também conta com um parser para a linguagem OIL que, embora ainda não ofereça suporte a todas as instruções da linguagem, já se apresenta em um estado funcional.
+
+O SO ainda foi projetado pensando em atender a múltiplas plataformas de microcontroladores, abstraindo e interfaceando as chamadas de funções críticas ao sistema, enquanto que os códigos específicos para as plataformas foram separados e chamados por compilação condicional. A plataforma utilizada como base para realização das compilações foi o Linux, com o compiladores \emph{gcc}, versão 4.8.4, para compilações internas do SO e o compilador \emph{XC8} da Microchip Technology Inc., versão 1.37, para geração do código da plataforma PIC18F25K80.
+
+\subsubsection{Estrutura de Arquivos} \label{cap:cap4_estrutura}
+
+A estruturação dos arquivos do OpenAUTOS foi inspirada no sistema SDVOS, buscando atender ao critério de que o código poderia ser facilmente portado para novas plataformas, além de fazer uma distinção e possível migração dos cabeçalhos da norma OSEK/VDX para a norma AUTOSAR. A \reffig{cap4_file_structure} apresenta a estrutura das pastas do sistema.
+
+\figura{cap4_file_structure}{Estrutura de Arquivos do OpenAUTOS}{4cm}{}
+
+A pasta raiz do OpenAUTOS contém um arquivo \emph{make}, chamado de Makefile, o qual é responsável por iniciar a sequência de compilação do programa.
+
+O diretório \emph{app} representa a pasta do programa que irá executar no SO. Esta pasta deve conter dois arquivos, ambos escritos pelo usuário, descritos em mais detalhes na \reftop{cap4_utilizando_o_sistema}.
+
+Na pasta \emph{build} serão gerados os arquivos binários compilados, bem como a imagem do SO pronta para ser gravada na memória de programa do microcontrolador.
+
+No diretório \emph{oiler} estão os fontes e executável do parser para linguagem OIL. Estes arquivos são automaticamente gerados e executados pelo comando make, no diretório raiz do OpenAUTOS. A \reftop{cap4_oiler} apresenta mais detalhes sobre sua implementação.
+
+Em \emph{so}, estão os códigos-fonte referentes ao sistema operacional. Nesta pasta, estão contidas as estruturas de dados e funções que dão base para o funcionamento do SO. Também contém o arquivo de cabeçalho \emph{openautos.h}, que contém as declarações de todas as funções que podem ser chamadas pela interface OSEK/VDX. 
+
+Na subpasta \emph{osek} estão as interfaces e funções previstas pela norma do OSEK/VDX. Estes arquivos foram assim estruturados para que fique distinguível os elementos que pertencem ao OSEK/VDX e os que, num futuro próximo, pertencerão ao AUTOSAR OS, que também possuirão seu próprio diretório.
+
+Finalmente, no diretório \emph{platform} estão contidos toda a parte não-portável do código. Cada plataforma adotada pelo projeto deverá conter aqui uma pasta com o nome da arquitetura alvo, a qual conterá o código responsável por executar uma determinada tarefa nesta arquitetura. Os seguintes itens são exclusivos da plataforma alvo:
+
+\begin{itemize}
+	\item Algoritmos para troca de contexto;
+	\item Definição de algumas constantes\footnote{À exemplo, valores para indicar se uma porta atua como INPUT ou OUTPUT.};
+	\item Rotinas de inicialização da plataforma;
+	\item Rotina de interrupção;
+	\item Contador padrão.
+\end{itemize}
+
+Como desvantagem, esta estrutura permite que apenas um programa seja compilado por vez. Como sugestão, a pasta \emph{app} pode ser substituída por um atalho para a pasta que contenham os fontes do programa que se deseja compilar.
+
+Esta estrutura esta sujeita a alterações futuras, principalmente quando o SO passar a oferecer mais funcionalidades.
+
+\subsubsection{Módulos Lógicos do SO}
+
+Além da divisão dos arquivos apresentada na \reftop{cap4_estrutura}, houve também uma divisão do código por funcionalidades. A \reffig{cap4_modules} apresenta os principais módulos lógicos presentes no OpenAUTOS. Nela, existem três grupos maiores que indicam o nível de especialização do conjunto, sendo eles:
+
+\figura{cap4_modules}{Módulos Lógicos do OpenAUTOS}{7cm}{}
+
+\begin{itemize}
+	\item \textbf{OSEK}: agrupam os módulos que são utilizadas para interfaceamento pela pessoa que desenvolve uma solução com o OpenAUTOS;
+	\item \textbf{OS}: agrupa os módulos que oferecem o suporte as interfaces da norma do OSEK/VDX. Futuramente, oferecerá suporte, também, as normas do AUTOSAR;
+	\item \textbf{PLATFORM}: agrupa os módulos que possuem códigos que são específicos para a plataforma alvo;
+\end{itemize}
+
+Ainda sobre a \reffig{cap4_modules}, os módulos que a compõem são descritos como:
+
+\begin{itemize}
+	\item \texttt{alarms}: implementa funcionalidades de alarmes do SO;
+	\item \texttt{events}: implementa funcionalidades de eventos do SO;
+	\item \texttt{hooks}: implementa os métodos de pré e pós chamadas para algumas das rotinas do OSEK/VDX;
+	\item \texttt{interrupts}: permite o registro de rotinas de interrupções do usuário no SO;
+	\item \texttt{os}: possui as rotinas de inicialização do SO;
+	\item \texttt{resources}: implementa funcionalidades de alocação e desalocação de recursos;
+	\item \texttt{setup}: realiza a inicialização do SO e é a base para o módulo \texttt{os} do OSEK/VDX;
+	\item \texttt{system\_counter}: agrupa as rotinas que implementam o contador interno do SO. Serve como base para a implementação de funcionalidades nos módulos de \texttt{alarms}, \texttt{events} e \texttt{interrupts} do OSEK;
+	\item \texttt{tasks}: implementa as rotinas para declaração e manipulação dos estados das tarefas, bem como para suas trocas contexto;
+	\item \texttt{task\_context}: implementa funcionalidades de troca de contexto para as tarefas, especificas para uma plataforma.
+\end{itemize}
+
+Dos módulos pertencetes ao grupo OSEK, apenas os que se encontram destacados em negrito estão implementados no sistema. Os demais serão implementados em versões futuras do OpenAUTOS.
+
+\subsection{Funcionamento do SO} \label{cap:cap4_utilizando_o_sistema}
+
+Conforme mencionado na \reftop{cap4_estrutura}, o OpenAUTOS requer que o usuário escreva dois arquivos na pasta \emph{app}. Estes arquivos são:
+
+\begin{itemize}
+	\item \textbf{program.oil}: é o arquivo de declarações e configurações dos recursos utilizados pelo SO, escrito de acordo com as normas da linguagem OIL. Um exemplo de arquivo OIL pode ser visto em \refalg{cap4_program_oil};
+	\item \textbf{program.d}: este arquivo corresponde a implementação das rotinas das tarefas declaradas em \emph{program.oil}. Basicamente, envolve chamadas à macro TASK, definida nos cabeçalhos do OSEK/VDX. Um exemplo de um arquivo \emph{program.d} pode ser visto em \refalg{cap4_program_d}.
+\end{itemize}
+
+\begin{algoritmo}{cap4_program_oil}{Exemplo de arquivo \emph{program.oil}}{c}
+	CPU PIC_MASTER {
+		OS OpenAUTOS {
+			STARTUPHOOK = TRUE;
+			PLATFORM = PIC18F25K80;
+		};
+		
+		TASK task1 {
+			PRIORITY = 1;
+			SCHEDULE = FULL;
+			ACTIVATION = 2;
+			AUTOSTART = FALSE;
+			RESOURCE = Resource1;
+		} "Tarefa de Testes";
+		
+		RESOURCE Resource1 {
+			RESOURCEPROPERTY = STANDARD;
+		};
+	} "Plataforma para testes";
+\end{algoritmo}
+
+\begin{algoritmo}{cap4_program_d}{Exemplo de arquivo \emph{program.d}}{c}
+	TASK(task1) {
+		while( TRUE ) {
+			// Allocate Resource
+			if( GetResource( Resource1 ) ) {
+				BlinkLed();
+				ReleaseResource( Resource1 );
+			}
+			Sleep(1000);
+		}	
+	}
+\end{algoritmo}
+
+Uma vez que ambos os arquivos estejam devidamente escritos, basta que o usuário abra um terminal da plataforma base, navegue até a pasta raiz do OpenAUTOS e execute o comando \emph{make}, conforme ilustrado pela \reffig{cap4_make_terminal}, passando para o parâmetro PLATFORM o valor da plataforma desejada\footnote{No momento, o único valor suportado pelo OpenAUTOS é PIC18F25K80.}. Este comando executará os seguintes passos:
+
+\begin{enumerate}
+	\item Compilar os códigos-fonte do parser \emph{oiler};
+	\item Gerar o arquivo \emph{oiler.d} a partir do arquivo \emph{program.oil};
+	\item Combinar os arquivos \emph{program.d}, \emph{oiler.d} e \emph{main.d} em um único arquivo \emph{main.c} no diretório \emph{os}. Uma ilustração deste processo pode ser vista na \reffig{cap4_oiler_merge};
+	\item Compilar os arquivos fontes da pasta \emph{os} em arquivos de objeto na pasta \emph{build};
+	\item Linkar os arquivos de objeto da pasta \emph{build} em um arquivo de imagem para a plataforma especificada, também localizado na pasta \emph{build}.
+\end{enumerate}
+
+\figura{cap4_make_terminal}{Comando Make pelo terminal}{7cm}{}
+
+\figura{cap4_oiler_merge}{Geração do arquivo \emph{main.c}}{7cm}{}
+
+Encerrado este processo, cabe ao usuário agora gravar a imagem gerada pelo OpenAUTOS na plataforma escolhida.
+
+\subsection{Sistemas Implementados}
+
+No projeto OpenAUTOS optou-se por iniciar a implementação a partir da norma do OSEK/VDX que, apesar de ser um projeto descontinuado, representa uma base compatível com o AUTOSAR, além de possuir um nível de complexidade bem mais acessível para um projeto iniciante. Infelizmente, este conjunto de normas se provou bastante extenso para a realização no intervalo proposto e uma parte significativa dos recursos por ela oferecido não puderam ser implementados ainda.
+
+O trabalho focou unicamente nos documentos voltado a implementação do SO e da linguagem OIL, deixando para trabalhos futuros os documentos que falam sobre os protocolos de comunicação e tratamento de falhas.
+
+Em seu estado atual, o OpenAUTOS possui um parser parcial para a linguagem OIL, funcionalidades para declaração de tarefas, trocas de contexto e alocação de recursos com uso de prioridade-teto. Na sequencia, estes tópicos serão abordados em maiores detalhes, explicando suas limitações conforme a norma, quando for o caso.
+
+\subsubsection{Oiler: parser para linguagem OIL} \label{cap:cap4_oiler}
+
+O parser para linguagem OIL, chamado de oiler, foi escrito utilizando as bibliotecas \emph{flex} e \emph{lemon}\footnote{Desenvolvido por \citeonline{lemon} como parte do gerenciador de banco de dados SQLite} para linguagem C. Para sua utilização, é necessário que a plataforma Linux base tenha instalado a biblioteca \emph{flex}. Os fontes da biblioteca \emph{lemon} já estão inclusos com o projeto.
+
+O parser oiler reconhece todas as configurações para tarefas e recursos do OSEK/VDX, respectivamente declarados em arquivos OIL como TASK e RESOURCE. Infelizmente, algumas destas configurações ainda não são devidamente tratadas no OpenAUTOS, sendo elas:
+
+\begin{itemize}
+	\item Em TASK, a opção SCHEDULE é sempre tratada como FULL, caso exista mais de uma tarefa com a mesma prioridade. Para tarefas marcadas como $SCHEDULE = NON$, estas tarefas não deveriam ser interrompidas pelo escalonamento por tempo;
+	\item Em RESOURCE, a opção RESOURCEPROPERTY está sendo sempre tratada como STANDARD. É necessário ainda oferecer suporte aos valores LINKED e INTERNAL.
+\end{itemize}
+
+\subsubsection{Constantes, Tipos e Compilação Condicional}
+
+Para manter a portabilidade do sistema, o OpenAUTOS faz amplo uso de constantes externas, as quais são definidas automaticamente no arquivo gerado \emph{os/main.c}. Estas variáveis são responsáveis por especificar o tamanho de arrays globais ou outras constantes utilizadas pelo sistema.
+
+Como o tipo primitivo \emph{int} não possui tamanho definido na linguagem C, o OpenAUTOS faz uso da biblioteca \emph{stdint.h}, quando disponível\footnote{Em casos onde ela não se encontra disponível, é possível a utilização de \emph{typedef}s para estabelecer os tamanhos padrões.}. Desta forma, sempre é especificado o tamanho real da variável, buscando-se sempre utilizar o menor tamanho possível para cada variável. Conforme pode ser observado também no \refalg{cap4_task_structure}, membros de uma estrutura sempre tem seu tipo especificado por um \emph{typedef}, afim de facilitar adaptações para novas plataformas no futuro.
+
+Para seleção dos códigos da plataforma alvo, utilizou-se o mecanismo de compilação condicional da linguagem C. O \refalg{cap4_conditional_compiling} demonstra os casos mais comuns onde este recurso foi utilizado. Em síntese, ele é usado para fazer a seleção de trechos de código e o renomeamento de funções definidas nos fontes da plataforma.
+
+\begin{algoritmo}{cap4_conditional_compiling}{Compilação condicional}{c}
+	#if defined(PLATFORM) &&  PLATFORM == PIC18F25K80
+	#include "platform/pic18f25k80/task_context.h"
+	#else
+	#error Platform not defined!
+	#endif
+	
+	#define SaveTask(TaskRef) PlatformSaveTask((TaskRef))
+\end{algoritmo}
+
+\subsubsection{Tarefas}
+
+Para realizar o gerenciamento das tarefas, foi criada uma estrutura de dados e funções de manipulação \emph{os/task.h}. Como pode ser observado no \refalg{cap4_task_structure}, esta estrutura armazena informações sobre a tarefa decorrentes do arquivo de configuração OIL, bem como outras estruturas internas para controle da tarefa, como a da troca de contexto e rotina de callback.
+
+\begin{algoritmo}{cap4_task_structure}{Estrutura de dados interna para tarefas}{c}
+	typedef struct STaskDataType {
+		TaskType id;
+		TaskPriorityType priority;
+		TaskPriorityType priority_base;
+		TaskStateType state;
+		TaskContextType context;
+		TaskCallbackType callback;
+		struct STaskDataType* next_task_same_priority;
+		ResourceDataType resources;
+	} TaskDataType;
+\end{algoritmo}
+
+A estrutura também mantém um ponteiro para uma outra tarefa de mesma prioridade, para que o algoritmo de escalonamento por tempo saiba qual a próxima tarefa a ser executada\footnote{Importante ressaltar que o escalonamento por tempo só ocorre quando duas ou mais tarefas de mesma e maior prioridade se encontram no estado \texttt{READY}.}, conforme na \reffig{cap4_task_next}. Uma alternativa a ela seria uma pilha de ordenação para execução das tarefas ativas de mesma prioridade. Porém, dada a natureza de alocação estática para todos os recursos do sistema, o modelo pensado originalmente resultaria em um maior uso de memória, que é um recurso geralmente escasso para sistemas embarcados.
+
+\figura{cap4_task_next}{Lista encadeada para tarefas de mesma prioridade}{7cm}{}
+
+O sistema oferece rotinas de manipulação para esta e outras estruturas. A exemplo, tem-se a rotina de inicialização de tarefas, chamada de \emph{InitializeTaskData}. Estas rotinas internas nunca devem ser utilizadas pelo usuário do sistema. Porém, elas são chamadas internamente pelo próprio SO, que pode utiliza-las, também, nos arquivos gerados pelo sistema, como em \texttt{main.c}.
+
+As rotinas de manipulação de tarefas disponíveis para o usuário estão todas definidas em \texttt{os/osek/tasks.h}, seguindo as interfaces presentes na norma do OSEK/VDX\footnote{O cabeçalho \texttt{openautos.h}, que inclui todas as declarações de rotinas da norma OSEK/VDX já é inclusa automaticamente no arquivo gerado pelo \emph{oiler}.}.
+
+Para atender a natureza estática do OSEK/VDX, todas as tarefas, incluindo uma tarefa para quando o sistema estiver ocioso, chamada de IDLE, são declaras por meio de um array global. O cálculo para o tamanho deste array pode ser visto na Equação 1. Basicamente, cada ativação de um mesmo tipo de tarefa é tratado como uma entidade separada.
+
+\begin{equation}
+	\label{equ:cap4_tasks_total}
+	TASKS\_TOTAL = (\sum\limits_{i=1}^{n} task[i].activations) + 1
+\end{equation}
+
+A partir deste array global de tarefas, são criadas referências por ponteiros, os quais servem para realizar a manipulação destas tarefas em funções do sistema.
+
+\subsubsection{Troca de Contexto}
+
+A troca de contexto das tarefas é sempre realizada em um trecho de código específico para a plataforma alvo. Segundo a norma do OSEK/VDX, uma troca de contexto pode ocorrer apenas nas seguintes ocasiões:
+
+\begin{itemize}
+	\item Quando a tarefa em execução não for interrompível, o SO só realizará uma troca de contexto quando esta tarefa em execução realizar a chamada a uma das seguintes funções: \texttt{ActivateTask}, \texttt{TerminateTask}, \texttt{ChainTask}, \texttt{Schedule}, \texttt{GetResource}, \texttt{ReleaseResource};
+	\item Quando a tarefa em execução for interrompivel e existir outra tarefa de mesma prioridade que esteja no estado \texttt{READY}, o OpenAUTOS fará a troca de contexto entre estas tarefas a cada intervalo de $1ms$. Este tempo é escolhido arbitrariamente pelo SO, já que a norma do OSEK/VDX não estipula um valor mínimo/máximo para o mesmo.
+\end{itemize}
+
+Na plataforma do PIC18F25K80, sempre que há uma troca de contexto, os dados que são salvo pelo sistema são os registradores de trabalho, seleção de banco de memória e status do microcontrolador, além da pilha de memória.
+
+As rotinas que realizam esta troca de contexto são: \texttt{SaveTaskContext} e \texttt{LoadTaskContext}. Elas são um dos poucos trechos do código que utilizam explicitamente instruções em Assembly, devido a um bug do compilador XC8, no qual o Assembly gerado pela linguagem C não produzia um código funcional.
+
+\subsubsection{Alocação de Recursos e Elevação de Prioridade}
+
+Conforme especificado pelas normas do OSEK/VDX, uma tarefa pode alocar um recurso utilizando a rotina GetResource. Tarefas que conseguem alocar este recurso tem sua prioridade elevada para a prioridade do recurso, que é sempre superior a de todas as tarefas que podem alocá-lo, mas inferior a de tarefas cuja prioridade é maior que a do recurso e que não podem alocá-lo. A \reffig{cap4_resource_alloc} demonstra um exemplo de uma tarefa \textbf{Task1b}, a qual em um primeiro momento aloca um recurso e tem sua prioridade elevada, para logo em seguida, quando o recurso é liberado, ter sua prioridade restaurada ao seu valor original, representado na estrutura para tarefas como \texttt{priority\_base}.
+
+\figura{cap4_resource_alloc}{Elevação de prioridade}{7cm}{}
+
+Ainda, segundo a norma, caso uma tarefa aloque mais de um recurso, este deve ser feito na ordem de menos prioritário para mais prioritário\footnote{Um recurso de menor prioridade não pode ser alocado após a alocação de um recurso com maior prioridade}. A liberação destes recursos deve ocorrer na ordem inversa a alocada. Este controle é alcançado pelo uso de uma pilha de recursos.
+
+De acordo com a \reffig{cap4_resource_alloc}, mesmo que uma tarefa aloque um recurso, ela ainda poderá ser interrompida por uma tarefa de maior prioridade, caso esta entre em seu estado de prontidão.
+
+\section{Testes e Validação}
+
+Para realizar a validação do SO, foi idealizado um circuito sem entradas e com apenas \criarSigla[Diodos Emissores de Luz]{Light-Emitting Diode}{LED}s para saída de dados, utilizados para demostrar o escalonamento das tarefas presentes no SO através de seus acionamentos. Este circuito pode ser visto na \reffig{cap5_circuit_board}.
+
+\figura{cap5_circuit_board}{Circuito na Protoboard}{8cm}{}
+
+Foram realizados um total de 4 experimentos neste circuito, onde 3 deles buscaram validar os diferentes tipos de escalonamento, enquanto que o quarto testou o comportamento do sistema com a alocação de recursos e protocolo prioridade-teto.
+
+Em todos os experimentos, são utilizadas 3 tarefas, responsáveis por fazer os acendimento dos LEDs do circuito. Nas sessões de resultados de seu respectivo experimento, as ondas mostrada pelos osciloscópios representam, respectivamente, as tarefas \texttt{task\_b0}, \texttt{task\_b1} e \texttt{task\_b2}. A \reftab{cap5_osciloscope_color} apresenta uma associação por cores desta relação entre tarefas e ondas dos osciloscópios.
+
+\begin{table}[h]
+	\centering
+	\caption{Associação das tarefas e cores dos osciloscópios.}
+	\label{tab:cap5_osciloscope_color}
+	\begin{tabular}{ccc}
+		Tarefa            & TDS 2024C & Proteus \\ \hline \hline
+		\texttt{task\_b0} & laranja   & amarelo \\ \hline
+		\texttt{task\_b1} & ciano     & ciano   \\ \hline
+		\texttt{task\_b2} & roxo      & magenta \\ \hline		
+	\end{tabular}
+\end{table}
+
+\subsection{Experimento 1: Escalonador por Prioridade} \label{cap:cap5_scheduler_p}
+
+O objetivo deste experimento foi o de garantir que o escalonador por prioridades do OpenAUTOS estivesse operando conforme o esperado pela norma, realizando o escalonamento através do uso da chamada das rotinas: \texttt{ActivateTask}, \texttt{TerminateTask} e \texttt{ChainTask}.
+
+\subsubsection{Configuração do Experimento}
+
+Foram utilizadas 5 tarefas, cada qual com um valor único de prioridade, especificadas na \reftab{cap5_scheduler_p}. As funcionalidades de cada tarefa ficaram distribuídas da seguinte maneira:
+
+\begin{table}[h]
+	\centering
+	\caption{Prioridade das tarefas.}
+	\label{tab:cap5_scheduler_p}
+	\begin{tabular}{cc}
+		Tarefa               & Prioridade \\ \hline \hline
+		\texttt{task\_init}  & 254        \\ \hline
+		\texttt{task\_start} & 4          \\ \hline
+		\texttt{task\_b2}    & 3          \\ \hline
+		\texttt{task\_b1}    & 2          \\ \hline
+		\texttt{task\_b0}    & 1          \\ \hline
+	\end{tabular}
+\end{table}
+
+\begin{itemize}
+	\item \textbf{\texttt{task\_init}}: única tarefa a iniciar no estado \texttt{READY}, ela faz a inicialização das portas dos sistema, bem como inicia o looping principal de escalonamento entre \textbf{\texttt{task\_start}} e \textbf{\texttt{task\_b\textit{n}}};
+	\item \textbf{\texttt{task\_start}}: apaga os LEDs e ativa as tarefas responsáveis por acende-los;
+	\item \textbf{\texttt{task\_b\textit{n}}}: acedem o LED respectivo a porta B a qual a tarefa foi associada.
+\end{itemize}
+
+%Com base nesta configuração, o fluxo de escalonamento do SO pode ser representado no diagrama de estados presente na \reffig{cap5_scheduler_p}.
+
+%\figura{cap5_scheduler_p}{Diagrama de estados do escalonador por prioridade}{7cm}{}
+
+\subsubsection{Resultados}
+
+Todas as rotinas testadas agiram conforme a sua especificação. Neste exemplo, a rotina \texttt{ActivateTask} não realizou a chamada a rotina de escalonamento, pois esta deveria escalonar apenas caso estivesse ativando uma tarefa de maior prioridade que a tarefa em execução no momento. O melhor exemplo para este comportamento pode ser visto na tarefa \textbf{\texttt{task\_start}}, que altera os estados das tarefas \textbf{\texttt{task\_b\textit{n}}} de \texttt{SUSPENDED} para \texttt{READY}.
+
+Sendo assim, o escalonamento do sistema passou a ser executado pelas rotinas \texttt{TerminateTask} e \texttt{ChainTask}, que ao realizarem a transição das tarefas do estado \texttt{RUNNING} para \texttt{SUSPENDED}, também fazem uma chamada a rotina de escalonamento. Importante ressaltar que a função \texttt{ChainTask} faz a ativação de uma tarefa antes de se suspender, executando tanto as funções de \texttt{ActivateTask} e \texttt{TerminateTask} em uma única rotina.
+
+A execução destas tarefas podem ser visualizadas na figura \ref{fig:cap5_scheduler_p_osc1a}.
+
+\figura{cap5_scheduler_p_osc1a}{Escalonador por prioridades - Osciloscópio}{6cm}{}
+
+\subsection{Experimento 2: Escalonador por Round-Robin}
+
+Diferente do escalonador por prioridades, o escalonamento por \emph{Round-Robin} é realizado por uma interrupção temporal, a qual ocorre apenas quando mais de uma tarefa com a mesma prioridade estejam ativas ao mesmo tempo, podendo estas tarefas serem tanto de tipos diferentes quanto múltiplas ativações de um mesmo tipo. Para fins deste teste, todas as tarefas estão limitadas a apenas uma ativação e são de tipos diferentes, cada qual responsável por um dos LEDs do circuito.
+
+\subsubsection{Configuração do Experimento}
+
+Assim como no escalonador por prioridades\refcap{cap5_scheduler_p}, foram utilizadas 5 tarefas, onde uma delas ficou responsável pela inicialização das outras, uma pelo desligamento dos LEDs e as demais pelo acendimento do LED de seu respectivo processo. Diferente do teste anterior, com exceção da tarefa \texttt{task\_init}, nenhuma das outras tarefas encerra sua execução, permanecendo infinitamente ativas, até que o microcontrolador seja desligado.
+
+%Como todas as tarefas possuem a mesma prioridade, a ordem de execução se dá exclusivamente pela ordem de ativação das tarefas, conforme especificado pelas linhas 7 à 10 do \refalg{cap5_scheduler_rr_program} do \refape{capA_validacao}. O diagrama de estados presente na \reffig{cap5_scheduler_rr} ilustra a ordem de execução destas tarefas.
+
+%\figura{cap5_scheduler_rr}{Diagrama de estados do escalonador por Round-Robin}{7cm}{}
+
+\subsubsection{Resultados}
+
+Assim como no teste anterior, o comportamento do sistema foi exatamente como o especificado pela norma. A cada intervalo de $1_{ms}$, valor adotado pelo OpenAUTOS como o intervalo de escalonamento para Round-Robin, ou seja, o valor do quantum, uma interrupção é gerada pelo temporizador do sistema. Durante esta interrupção, faz-se uma busca pela próxima tarefa de mesma prioridade que se encontra ativa\footnote{No estado \texttt{READY}.}, fazendo com que haja uma troca de contexto em caso afirmativo. Importante ressaltar que esta é a única forma encontrada pela norma de troca de contexto em uma interrupção. Nos demais casos, mesmo que uma tarefa seja ativada durante uma interrupção, ela só será considerada no próximo ponto de escalonamento\footnote{Que se resumem as rotinas: \texttt{Schedule}, \texttt{ActivateTask}, \texttt{TerminateTask}, \texttt{ChainTask}, \texttt{SetEvent}, \texttt{WaitEvent} e \texttt{ReleaseResource}.}.
+
+O resultado da execução deste teste pode ser visualizado na \reffig{cap5_scheduler_rr_osc}.
+
+\figura{cap5_scheduler_rr_osc}{Escalonador por \emph{Round-Robin} - Osciloscópio}{6cm}{}
+
+%\figura{cap5_scheduler_rr_pro}{Escalonador por \emph{Round-Robin} - Proteus}{7cm}{}
+
+%Uma demonstração do circuito em funcionamento está disponível em \url{https://youtu.be/QC50OuNeoio}. Para uma melhor visualização do experimento foi aumentado para $1_s$ o tempo de interrupção para chamada do escalonador \emph{Round-Robin}.
+
+\subsection{Experimento 3: Escalonador por Prioridade e Round-Robin}
+
+Este experimento teve como objetivo avaliar o funcionamento do SO em um cenário onde ambos os modelos de escalonamento seriam requisitados.
+
+\subsubsection{Configuração do Experimento}
+
+Foram utilizados 5 tipos de tarefas, os quais ficaram organizados da seguinte maneira:
+
+\begin{itemize}
+	\item \textbf{\texttt{task\_init}}: tarefa com a menor prioridade, e a única que nunca é encerrada. Ela tem por objetivo manter o programa em ciclo após o encerramento de todas as tarefas de maior prioridade que ela;
+	\item \textbf{\texttt{task\_start}}: ativada pela tarefa \textbf{\texttt{task\_init}}, seu papel é o de apagar os LEDS, bem como o de ativar as tarefas que os reacenderão;
+	\item \textbf{\texttt{task\_b\textit{n}}}: são as tarefas responsáveis pelo acendimento de seu respectivo LED. Todas possuem a mesma prioridade e também fazem uso a uma chamada na rotina de atraso, para permitir que o tempo de escalonamento do \emph{Round-Robin} execute pelo menos uma vez para cada uma destas tarefas.
+\end{itemize}
+
+%A \reffig{cap5_scheduler_prr} apresenta um diagrama de estados deste teste, com os seguintes destaques:
+
+%\begin{itemize}
+%	\item Em cinza encontram-se as tarefas que são escalonados pelas rotinas de prioridade;
+%	\item Em rosa encontram-se as tarefas que possuem mesma prioridade e que são escalonadas por \emph{Round-Robin};
+%	\item Em preto encontram-se as setas indicando transições que ocorrem exclusivamente por \texttt{TerminateTask};
+%	\item Em azul encontram-se as setas indicando transições que ocorrem tanto por interrupção quanto por \texttt{TerminateTask};
+%\end{itemize}
+
+%\figura{cap5_scheduler_prr}{Diagrama de estados do escalonador por Prioridade e Round-Robin}{7cm}{}
+
+\subsubsection{Resultados}
+
+O experimento se comportou conforme o esperado onde, em um primeiro momento, o sistema faz a ativação das tarefas através de chamadas a rotina \texttt{ActivateTask}, até então escalonando apenas pela tarefa de maior prioridade ativa na ocasião, que pela lógica do programa acontece na seguinte ordem: \texttt{task\_init}, \texttt{task\_start} e \texttt{task\_b0}.
+
+No momento em que \texttt{task\_b0} entra em execução, apenas tarefas de prioridade idêntica estão ativas no sistema. A partir deste momento, o sistema passa a escalonar as tarefas por \emph{Round-Robin} nos intervalos de quantum definidos pelo SO. O sistema permanece, então, neste modelo de escalonamento até que as tarefas terminem seu tempo de atraso, encerrando, prematuro ao quantum, seu funcionamento através da rotina \texttt{TerminateTask}.
+
+Uma vez encerrada a última das tarefas de ativação de LEDs, a tarefa \texttt{task\_init} volta a ser a tarefa de maior prioridade no sistema, reiniciando o processo.
+
+As ondas do osciloscópio da figura \ref{fig:cap5_scheduler_prr_osc} ilustram o momento em que as tarefas de acionamento dos LEDs são iniciadas e o tempo no qual elas permanecem processando a rotina de atraso.
+
+\figura{cap5_scheduler_prr_osc}{Escalonador por prioridade e \emph{Round-Robin} - Osciloscópio}{6cm}{}
+
+%\figura{cap5_scheduler_prr_pro}{Escalonador por prioridade e \emph{Round-Robin} - Proteus}{7cm}{}
+
+%Um vídeo demonstrativo do funcionamento deste circuito encontra-se disponível em \url{https://youtu.be/LSDL\_LMfO3o}, também utilizando atrasos de $1_s$ para permitir uma melhor observação do fluxo de funcionamento.
+
+\subsection{Experimento 4: Alocação de Recursos}
+
+Assim como no modelo de prioridade com \emph{Round-Robin}, este experimento utilizou um cenário bem semelhante, porém, com o uso da alocação de recursos e prioridade-teto para que um processo de baixa prioridade pudesse ativar tarefas de maior prioridade sem ser escalonado imediatamente.
+
+\subsubsection{Configuração do Experimento}
+
+Diferente dos outros experimentos, foram utilizadas apenas 4 tarefas, onde além das 3 tarefas responsáveis pelo acendimento dos leds, a quarta tarefa passou a realizar as operações de desligar os leds e de iniciar as tarefas de acendimento. A principal diferença é que esta tarefa passou uma menor prioridade que as demais. Sendo assim, para que todas as tarefas de maior prioridade operassem em Round-Robin, foi necessário elevar a prioridade da tarefa \texttt{task\_init} através da alocação de recursos, conforme demonstrado pela \reffig{cap5_scheduler_res}.
+
+\figura{cap5_scheduler_res}{Diagrama de sequencia da alocação de recurso e prioridade-teto}{6cm}{}
+
+\subsubsection{Resultados}
+
+Após a alocação do recurso, a tarefa \texttt{task\_init} passou a ter uma prioridade superior a das tarefas que estaria ativando, permitindo que ativasse todas as tarefas \texttt{task\_b\textit{n}} sem que ela própria fosse escalonada.
+
+A partir do momento no qual o recurso alocado por \texttt{task\_init} é liberado, esta tem sua prioridade reduzida para seu valor original, o qual é inferior ao das demais tarefas que se encontram aptos para execução. Sendo assim, o SO passa a executar as tarefas de maior prioridade, que por possuírem valores idênticos de prioridade, são escalonados por \emph{Round-Robin} até que sua execução encerre com a chamada a rotina \emph{TerminateTask}, reiniciando o clico em \texttt{task\_init}.
+
+Caso \texttt{task\_init} tentasse ativar as demais tarefas sem antes ter feito a alocação do recurso, o SO teria interrompido seu processamento ao retornar da rotina \emph{ActivateTask}, executando cada tarefa até seu encerramento em \emph{TerminateTask}, sem nunca escalonalas por \emph{Round-Robin}.
+
+Os resultados da execução deste experimento podem ser vistos no gráfico da \reffig{cap5_scheduler_res_osc}.
+
+\figura{cap5_scheduler_res_osc}{Alocação de recurso e prioridade-teto - Osciloscópio}{6cm}{}
+
+\section{Conclusão}
+
+O desenvolvimento de um sistema operacional embarcado é uma tarefa extensa, desafiadora e complexa, tendo em vista a quantidade funcionalidades que este deve oferecer, bem como a estabilidade, desempenho, portabilidade, dentre vários outros aspectos possíveis.
+
+Desenvolver um SOE que visa atender a um conjunto de normas como as do OSEK/VDX e AUTOSAR apresentou-se um desafio ainda maior do que o que era originalmente esperado, tamanha a complexidade do sistema proposto por elas.
+
+Embora o trabalho tenha apresentado sucesso no desenvolvimento parcial de um SOE baseado nestas normas, existem ainda diversos módulos e funcionalidades que precisam serem implementadas para que o SOE se adeque totalmente as normas.
+
+Este trabalho tem sua importância marcada como o inicio do SOE OpenAUTOS que, no momento, oferece uma estrutura preparada para o desenvolvimento em múltiplas plataformas de micro-controladores, um compilador para a linguagem OIL, sistemas para o gerenciamento de tarefas, trocas de contexto e alocação de recursos, bem como uma base de código para a implementação das demais funcionalidades.
+
+Embora todas estas funcionalidades tenham sido testadas e validadas conforme especifica a norma, há ainda bastante espaço para melhorias, pois muitas das funções e estruturas de dados utilizadas foram implementadas sem revisões de otimização ou um planejamento de longo prazo, com o intuito de deixar o OpenAUTOS em um ponto usável o mais cedo possível, para que a partir dali ele evoluísse para um sistema mais complexo.
+
+Espera-se que o OpenAUTOS continue a evoluir, mesmo com a conclusão deste trabalho, e que, eventualmente, ele venha a se tornar uma referência no mercado de sistemas embarcados automobilísticos, tanto como uma ferramenta de ensino como em usabilidade. Para isso, seu código está disponível no repositório online GitHub, sobre o endereço \url{https://github.com/brunocanella/OpenAUTOS}.
+
+\bibliographystyle{IEEEtran}
+\bibliography{referencias}
+
+% that's all folks
+\end{document}
+
+
